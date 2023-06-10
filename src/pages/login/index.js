@@ -50,6 +50,10 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { authLogin } from "src/store/apps/auth";
+import { validateEmail } from "src/utils/commonUtils";
+import useNotification from "src/hooks/useNotification";
 
 // ** Styled Components
 const LoginIllustration = styled("img")(({ theme }) => ({
@@ -100,14 +104,16 @@ const defaultValues = {
 };
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const [rememberMe, setRememberMe] = useState(true);
   // const [showPassword, setShowPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formValue, setFormValue] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sendNotification] = useNotification();
 
   // ** Hooks
   const auth = useAuth();
@@ -138,17 +144,33 @@ const LoginPage = () => {
     setFormValue(newFormValue);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setSubmitted(true);
+    if (!formValue.username || !formValue.password) {
+      return;
+    }
+    if (!validateEmail(formValue.username)) {
+      return;
+    }
     console.log("formValue", formValue);
+    const response = await dispatch(
+      authLogin({
+        formValue: formValue,
+      })
+    );
+    console.log("response", response);
+    if (response.payload?.data) {
+      sendNotification({
+        message: response.payload?.data?.message,
+        variant: "success",
+      });
+    } else {
+      sendNotification({
+        message: response.payload?.message,
+        variant: "error",
+      });
+    }
   };
-
-  function validateEmail(email) {
-    // Regular expression pattern for email validation
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    return pattern.test(email);
-  }
 
   const onSubmit = (data) => {
     const { email, password } = data;
@@ -237,18 +259,18 @@ const LoginPage = () => {
                     id="outlined-basic"
                     label="Email"
                     variant="outlined"
-                    name="email"
+                    name="username"
                     onChange={handleInputChange}
                   />
                 </FormControl>
-                {submitted && !formValue.email && (
+                {submitted && !formValue.username && (
                   <>
                     <FormHelperText error={true}>
                       Email is required
                     </FormHelperText>
                   </>
                 )}
-                {submitted && !validateEmail(formValue.email) && (
+                {submitted && !validateEmail(formValue.username) && (
                   <>
                     <FormHelperText error={true}>Invalid email</FormHelperText>
                   </>
