@@ -1,14 +1,17 @@
 // ** React Imports
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from "react";
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
 // ** Axios
-import axios from 'axios'
+import axios from "axios";
 
 // ** Config
-import authConfig from 'src/configs/auth'
+import authConfig from "src/configs/auth";
+import { getUserData } from "src/store/apps/auth";
+import { userProfileUrl } from "src/utils/pathConst";
+import { useSelector } from "react-redux";
 
 // ** Defaults
 const defaultProvider = {
@@ -17,74 +20,126 @@ const defaultProvider = {
   setUser: () => null,
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
-  logout: () => Promise.resolve()
-}
-const AuthContext = createContext(defaultProvider)
+  logout: () => Promise.resolve(),
+};
+const AuthContext = createContext(defaultProvider);
 
 const AuthProvider = ({ children }) => {
   // ** States
-  const [user, setUser] = useState(defaultProvider.user)
-  const [loading, setLoading] = useState(defaultProvider.loading)
+  const [user, setUser] = useState(defaultProvider.user);
+  const [loading, setLoading] = useState(defaultProvider.loading);
+  const { userData } = useSelector((state) => state.auth);
 
   // ** Hooks
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+      const returnUrl = router.pathname;
+
+      const storedToken = window.localStorage.getItem(
+        authConfig.storageTokenKeyName
+      );
+      console.log("reloaded");
       if (storedToken) {
-        setLoading(true)
+        setLoading(true);
         await axios
-          .get(authConfig.meEndpoint, {
+          .get(userProfileUrl, {
             headers: {
-              Authorization: storedToken
-            }
+              Authorization: "Bearer " + storedToken,
+            },
           })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
+          .then(async (response) => {
+            setLoading(false);
+            setUser(response?.data?.data);
+            const redirectURL =
+              returnUrl && returnUrl !== "/" ? returnUrl : "/";
+            router.replace(redirectURL);
           })
           .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
+            localStorage.removeItem("userData");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("idToken");
+            setUser(null);
+            setLoading(false);
+            if (
+              authConfig.onTokenExpiration === "logout" &&
+              !router.pathname.includes("login")
+            ) {
+              router.replace("/login");
             }
-          })
+          });
       } else {
-        setLoading(false)
+        localStorage.removeItem("userData");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("idToken");
+        setUser(null);
+        setLoading(false);
+        router.replace("/login");
       }
-    }
-    initAuth()
+    };
+    initAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
-  const handleLogin = (params, errorCallback) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
-      .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        router.replace(redirectURL)
-      })
-      .catch(err => {
-        if (errorCallback) errorCallback(err)
-      })
-  }
+  const handleLogin = (userData, errorCallback) => {
+    const returnUrl = router.query.returnUrl;
+    // let data = [];
+    // if (userData?.roles.includes("JOB_SEEKER")) {
+    //   data = userData;
+    //   data.role = "jobseeker";
+    // }
+    // console.log(data);
+    setUser(userData);
+    // params.rememberMe
+    //   ? window.localStorage.setItem(
+    //       "userData",
+    //       JSON.stringify(response.data.userData)
+    //     )
+    //   : null;
+    const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
+    router.replace(redirectURL);
+    // axios
+    //   .post(authConfig.loginEndpoint, params)
+    // getUserData({})
+    //   .then(async (response) => {
+    //     params.rememberMe
+    //       ? window.localStorage.setItem(
+    //           authConfig.storageTokenKeyName,
+    //           response.data.accessToken
+    //         )
+    //       : null;
+    //     const returnUrl = router.query.returnUrl;
+    //     setUser({ ...response.data.userData });
+    //     params.rememberMe
+    //       ? window.localStorage.setItem(
+    //           "userData",
+    //           JSON.stringify(response.data.userData)
+    //         )
+    //       : null;
+    //     const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
+    //     router.replace(redirectURL);
+    //   })
+    //   .catch((err) => {
+    //     if (errorCallback) errorCallback(err);
+    //   });
+  };
 
   const handleLogout = () => {
-    setUser(null)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
-  }
+    setUser(null);
+    window.localStorage.removeItem("userData");
+    window.localStorage.removeItem(authConfig.storageTokenKeyName);
+    localStorage.removeItem("userData");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("idToken");
+    setUser(null);
+    setLoading(false);
+
+    window.location.reload();
+    router.replace("/login");
+  };
 
   const values = {
     user,
@@ -92,10 +147,10 @@ const AuthProvider = ({ children }) => {
     setUser,
     setLoading,
     login: handleLogin,
-    logout: handleLogout
-  }
+    logout: handleLogout,
+  };
 
-  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
-}
+  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
+};
 
-export { AuthContext, AuthProvider }
+export { AuthContext, AuthProvider };

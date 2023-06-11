@@ -6,3 +6,4 @@ export const baseURL =
 export const loginUrl = `${baseURL}/login`;
 export const forgotPasswordUrl = `${baseURL}/forgot_password`;
 export const registerUrl = `${baseURL}/registration`;
+export const userProfileUrl = `${baseURL}/profile`;

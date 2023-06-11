@@ -1,7 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiPost } from "src/utils/axios";
+import { apiGet, apiPost } from "src/utils/axios";
 import { errorHandler } from "src/utils/errorHandler";
-import { forgotPasswordUrl, loginUrl, registerUrl } from "src/utils/pathConst";
+import {
+  forgotPasswordUrl,
+  loginUrl,
+  registerUrl,
+  userProfileUrl,
+} from "src/utils/pathConst";
 
 export const authLogin = createAsyncThunk(
   "auth/authLogin",
@@ -14,7 +19,18 @@ export const authLogin = createAsyncThunk(
     }
   }
 );
+export const getUserData = createAsyncThunk(
+  "auth/getUserData",
+  async ({}, { rejectWithValue }) => {
+    try {
+      let response = await apiGet(`${userProfileUrl}`);
 
+      return response?.data?.data;
+    } catch (error) {
+      return rejectWithValue(errorHandler(error));
+    }
+  }
+);
 export const authForgotPasswor = createAsyncThunk(
   "auth/authForgotPasswor",
   async ({ formValue }, { rejectWithValue }) => {
@@ -43,6 +59,7 @@ export const appAuthSlice = createSlice({
   name: "appAuth",
   initialState: {
     isLoading: false,
+    userData: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -53,6 +70,16 @@ export const appAuthSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(authLogin.rejected, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(getUserData.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getUserData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.userData = action.payload;
+    });
+    builder.addCase(getUserData.rejected, (state, action) => {
       state.isLoading = false;
     });
   },

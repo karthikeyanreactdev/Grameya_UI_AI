@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // ** Next Imports
 import Link from "next/link";
@@ -50,8 +50,8 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { authLogin } from "src/store/apps/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { authLogin, getUserData } from "src/store/apps/auth";
 import { validateEmail } from "src/utils/commonUtils";
 import useNotification from "src/hooks/useNotification";
 
@@ -122,6 +122,8 @@ const LoginPage = () => {
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
 
+  const { userData } = useSelector((state) => state.auth);
+  console.log("UserData", userData);
   // ** Vars
   const { skin } = settings;
 
@@ -160,6 +162,17 @@ const LoginPage = () => {
     );
     console.log("response", response);
     if (response.payload?.data) {
+      localStorage.setItem("idToken", response.payload?.data?.data?.idToken);
+      localStorage.setItem(
+        "accessToken",
+        response.payload?.data?.data?.accessToken
+      );
+      localStorage.setItem(
+        "refreshToken",
+        response.payload?.data?.data?.refreshToken
+      );
+      dispatch(getUserData({}));
+
       sendNotification({
         message: response.payload?.data?.message,
         variant: "success",
@@ -185,7 +198,16 @@ const LoginPage = () => {
     skin === "bordered"
       ? "auth-v2-login-illustration-bordered"
       : "auth-v2-login-illustration";
-
+  useEffect(() => {
+    if (userData?._id) {
+      auth.login(userData, () => {
+        setError("email", {
+          type: "manual",
+          message: "Email or Password is invalid",
+        });
+      });
+    }
+  }, [userData]);
   return (
     <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
       {!hidden ? (

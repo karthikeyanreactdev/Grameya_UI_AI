@@ -104,10 +104,10 @@ const App = (props) => {
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+          <title>{`${themeConfig.templateName} - AI Powered Job Portal`}</title>
           <meta
             name="description"
-            content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+            content={`${themeConfig.templateName} – AI Powered Job Portal`}
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -117,7 +117,7 @@ const App = (props) => {
           />
           <meta
             name="keywords"
-            content="Material Design, MUI, Admin Template, React Admin Template"
+            content="AI, Job Portal, jobseeker, recruiter, skills, grameya, next innovation asia, hrtalky"
           />
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
