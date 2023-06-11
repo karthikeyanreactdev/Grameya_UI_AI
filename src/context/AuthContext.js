@@ -9,9 +9,9 @@ import axios from "axios";
 
 // ** Config
 import authConfig from "src/configs/auth";
-import { getUserData } from "src/store/apps/auth";
+import { getUserData, handleUserData } from "src/store/apps/auth";
 import { userProfileUrl } from "src/utils/pathConst";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // ** Defaults
 const defaultProvider = {
@@ -29,7 +29,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(defaultProvider.user);
   const [loading, setLoading] = useState(defaultProvider.loading);
   const { userData } = useSelector((state) => state.auth);
-
+  console.log("UserData", userData);
+  const dispatch = useDispatch();
   // ** Hooks
   const router = useRouter();
   useEffect(() => {
@@ -51,6 +52,7 @@ const AuthProvider = ({ children }) => {
           .then(async (response) => {
             setLoading(false);
             setUser(response?.data?.data);
+            dispatch(handleUserData());
             const redirectURL =
               returnUrl && returnUrl !== "/" ? returnUrl : "/";
             router.replace(redirectURL);

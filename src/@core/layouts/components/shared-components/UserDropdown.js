@@ -103,7 +103,7 @@ const UserDropdown = (props) => {
             color: "#fff",
           }}
         >
-          {userData?.first_name[0] || ""}
+          {userData?.first_name?.charAt(0) || ""}
         </Avatar>
       </Badge>
       <Menu
@@ -140,7 +140,7 @@ const UserDropdown = (props) => {
                   color: "#fff",
                 }}
               >
-                {userData?.first_name[0]}
+                {userData?.first_name?.charAt(0)}
               </Avatar>
             </Badge>
             <Box

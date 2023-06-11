@@ -61,7 +61,11 @@ export const appAuthSlice = createSlice({
     isLoading: false,
     userData: [],
   },
-  reducers: {},
+  reducers: {
+    handleUserData: (state, action) => {
+      state.userData = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(authLogin.pending, (state, action) => {
       state.isLoading = true;
@@ -84,5 +88,6 @@ export const appAuthSlice = createSlice({
     });
   },
 });
+export const { handleUserData } = appAuthSlice.actions;
 
 export default appAuthSlice.reducer;
