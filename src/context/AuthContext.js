@@ -52,7 +52,7 @@ const AuthProvider = ({ children }) => {
           .then(async (response) => {
             setLoading(false);
             setUser(response?.data?.data);
-            dispatch(handleUserData());
+            dispatch(handleUserData(response?.data?.data));
             const redirectURL =
               returnUrl && returnUrl !== "/" ? returnUrl : "/";
             router.replace(redirectURL);
