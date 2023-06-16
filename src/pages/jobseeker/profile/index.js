@@ -2,37 +2,10 @@
 import { useContext, useEffect, useState } from "react";
 
 // ** Context Imports
-import { AbilityContext } from "src/layouts/components/acl/Can";
-import {
-  Autocomplete,
-  FormControl,
-  Grid,
-  InputLabel,
-  Select,
-  TextField,
-  Box,
-  MenuItem,
-  Button,
-  Divider,
-  IconButton,
-  CardActionArea,
-  CardMedia,
-  CardActions,
-} from "@mui/material";
+import { Grid, Box, Button, CardActionArea, CardActions } from "@mui/material";
 import Icon from "src/@core/components/icon";
-
-import { LoadingButton } from "@mui/lab";
-import { useFormik } from "formik";
-import Slider from "@mui/material/Slider";
-// ** Third Party Imports
-import subDays from "date-fns/subDays";
-import addDays from "date-fns/addDays";
-import DatePicker from "react-datepicker";
-import * as yup from "yup";
 import { useTheme } from "@mui/material/styles";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
-import { yupResolver } from "@hookform/resolvers/yup";
 import MuiTabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import { styled } from "@mui/material/styles";
@@ -41,12 +14,9 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import TabContext from "@mui/lab/TabContext";
 // ** MUI Imports
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import UserProfileHeader from "./UserProfileHeader";
-import { useDispatch, useSelector } from "react-redux";
-import CustomInput from "./PickersCustomInput";
 import BasicInfoEditDrawer from "./components/BasicInfoEditDrawer";
 import AddNewEducation from "./components/AddNewEducation";
 import EditEducation from "./components/EditEducation";
@@ -84,32 +54,10 @@ const TabList = styled(MuiTabList)(({ theme }) => ({
 }));
 
 const ACLPage = () => {
-  // ** Hooks
-  const ability = useContext(AbilityContext);
-  const dispatch = useDispatch();
   const theme = useTheme();
   const { direction } = theme;
-  const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
-  const store = useSelector((state) => state.user);
-  const [salary, setSalary] = useState([0, 10]);
   const [activeTab, setActiveTab] = useState("info");
   const hideText = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-
-  const [currentCTC, setCurrentCTC] = useState(0);
-  const [expectedCTC, setExpectedCTC] = useState(0);
-  const [experiance, setExperiance] = useState(1);
-  const [minDate, setMinDate] = useState(new Date());
-  const [maxDate, setMaxDate] = useState(new Date());
-  const [categoryList, setCategoryList] = useState([
-    { id: 1, jobCategory: "IT" },
-    { id: 2, jobCategory: "BPO" },
-    { id: 3, jobCategory: "Banking" },
-    { id: 4, jobCategory: "HR" },
-  ]);
-  const [subCategoryList, setSubCategoryList] = useState([
-    { id: 101, pid: 1, category: "React" },
-    { id: 102, pid: 2, category: "CRE" },
-  ]);
 
   const [drawerState, setDrawerState] = useState({
     isBasicInfoEdit: false,
@@ -120,7 +68,6 @@ const ACLPage = () => {
   });
 
   const [userdetail, setUserDetail] = useState(null);
-  console.log("userdetail", userdetail);
 
   const handleDrawerStateChangeOpen = (parentName) => {
     const newDrawerState = { ...drawerState };
@@ -134,100 +81,6 @@ const ACLPage = () => {
     setDrawerState(newDrawerState);
   };
 
-  const handleChange = (event, newValue) => {
-    console.log(newValue);
-    setSalary(newValue);
-  };
-  const handleChangeExp = (event, newValue) => {
-    console.log(newValue);
-    setExperiance(newValue);
-  };
-  const formik = useFormik({
-    initialValues: {
-      fullname: "",
-      designation: "",
-      email: "",
-      mobile: "",
-      alternateMobile: "",
-      currentLocation: "",
-      aboutMe: "",
-      jobTitle: "",
-      jobCategory: null,
-      jobSubCategory: null,
-      skills: [],
-      experiance: "",
-      jobType: "",
-      noticePeriod: "",
-      shortDescription: "",
-      location: "",
-      addressLineOne: "",
-      addressLineTwo: "",
-      city: "",
-      state: "",
-      postalCode: "",
-    },
-    //  validationSchema: SignUpValidationSchema,
-    onSubmit: async (values) => {
-      const params = {
-        first_name: values.firstName,
-        last_name: values.lastName,
-        designation: values.designation,
-        email: values.email,
-        country_code: values.code,
-        phone: values.phone,
-        company_name: values.corporateName,
-        country_of_incorporation: values.registration,
-        tax_id: values.taxId,
-        website: values.url,
-        address: values.address,
-        address_line_one: values.addressLineOne,
-        address_line_two: values.addressLineTwo,
-        country: values.country,
-        state: values.state,
-        city: values.city,
-        postal_code: values.postalCode,
-        latitude: values.latitude,
-        longitude: values.longitude,
-        password: values.password,
-        primary_industry: values.primaryIndustry,
-        user_type: "individual",
-        source: "dashboard",
-        role: "PARTNER_ADMIN",
-      };
-    },
-  });
-  const [workExperiance, setWorkExperiance] = useState([
-    { companyName: "", designation: "", skills: [], doj: null, dol: null },
-  ]);
-  const handleFormChange = (index, event) => {
-    let data = [...workExperiance];
-    console.log(event);
-    data[index][event.target.name] = event.target.value;
-    setWorkExperiance(data);
-  };
-
-  const submit = (e) => {
-    e.preventDefault();
-    console.log(workExperiance);
-  };
-
-  const addFields = () => {
-    let object = {
-      companyName: "",
-      designation: "",
-      skills: [],
-      doj: null,
-      dol: null,
-    };
-
-    setWorkExperiance([...workExperiance, object]);
-  };
-
-  const removeFields = (index) => {
-    let data = [...workExperiance];
-    data.splice(index, 1);
-    setWorkExperiance(data);
-  };
   const handleTabChange = (event, value) => {
     // setIsLoading(true)
     setActiveTab(value);
@@ -236,7 +89,6 @@ const ACLPage = () => {
   const getProfileDetail = async () => {
     try {
       const response = await getProfile();
-      console.log("response======>", response);
       if (response?.data?.data) {
         setUserDetail(response.data.data);
       }
