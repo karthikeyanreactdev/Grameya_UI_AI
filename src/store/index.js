@@ -9,6 +9,7 @@ import invoice from "src/store/apps/invoice";
 import calendar from "src/store/apps/calendar";
 import permissions from "src/store/apps/permissions";
 import auth from "src/store/apps/auth/index";
+import manageJob from "src/store/apps/recruiter/manageJob/index";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     calendar,
     permissions,
     auth,
+    manageJob,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
