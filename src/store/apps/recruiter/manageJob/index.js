@@ -7,9 +7,9 @@ const getJob = `${baseURL}/recruiter/posted_jobs`;
 
 export const getJobList = createAsyncThunk(
   "manageJob/getJobList",
-  async ({ formValue }, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await apiPost(`${getJob}`, formValue);
+      const response = await apiPost(`${getJob}`, params);
       return response?.data?.data?.data;
     } catch (error) {
       return rejectWithValue(errorHandler(error));

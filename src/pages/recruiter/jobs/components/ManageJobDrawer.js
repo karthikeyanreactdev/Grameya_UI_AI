@@ -14,7 +14,13 @@ import Box from "@mui/material/Box";
 import CustomTextField from "src/@core/components/mui/text-field";
 import { useFormik } from "formik";
 // ** Third Party Imports
-import { EditorState, convertToRaw } from "draft-js";
+import {
+  ContentState,
+  EditorState,
+  convertFromHTML,
+  convertFromRaw,
+  convertToRaw,
+} from "draft-js";
 import draftToHtml from "draftjs-to-html";
 
 // ** Component Import
@@ -34,6 +40,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "src/store/apps/user";
 import {
   Autocomplete,
+  Chip,
   FormControl,
   FormHelperText,
   Grid,
@@ -136,7 +143,9 @@ const SideBarJob = (props) => {
         job_type: `${values.jobType}`,
         short_description: `${draftToHtml(
           convertToRaw(jd.getCurrentContent())
-        )}`,
+        )}`
+          // .replace(/\"/g, '"')
+          .replace(/\"/g, '"'),
         email: values.email,
         address_line_one: "Kulithalai bus stand",
         address_line_two: "Kulithalai",
@@ -200,7 +209,14 @@ const SideBarJob = (props) => {
         }
         setExperiance([data?.experience_from, data?.experience_to]);
         setSalary([data?.salary_from, data?.salary_to]);
-        // setJd(`<div>` + `${data?.short_description}` + `</div>`);
+
+        const blocksFromHTML = convertFromHTML(data?.short_description);
+        const state = ContentState.createFromBlockArray(
+          blocksFromHTML.contentBlocks,
+          blocksFromHTML.entityMap
+        );
+
+        setJd(EditorState.createWithContent(state));
       }
     } catch (e) {
       sendNotification({
@@ -330,7 +346,7 @@ const SideBarJob = (props) => {
                 fullWidth
                 value={formik.values.jobCategory}
                 onChange={(event, item) => {
-                  formik.setFieldValue("jobCategory", item.label);
+                  formik.setFieldValue("jobCategory", item?.label);
                 }}
                 options={categoryList
                   ?.sort((a, b) => a?.jobCategory - b?.jobCategory)
@@ -372,7 +388,7 @@ const SideBarJob = (props) => {
                 fullWidth
                 value={formik.values.jobSubCategory}
                 onChange={(event, item) => {
-                  formik.setFieldValue("jobSubCategory", item.label);
+                  formik.setFieldValue("jobSubCategory", item?.label);
                 }}
                 options={subCategoryList
                   ?.sort((a, b) => a?.category - b?.category)
@@ -456,17 +472,26 @@ const SideBarJob = (props) => {
               label={"Skills"}
               name={"skills"}
               fullWidth
-              value={formik.values.skills}
+              defaultValue={formik.values.skills}
               multiple
               onChange={(event, item) => {
                 formik.setFieldValue("skills", item);
               }}
-              options={categoryList}
-              getOptionLabel={(option) => option.jobCategory}
-              limitTags={5}
-              freeSolo={false}
+              options={categoryList.map((option) => option.jobCategory)}
+              // getOptionLabel={(option) => option.jobCategory}
+              limitTags={10}
+              freeSolo
               filterSelectedOptions
               disableClearable
+              // renderTags={(value, getTagProps) =>
+              //   categoryList.map((option, index) => (
+              //     <Chip
+              //       variant="outlined"
+              //       label={option}
+              //       {...getTagProps({ index })}
+              //     />
+              //   ))
+              // }
               renderInput={(params) => (
                 <TextField
                   required

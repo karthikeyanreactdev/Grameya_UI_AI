@@ -10,6 +10,8 @@ import calendar from "src/store/apps/calendar";
 import permissions from "src/store/apps/permissions";
 import auth from "src/store/apps/auth/index";
 import manageJob from "src/store/apps/recruiter/manageJob/index";
+import applications from "src/store/apps/recruiter/applications/index";
+import resumeSearch from "src/store/apps/recruiter/resume-search/index";
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +23,8 @@ export const store = configureStore({
     permissions,
     auth,
     manageJob,
+    resumeSearch,
+    applications,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
