@@ -17,12 +17,12 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import UserProfileHeader from "./UserProfileHeader";
-import BasicInfoEditDrawer from "./components/BasicInfoEditDrawer";
 import AddNewEducation from "./components/AddNewEducation";
 import EditEducation from "./components/EditEducation";
 import AddNewExperiance from "./components/AddNewExperiance";
 import EditExperiance from "./components/EditExperiance";
 import { getProfile } from "src/api-services/seeker/profile";
+import EditBasicInfo from "./components/EditBasicInfo";
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: "0 !important",
@@ -58,6 +58,7 @@ const ACLPage = () => {
   const { direction } = theme;
   const [activeTab, setActiveTab] = useState("info");
   const hideText = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const [selectedExp, setSelectedExp] = useState(null);
 
   const [drawerState, setDrawerState] = useState({
     isBasicInfoEdit: false,
@@ -68,6 +69,10 @@ const ACLPage = () => {
   });
 
   const [userdetail, setUserDetail] = useState(null);
+
+  const handleSelectExp = (item) => {
+    setSelectedExp(item);
+  };
 
   const handleDrawerStateChangeOpen = (parentName) => {
     const newDrawerState = { ...drawerState };
@@ -318,6 +323,39 @@ const ACLPage = () => {
                                   </Grid>
                                 </>
                               )}
+                              {userdetail?.jobseekerDetails
+                                ?.preferred_job_location &&
+                                userdetail?.jobseekerDetails
+                                  ?.preferred_job_location.length && (
+                                  <>
+                                    <Grid
+                                      item
+                                      lg={6}
+                                      xl={6}
+                                      xs={12}
+                                      md={12}
+                                      sm={12}
+                                    >
+                                      <Typography variant="h3" component="div">
+                                        Preferred Job Location
+                                      </Typography>
+                                      <Typography variant="h5" component="div">
+                                        {userdetail?.jobseekerDetails?.preferred_job_location.map(
+                                          (element, index) => (
+                                            <span key={index}>
+                                              {element}
+                                              {index !==
+                                                userdetail?.jobseekerDetails
+                                                  ?.preferred_job_location
+                                                  .length -
+                                                  1 && ", "}
+                                            </span>
+                                          )
+                                        )}
+                                      </Typography>
+                                    </Grid>
+                                  </>
+                                )}
                             </Grid>
                           </CardContent>
 
@@ -348,6 +386,29 @@ const ACLPage = () => {
                                       {
                                         userdetail?.jobseekerDetails
                                           ?.current_salary
+                                      }
+                                    </Typography>
+                                  </Grid>
+                                </>
+                              )}
+                              {userdetail?.jobseekerDetails
+                                ?.total_years_of_experience && (
+                                <>
+                                  <Grid
+                                    item
+                                    lg={6}
+                                    xl={6}
+                                    xs={12}
+                                    md={12}
+                                    sm={12}
+                                  >
+                                    <Typography variant="h3" component="div">
+                                      Total years of experience
+                                    </Typography>
+                                    <Typography variant="h5" component="div">
+                                      {
+                                        userdetail?.jobseekerDetails
+                                          ?.total_years_of_experience
                                       }
                                     </Typography>
                                   </Grid>
@@ -429,6 +490,28 @@ const ACLPage = () => {
                                     </Grid>
                                   </>
                                 )}
+                              {userdetail?.jobseekerDetails?.designation && (
+                                <>
+                                  <Grid
+                                    item
+                                    lg={6}
+                                    xl={6}
+                                    xs={12}
+                                    md={12}
+                                    sm={12}
+                                  >
+                                    <Typography variant="h3" component="div">
+                                      Current Designation
+                                    </Typography>
+                                    <Typography variant="h5" component="div">
+                                      {
+                                        userdetail?.jobseekerDetails
+                                          ?.designation
+                                      }
+                                    </Typography>
+                                  </Grid>
+                                </>
+                              )}
                             </Grid>
                           </CardContent>
 
@@ -456,10 +539,16 @@ const ACLPage = () => {
                             </Grid>
                           </CardContent>
                         </Card>
-                        <BasicInfoEditDrawer
-                          isOpen={drawerState.isBasicInfoEdit}
-                          onClose={handleDrawerStateChangeClose}
-                        />
+                        {drawerState.isBasicInfoEdit && (
+                          <>
+                            <EditBasicInfo
+                              getProfileDetail={getProfileDetail}
+                              isOpen={drawerState.isBasicInfoEdit}
+                              onClose={handleDrawerStateChangeClose}
+                              userDetail={userdetail}
+                            />
+                          </>
+                        )}
                       </Grid>
                     )}
                     {activeTab === "education" && (
@@ -623,11 +712,12 @@ const ACLPage = () => {
                                           <Button
                                             size="small"
                                             color="primary"
-                                            onClick={() =>
+                                            onClick={() => {
+                                              handleSelectExp(item);
                                               handleDrawerStateChangeOpen(
                                                 "isEditExperiance"
-                                              )
-                                            }
+                                              );
+                                            }}
                                           >
                                             Edit
                                           </Button>
@@ -664,14 +754,22 @@ const ACLPage = () => {
                             </Grid>
                           </CardContent>
                         </Card>
-                        <EditExperiance
-                          isOpen={drawerState.isEditExperiance}
-                          onClose={handleDrawerStateChangeClose}
-                        />
-                        <AddNewExperiance
-                          isOpen={drawerState.isAddNewExperiance}
-                          onClose={handleDrawerStateChangeClose}
-                        />
+                        {drawerState.isEditExperiance && (
+                          <EditExperiance
+                            isOpen={drawerState.isEditExperiance}
+                            onClose={handleDrawerStateChangeClose}
+                            getProfileDetail={getProfileDetail}
+                            selectedExp={selectedExp}
+                          />
+                        )}
+
+                        {drawerState.isAddNewExperiance && (
+                          <AddNewExperiance
+                            isOpen={drawerState.isAddNewExperiance}
+                            onClose={handleDrawerStateChangeClose}
+                            getProfileDetail={getProfileDetail}
+                          />
+                        )}
                       </Grid>
                     )}
                   </TabPanel>

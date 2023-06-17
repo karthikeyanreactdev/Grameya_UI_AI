@@ -1,30 +1,101 @@
 import {
   Autocomplete,
   Box,
+  Checkbox,
+  Chip,
   Drawer,
-  FormControl,
+  FormControlLabel,
+  FormGroup,
   Grid,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { LoadingButton } from "@mui/lab";
+import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
+import DatePicker from "react-datepicker";
+import { useTheme } from "@mui/material/styles";
+import useNotification from "src/hooks/useNotification";
+import { addJobseekerExperience } from "src/api-services/seeker/profile";
 
-const AddNewExperiance = ({ isOpen, onClose }) => {
-  const [categoryList, setCategoryList] = useState([
-    { id: 1, jobCategory: "IT" },
-    { id: 2, jobCategory: "BPO" },
-    { id: 3, jobCategory: "Banking" },
-    { id: 4, jobCategory: "HR" },
+const AddNewExperiance = ({ isOpen, onClose, getProfileDetail }) => {
+  const theme = useTheme();
+  const { direction } = theme;
+  const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
+  const [submitted, setSubmitted] = useState(false);
+  const [sendNotification] = useNotification();
+  const [skills, setSkills] = useState([
+    { id: 1, name: "Node.js" },
+    { id: 2, name: "Flutter" },
+    { id: 3, name: "Java" },
   ]);
+  const [formValue, setFormValue] = useState({
+    company_name: "",
+    designation: "",
+    skills: [],
+    start_date: "",
+    end_date: "",
+    is_current_company: false,
+  });
 
   const handleClose = () => {
     onClose("isAddNewExperiance");
+  };
+
+  const handleFormInputChange = (e) => {
+    const newFormValue = { ...formValue };
+    const { name, value } = e.target;
+    newFormValue[name] = value;
+    setFormValue(newFormValue);
+  };
+
+  const handleMultiSelectChange = (parentName, value) => {
+    const newFormValue = { ...formValue };
+    newFormValue[parentName] = value;
+    setFormValue(newFormValue);
+  };
+
+  const handleFormSubmit = async () => {
+    setSubmitted(true);
+    if (
+      !formValue?.company_name ||
+      !formValue?.designation ||
+      !formValue?.end_date ||
+      formValue?.skills.length === 0 ||
+      !formValue.start_date
+    ) {
+      return;
+    }
+    try {
+      const response = await addJobseekerExperience(formValue);
+
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+    }
+  };
+
+  const handleDateChange = (parentName, value) => {
+    const newFormValue = { ...formValue };
+    newFormValue[parentName] = value;
+    setFormValue(newFormValue);
+  };
+
+  const handleCheckBoxChange = (e) => {
+    const newFormValue = { ...formValue };
+    const { name, checked } = e.target;
+    newFormValue[name] = checked;
+    setFormValue(newFormValue);
   };
 
   return (
@@ -53,286 +124,168 @@ const AddNewExperiance = ({ isOpen, onClose }) => {
               <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  label={"Resume Headline"}
-                  // required
+                  label={"Company Name"}
                   fullWidth
-                  multiline
-                  minRows={2}
-                  name="aboutMe"
-                  error={false}
-                  //   value={formik.values.aboutMe
-                  //     .trimStart()
-                  //     .replace(/\s\s+/g, "")
-                  //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  //   onChange={(e) => formik.handleChange(e)}
-                  //   helperText={}
+                  name="company_name"
+                  onChange={handleFormInputChange}
+                  value={formValue.company_name}
+                  error={submitted && !formValue.company_name}
+                  helperText={
+                    submitted &&
+                    !formValue.company_name &&
+                    "Company Name is required"
+                  }
                 />
               </Grid>
-              <Grid container spacing={2} py={2}>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={"Full Name"}
-                    required
-                    fullWidth
-                    name="fullname"
-                    error={false}
-                    // value={formik.values.fullname
-                    //   .trimStart()
-                    //   .replace(/\s\s+/g, "")
-                    //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                    // onChange={(e) => formik.handleChange(e)}
-                    // helperText={
-                    //   formik.touched.fullname &&
-                    //   formik.errors.fullname &&
-                    //   formik.errors.fullname
-                    // }
-                  />
-                </Grid>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={"Designation"}
-                    required
-                    fullWidth
-                    name="designation"
-                    // error={false}
-                    // value={formik.values.designation
-                    //   .trimStart()
-                    //   .replace(/\s\s+/g, "")
-                    //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                    // onChange={(e) => formik.handleChange(e)}
-                    // helperText={}
-                  />
-                </Grid>
-              </Grid>
+
               <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  label={"Email"}
-                  required
+                  label={"Designation"}
                   fullWidth
-                  name="email"
-                  type="email"
-                  //   error={formik.touched.email && Boolean(formik.errors.email)}
-                  //   value={formik.values.email
-                  //     .trimStart()
-                  //     .replace(/\s\s+/g, "")
-                  //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  //   onChange={(e) => formik.handleChange(e)}
-                  //   helperText={
-                  //     formik.touched.email &&
-                  //     formik.errors.email &&
-                  //     formik.errors.email
-                  //   }
+                  name="designation"
+                  onChange={handleFormInputChange}
+                  value={formValue.designation}
+                  error={submitted && !formValue.designation}
+                  helperText={
+                    submitted &&
+                    !formValue.designation &&
+                    "Designation is required"
+                  }
                 />
-              </Grid>
-              <Grid container spacing={2} py={2}>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={"Mobile Number"}
-                    required
-                    fullWidth
-                    name="mobile"
-                    // error={
-                    //   formik.touched.mobile && Boolean(formik.errors.mobile)
-                    // }
-                    // value={formik.values.mobile
-                    //   .trimStart()
-                    //   .replace(/\s\s+/g, "")
-                    //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                    // onChange={(e) => formik.handleChange(e)}
-                    // helperText={
-                    //   formik.touched.mobile &&
-                    //   formik.errors.mobile &&
-                    //   formik.errors.mobile
-                    // }
-                  />
-                </Grid>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={"Alternate Mobile Number"}
-                    fullWidth
-                    name="alternateMobile"
-                    // error={
-                    //   formik.touched.alternateMobile &&
-                    //   Boolean(formik.errors.alternateMobile)
-                    // }
-                    // value={formik.values.alternateMobile
-                    //   .trimStart()
-                    //   .replace(/\s\s+/g, "")
-                    //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                    // onChange={(e) => formik.handleChange(e)}
-                    // helperText={
-                    //   formik.touched.alternateMobile &&
-                    //   formik.errors.alternateMobile &&
-                    //   formik.errors.alternateMobile
-                    // }
-                  />
-                </Grid>
               </Grid>
               <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
                 <Autocomplete
-                  required
-                  sx={{ my: 2 }}
-                  label={"Skills"}
-                  name={"skills"}
-                  fullWidth
-                  //   value={formik.values.skills}
                   multiple
-                  onChange={(event, item) => {
-                    // formik.setFieldValue("skills", item);
+                  error={submitted && formValue.skills.length === 0}
+                  value={formValue.skills}
+                  id="tags-filled"
+                  onChange={(event, newValue) => {
+                    handleMultiSelectChange("skills", newValue);
                   }}
-                  options={categoryList}
-                  getOptionLabel={(option) => option.jobCategory}
-                  limitTags={5}
-                  freeSolo={false}
-                  filterSelectedOptions
-                  disableClearable
+                  // options={categoryList}
+                  options={skills.map((option) => option.name)}
+                  freeSolo
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => (
+                      <Chip
+                        variant="outlined"
+                        label={option}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
                   renderInput={(params) => (
                     <TextField
-                      required
                       {...params}
-                      label={"Skills"}
-                      placeholder="Select Skills"
-                      //   error={
-                      //     formik.touched.skills && Boolean(formik.errors.skills)
-                      //   }
-                      //   helperText={
-                      //     formik.touched.skills &&
-                      //     formik.errors.skills &&
-                      //     formik.errors.skills
-                      //   }
-                      variant={"outlined"}
-                      InputProps={{
-                        ...params.InputProps,
-                      }}
-                      //   value={formik?.values?.skills}
+                      label="Skills"
+                      placeholder="Skills"
+                      error={submitted && formValue.skills.length === 0}
+                      helperText={
+                        submitted &&
+                        formValue.skills.length === 0 &&
+                        "Skills is required"
+                      }
                     />
                   )}
                 />
               </Grid>
-              <Grid container spacing={2} py={2}>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <FormControl fullWidth sx={{ my: 2 }}>
-                    <InputLabel id="demo-simple-select-label">
-                      Current Location *
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //   value={formik.values.currentLocation}
-                      label="Current Location *"
-                      //   onChange={(e) =>
-                      //     formik.setFieldValue("location", e.target.value)
-                      //   }
-                    >
-                      <MenuItem value={0}>Chennai</MenuItem>
-                      <MenuItem value={15}>Delhi</MenuItem>
-                      <MenuItem value={30}>Mumbai</MenuItem>
-                      <MenuItem value={90}>Bangalore</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <FormControl fullWidth sx={{ my: 2 }}>
-                    <InputLabel id="demo-simple-select-label">
-                      Prefered Job Location *
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //   value={formik.values.location}
-                      label="Prefered Job Location *"
-                      //   onChange={(e) =>
-                      //     formik.setFieldValue("location", e.target.value)
-                      //   }
-                    >
-                      <MenuItem value={0}>Chennai</MenuItem>
-                      <MenuItem value={15}>Delhi</MenuItem>
-                      <MenuItem value={30}>Mumbai</MenuItem>
-                      <MenuItem value={90}>Bangalore</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
-                <TextField
-                  sx={{ my: 2 }}
-                  label={"Total Experiance (in Years) "}
-                  type="number"
-                  fullWidth
-                  name="from"
-                  //   value={experiance}
-                  //   onChange={(e) => {
-                  //     setExperiance(e.target.value);
-                  //   }}
-                />
-              </Grid>
-              <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
+
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
+                    width: "100%",
+                    mt: 2,
                   }}
+                  className="demo-space-xe"
                 >
-                  <Grid container spacing={2}>
-                    <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
-                      <TextField
-                        sx={{ my: 2 }}
-                        label={"Current CTC (in LPA)"}
-                        type="number"
-                        fullWidth
-                        name="from"
-                        // value={currentCTC}
-                        // onChange={(e) => {
-                        //   setCurrentCTC(e.target.value);
-                        // }}
-                      />
-                    </Grid>
-                    <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
-                      <TextField
-                        sx={{ my: 2 }}
-                        label={" Expected CTC (in LPA)"}
-                        type="number"
-                        fullWidth
-                        name="to"
-                        // value={expectedCTC}
-                        // onChange={(e) => {
-                        //   setExpectedCTC(e.target.value);
-                        // }}
-                      />
-                    </Grid>
-                  </Grid>
+                  <DatePickerWrapper>
+                    <DatePicker
+                      id="join-date"
+                      fullWidth
+                      sx={{ width: 1 }}
+                      popperPlacement={popperPlacement}
+                      selected={formValue.start_date}
+                      onChange={(date) => {
+                        handleDateChange("start_date", date);
+                      }}
+                      dateFormat="dd/MM/yyyy"
+                      customInput={
+                        <TextField
+                          sx={{ mb: 2 }}
+                          label={"Start Date"}
+                          fullWidth
+                          error={submitted && !formValue.start_date}
+                          helperText={
+                            submitted &&
+                            !formValue.start_date &&
+                            "Start Date is required"
+                          }
+                        />
+                      }
+                    />
+                  </DatePickerWrapper>
                 </Box>
               </Grid>
 
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    mt: 2,
+                  }}
+                  className="demo-space-xe"
+                >
+                  <DatePickerWrapper>
+                    <DatePicker
+                      id="join-date"
+                      selected={formValue.end_date}
+                      dateFormat="dd/MM/yyyy"
+                      fullWidth
+                      sx={{ width: 1 }}
+                      popperPlacement={popperPlacement}
+                      onChange={(date) => {
+                        handleDateChange("end_date", date);
+                      }}
+                      customInput={
+                        <TextField
+                          sx={{ mb: 2 }}
+                          label={"End Date"}
+                          // value={formValue.end_date}
+                          fullWidth
+                          error={submitted && !formValue.end_date}
+                          helperText={
+                            submitted &&
+                            !formValue.end_date &&
+                            "End Date is required"
+                          }
+                        />
+                      }
+                    />
+                  </DatePickerWrapper>
+                </Box>
+              </Grid>
               <Grid item lg={12} xl={12} xs={12} md={6} sm={12}>
-                <FormControl fullWidth sx={{ my: 2 }}>
-                  <InputLabel id="demo-simple-select-label">
-                    Notice Period *
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    // value={formik.values.noticePeriod}
-                    label="Notice Period *"
-                    // onChange={(e) =>
-                    //   formik.setFieldValue("noticePeriod", e.target.value)
-                    // }
-                  >
-                    <MenuItem value={0}>Immediate</MenuItem>
-                    <MenuItem value={15}>15 Days</MenuItem>
-                    <MenuItem value={30}>30 Days</MenuItem>
-                    <MenuItem value={90}>90 Days</MenuItem>
-                  </Select>
-                </FormControl>
+                <FormGroup fullWidth sx={{ my: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={handleCheckBoxChange}
+                        name="is_current_company"
+                        checked={formValue.is_current_company}
+                      />
+                    }
+                    label="Is this your current company"
+                  />
+                </FormGroup>
               </Grid>
 
               <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                <LoadingButton fullWidth variant="contained">
+                <LoadingButton
+                  fullWidth
+                  variant="contained"
+                  onClick={handleFormSubmit}
+                >
                   Save
                 </LoadingButton>
               </Grid>

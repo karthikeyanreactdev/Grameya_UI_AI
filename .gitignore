@@ -31,3 +31,9 @@ yarn-error.log*
 next
 .next/build-manifest.json
 .next/react-loadable-manifest.json
+.next/server/pages/_document.js
+.next/server/pages/_document.js
+.next/server/pages/_error.js
+.next/static/chunks/amp.js
+.next/static/chunks/main.js
+.next/static/chunks/webpack.js
