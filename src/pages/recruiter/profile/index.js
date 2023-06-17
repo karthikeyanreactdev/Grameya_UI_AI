@@ -48,11 +48,11 @@ const Profile = () => {
   // console.log("gmpa", process.env.REACT_APP_GMAP_API_KEY);
 
   const validationSchema = yup.object({
-    jobTitle: yup
-      .string("Job Title is required")
-      .trim()
-      .required("Job Title is required")
-      .min(10, "Minimum 10 character required"),
+    // jobTitle: yup
+    //   .string("Job Title is required")
+    //   .trim()
+    //   .required("Job Title is required")
+    //   .min(10, "Minimum 10 character required"),
     companyName: yup
       .string("Company Name is required")
       .trim()
