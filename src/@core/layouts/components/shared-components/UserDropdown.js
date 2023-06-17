@@ -94,7 +94,7 @@ const UserDropdown = (props) => {
         }}
       >
         <Avatar
-          alt={userData?.first_name}
+          alt={userData?.full_name}
           // src="/images/avatars/1.png"
           sx={{
             width: "2.5rem",
@@ -103,7 +103,7 @@ const UserDropdown = (props) => {
             color: "#fff",
           }}
         >
-          {userData?.first_name?.charAt(0) || ""}
+          {userData?.full_name?.charAt(0) || ""}
         </Avatar>
       </Badge>
       <Menu
@@ -131,7 +131,7 @@ const UserDropdown = (props) => {
               }}
             >
               <Avatar
-                alt={userData?.first_name}
+                alt={userData?.full_name}
                 // src="/images/avatars/1.png"
                 sx={{
                   width: "2.5rem",
@@ -140,7 +140,7 @@ const UserDropdown = (props) => {
                   color: "#fff",
                 }}
               >
-                {userData?.first_name?.charAt(0)}
+                {userData?.full_name?.charAt(0)}
               </Avatar>
             </Badge>
             <Box
@@ -152,7 +152,7 @@ const UserDropdown = (props) => {
               }}
             >
               <Typography sx={{ fontWeight: 500 }}>
-                {userData?.first_name} {userData?.last_name}
+                {userData?.full_name}
               </Typography>
               <Typography variant="body2">{userData?.role}</Typography>
             </Box>

@@ -26,7 +26,7 @@ import { LoadingButton } from "@mui/lab";
 import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 import GoogleApiWrapper from "../../../utils/GoogleMap/index";
 
-Geocode.setApiKey("AIzaSyAcu4ueqc4kggYK5Uhu5OKQ1iEjIYAfwXc");
+Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
 
 const Profile = () => {
@@ -34,7 +34,7 @@ const Profile = () => {
   const ability = useContext(AbilityContext);
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
-
+  // console.log("gmpa", process.env.REACT_APP_GMAP_API_KEY);
   const formik = useFormik({
     initialValues: {
       fullname: "",
@@ -57,6 +57,7 @@ const Profile = () => {
       addressLineOne: "",
       addressLineTwo: "",
       city: "",
+      country: "",
       state: "",
       postalCode: "",
       latitude: "",
@@ -65,7 +66,7 @@ const Profile = () => {
     //  validationSchema: SignUpValidationSchema,
     onSubmit: async (values) => {
       const params = {
-        first_name: values.firstName,
+        full_name: values.firstName,
         last_name: values.lastName,
         designation: values.designation,
         email: values.email,
@@ -144,7 +145,7 @@ const Profile = () => {
     }
   }
   const { placePredictions, getPlacePredictions } = useGoogle({
-    apiKey: "AIzaSyAcu4ueqc4kggYK5Uhu5OKQ1iEjIYAfwXc",
+    apiKey: process.env.REACT_APP_GMAP_API_KEY,
   });
   return (
     <Grid container spacing={6}>
@@ -531,7 +532,7 @@ const Profile = () => {
               </Grid>
             </Grid>
             <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-              <LoadingButton fullWidth variant="contained">
+              <LoadingButton fullWidth variant="contained" sx={{ my: 3 }}>
                 Save
               </LoadingButton>
             </Grid>

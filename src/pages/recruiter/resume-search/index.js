@@ -87,7 +87,7 @@ const renderClient = (row) => {
         fontSize: (theme) => theme.typography.body1.fontSize,
       }}
     >
-      {getInitials(row.first_name ? row.first_name[0] : "NA")}
+      {getInitials(row.full_name ? row.full_name[0] : "NA")}
     </CustomAvatar>
   );
   // }
@@ -154,7 +154,7 @@ const Dashboard = () => {
     //   flex: 0.1,
     //   minWidth: 100,
     //   sortable: true,
-    //   field: "first_name",
+    //   field: "full_name",
     //   headerName: "First Name",
     // },
     // {
@@ -171,7 +171,7 @@ const Dashboard = () => {
       field: "job_title",
       headerName: "Job Title",
       renderCell: ({ row }) => {
-        const { first_name, last_name, email } = row;
+        const { full_name, email } = row;
 
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -194,7 +194,7 @@ const Dashboard = () => {
                   "&:hover": { color: "primary.main" },
                 }}
               >
-                {first_name} {last_name}
+                {full_name}
               </Typography>
               <Typography
                 noWrap

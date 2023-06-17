@@ -213,7 +213,7 @@ const ACLPage = () => {
                                 </>
                               )}
 
-                              {userdetail?.last_name && (
+                              {/* {userdetail?.last_name && (
                                 <>
                                   <Grid
                                     item
@@ -231,7 +231,7 @@ const ACLPage = () => {
                                     </Typography>
                                   </Grid>
                                 </>
-                              )}
+                              )} */}
                             </Grid>
                           </CardContent>
 

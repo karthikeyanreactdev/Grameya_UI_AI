@@ -1,7 +1,7 @@
 import { GoogleApiWrapper, Map, Marker } from "google-maps-react";
 import React from "react";
 // REACT_APP_GOOGLE_MAP_KEY = ''
-const GOOGLE_MAP_KEY = "AIzaSyAcu4ueqc4kggYK5Uhu5OKQ1iEjIYAfwXc";
+const GOOGLE_MAP_KEY = process.env.REACT_APP_GMAP_API_KEY;
 
 const mapStyles = {
   width: "100%",
