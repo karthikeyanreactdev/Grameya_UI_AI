@@ -93,12 +93,12 @@ const validationSchema = yup.object({
   jobType: yup.string("Job Type is required").required("Job Type is required"),
   skills: yup
     .array()
-    .of(
-      yup.object().shape({
-        id: yup.string(),
-        jobCategory: yup.string(),
-      })
-    )
+    // .of(
+    //   yup.object().shape({
+    //     id: yup.string(),
+    //     jobCategory: yup.string(),
+    //   })
+    // )
     .min(1, "Minimum 1 skill is required")
     .max(10, "Maximum 10 skills is allowed"),
 });
@@ -162,17 +162,17 @@ const SideBarJob = (props) => {
     onSubmit: async (values) => {
       console.log(values);
       setIsLoading(true);
-      let skills = [];
-      if (values.skills && values.skills.length > 0) {
-        skills = values.skills.map((item) => item.jobCategory);
-      }
+      // let skills = [];
+      // if (values.skills && values.skills.length > 0) {
+      //   values.skills.map((item) => skills.push(item.jobCategory));
+      // }
       const params = {
         company_name: values.companyName,
         job_title: values.jobTitle,
         job_category: values.jobCategory,
         job_sub_category: values.jobSubCategory,
         location: values.location,
-        skills: skills,
+        skills: values.skills,
         experience_from: `${experiance[0]}`,
         experience_to: `${experiance[1]}`,
         salary_from: `${salary[0]}`,
