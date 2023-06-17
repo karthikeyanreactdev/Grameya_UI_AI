@@ -478,20 +478,10 @@ const SideBarJob = (props) => {
                 formik.setFieldValue("skills", item);
               }}
               options={categoryList.map((option) => option.jobCategory)}
-              // getOptionLabel={(option) => option.jobCategory}
               limitTags={10}
               freeSolo
               filterSelectedOptions
               disableClearable
-              // renderTags={(value, getTagProps) =>
-              //   categoryList.map((option, index) => (
-              //     <Chip
-              //       variant="outlined"
-              //       label={option}
-              //       {...getTagProps({ index })}
-              //     />
-              //   ))
-              // }
               renderInput={(params) => (
                 <TextField
                   required
@@ -670,10 +660,12 @@ const SideBarJob = (props) => {
                     formik.setFieldValue("noticePeriod", e.target.value)
                   }
                 >
-                  <MenuItem value={0}>Immediate</MenuItem>
-                  <MenuItem value={15}>15 Days</MenuItem>
-                  <MenuItem value={30}>30 Days</MenuItem>
-                  <MenuItem value={90}>90 Days</MenuItem>
+                  <MenuItem value={"immediate"}>Immediate</MenuItem>
+                  <MenuItem value={"15 Days"}>15 Days</MenuItem>
+                  <MenuItem value={"30 Days"}>30 Days</MenuItem>
+                  <MenuItem value={"45 Days"}>45 Days</MenuItem>
+                  <MenuItem value={"60 Days"}>60 Days</MenuItem>
+                  <MenuItem value={"90 Days"}>90 Days</MenuItem>
                 </Select>
                 <FormHelperText>
                   {formik.touched.noticePeriod &&
@@ -708,11 +700,12 @@ const SideBarJob = (props) => {
                     formik.setFieldValue("jobType", e.target.value)
                   }
                 >
-                  <MenuItem value={0}>Permenant</MenuItem>
-                  <MenuItem value={15}>Temporary</MenuItem>
-                  <MenuItem value={30}>OnSite</MenuItem>
-                  <MenuItem value={90}>WFH</MenuItem>
-                  <MenuItem value={90}>Contract</MenuItem>
+                  <MenuItem value={"internship"}>Internship</MenuItem>
+                  <MenuItem value={"permenant"}>Permenant</MenuItem>
+                  <MenuItem value={"temporary"}>Temporary</MenuItem>
+                  <MenuItem value={"onsite"}>On Site</MenuItem>
+                  <MenuItem value={"wfh"}>WFH</MenuItem>
+                  <MenuItem value={"contract"}>Contract</MenuItem>
                 </Select>
                 <FormHelperText>
                   {formik.touched.jobType &&
