@@ -55,7 +55,7 @@ import {
   updateJobById,
 } from "src/api-services/recruiter/jobs";
 import useNotification from "src/hooks/useNotification";
-import validationSchema from "../validation";
+import { validationSchema } from "../validation";
 
 const Header = styled(Box)(({ theme }) => ({
   display: "flex",

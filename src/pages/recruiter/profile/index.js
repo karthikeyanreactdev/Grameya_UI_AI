@@ -26,7 +26,7 @@ import { LoadingButton } from "@mui/lab";
 import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 import GoogleApiWrapper from "../../../utils/GoogleMap/index";
 
-Geocode.setApiKey("AIzaSyCz5cEVvOlilNS33D3WuGN8HLMoeNm_rcI");
+Geocode.setApiKey("AIzaSyAcu4ueqc4kggYK5Uhu5OKQ1iEjIYAfwXc");
 Geocode.setLanguage("en");
 
 const Profile = () => {
@@ -144,7 +144,7 @@ const Profile = () => {
     }
   }
   const { placePredictions, getPlacePredictions } = useGoogle({
-    apiKey: "AIzaSyCz5cEVvOlilNS33D3WuGN8HLMoeNm_rcI",
+    apiKey: "AIzaSyAcu4ueqc4kggYK5Uhu5OKQ1iEjIYAfwXc",
   });
   return (
     <Grid container spacing={6}>

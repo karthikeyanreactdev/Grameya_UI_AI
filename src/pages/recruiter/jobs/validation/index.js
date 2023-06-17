@@ -17,7 +17,7 @@ import * as yup from "yup";
 //     });
 //   }
 // );
-const validationSchema = yup.object({
+export const validationSchema = yup.object({
   jobTitle: yup
     .string("Job Title is required")
     .trim()
@@ -56,4 +56,3 @@ const validationSchema = yup.object({
     .min(1, "Minimum 1 skill is required")
     .max(10, "Maximum 10 skills is allowed"),
 });
-export default validationSchema;
