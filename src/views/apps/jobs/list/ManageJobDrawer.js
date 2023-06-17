@@ -31,7 +31,7 @@ import Icon from "src/@core/components/icon";
 import { useDispatch, useSelector } from "react-redux";
 
 // ** Actions Imports
-import { addUser } from "src/store/apps/user";
+// import { addUser } from "src/store/apps/user";
 import {
   Autocomplete,
   FormControl,
@@ -167,7 +167,7 @@ const SidebarAddUser = (props) => {
         }
       });
     } else {
-      dispatch(addUser({ ...data, role, currentPlan: plan }));
+      // dispatch(addUser({ ...data, role, currentPlan: plan }));
       toggle();
       reset();
     }
