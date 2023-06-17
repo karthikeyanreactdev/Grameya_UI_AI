@@ -131,7 +131,7 @@ const Profile = () => {
         company_name: values.companyName,
         designation: values.designation,
         phone: values.mobile,
-        alternate_mobile: alternateMobile,
+        alternate_mobile: values.alternateMobile,
 
         company_type: values.companyType,
         address: values.location,
@@ -495,7 +495,7 @@ const Profile = () => {
             </Grid>
             <TextField
               id="addressLineOne"
-              label="Address Line 1 (e.g. House No. Street
+              label="Address Line 1 (e.g. House No./ Street
             Name) *"
               variant={"outlined"}
               disabled={!isEdit}
