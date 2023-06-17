@@ -25,19 +25,20 @@ import { Box } from "@mui/system";
 import { LoadingButton } from "@mui/lab";
 import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 import GoogleApiWrapper from "../../../utils/GoogleMap/index";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateProfile } from "src/api-services/recruiter/profile";
 import useNotification from "src/hooks/useNotification";
 import * as yup from "yup";
-
+import { getUserData } from "src/store/apps/auth";
+// import { makeStyles } from "@mui/styles";
 Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
-
+// const useStyles = makeStyles({});
 const Profile = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
   const [sendNotification] = useNotification();
-
+  const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -159,6 +160,7 @@ const Profile = () => {
         });
       } finally {
         setIsLoading(false);
+        dispatch(getUserData({}));
       }
     },
   });
