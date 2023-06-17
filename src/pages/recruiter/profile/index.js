@@ -1,5 +1,5 @@
 // ** React Imports
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // ** Context Imports
 import { AbilityContext } from "src/layouts/components/acl/Can";
@@ -25,6 +25,10 @@ import { Box } from "@mui/system";
 import { LoadingButton } from "@mui/lab";
 import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteService";
 import GoogleApiWrapper from "../../../utils/GoogleMap/index";
+import { useSelector } from "react-redux";
+import { updateProfile } from "src/api-services/recruiter/profile";
+import useNotification from "src/hooks/useNotification";
+import * as yup from "yup";
 
 Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
@@ -32,9 +36,63 @@ Geocode.setLanguage("en");
 const Profile = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
+  const [sendNotification] = useNotification();
+
+  const { userData } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
   // console.log("gmpa", process.env.REACT_APP_GMAP_API_KEY);
+
+  const validationSchema = yup.object({
+    jobTitle: yup
+      .string("Job Title is required")
+      .trim()
+      .required("Job Title is required")
+      .min(10, "Minimum 10 character required"),
+    companyName: yup
+      .string("Company Name is required")
+      .trim()
+      .required("Company Name is required"),
+    fullname: yup
+      .string("Full Name is required")
+      .trim()
+      .required("Full Name is required"),
+    designation: yup
+      .string("Designation is required")
+      .trim()
+      .required("Designation is required"),
+
+    addressLineOne: yup
+      .string("Address Line 1 is required")
+      .trim()
+      .required("Address Line 1 is required"),
+    email: yup
+      .string("Email is Required")
+      .email("Enter the valid email")
+      .trim()
+      .required("Email is Required"),
+
+    location: yup
+      .string("Location is required")
+      .required("Location is required"),
+    city: yup.string("City is required").trim().required("City is required"),
+    state: yup.string("State is required").trim().required("State is required"),
+    country: yup
+      .string("Country is required")
+      .trim()
+      .required("Country is required"),
+    postalCode: yup
+      .string("Postal Code is required")
+      .trim()
+      .required("Postal Code is required"),
+
+    companyType: yup
+      .string("Company Type is required")
+      .required("Company Type is required"),
+  });
   const formik = useFormik({
     initialValues: {
       fullname: "",
@@ -50,6 +108,7 @@ const Profile = () => {
       skills: [],
       experiance: "",
       jobType: "",
+      companyName: "",
       companyType: "",
       noticePeriod: "",
       shortDescription: "",
@@ -63,34 +122,44 @@ const Profile = () => {
       latitude: "",
       longitude: "",
     },
-    //  validationSchema: SignUpValidationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       const params = {
-        full_name: values.firstName,
-        last_name: values.lastName,
+        full_name: values.fullname,
         designation: values.designation,
-        email: values.email,
-        country_code: values.code,
-        phone: values.phone,
-        company_name: values.corporateName,
-        country_of_incorporation: values.registration,
-        tax_id: values.taxId,
-        website: values.url,
-        address: values.address,
+        company_name: values.companyName,
+        designation: values.designation,
+        phone: values.mobile,
+        alternate_mobile: alternateMobile,
+
+        company_type: values.companyType,
+        address: values.location,
         address_line_one: values.addressLineOne,
         address_line_two: values.addressLineTwo,
-        country: values.country,
-        state: values.state,
         city: values.city,
+        state: values.state,
+        country: values.country,
         postal_code: values.postalCode,
         latitude: values.latitude,
         longitude: values.longitude,
-        password: values.password,
-        primary_industry: values.primaryIndustry,
-        user_type: "individual",
-        source: "dashboard",
-        role: "PARTNER_ADMIN",
       };
+      console.log(params);
+
+      try {
+        setIsLoading(true);
+        const result = await updateProfile(params);
+        sendNotification({
+          message: result?.data?.message,
+          variant: "success",
+        });
+      } catch (e) {
+        sendNotification({
+          message: e,
+          variant: "error",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     },
   });
   function getLatLngByAddress(address) {
@@ -147,42 +216,118 @@ const Profile = () => {
   const { placePredictions, getPlacePredictions } = useGoogle({
     apiKey: process.env.REACT_APP_GMAP_API_KEY,
   });
+
+  useEffect(() => {
+    console.log("user", userData);
+    if (userData) {
+      formik.setFieldValue("fullname", userData?.full_name);
+      formik.setFieldValue(
+        "designation",
+        userData?.recruiterDetails?.designation
+      );
+      formik.setFieldValue("mobile", userData?.phone);
+      formik.setFieldValue("email", userData?.email);
+      formik.setFieldValue("location", userData?.recruiterDetails?.address);
+      formik.setFieldValue(
+        "companyName",
+        userData?.recruiterDetails?.company_name
+      );
+      formik.setFieldValue(
+        "companyType",
+        userData?.recruiterDetails?.company_type
+      );
+
+      formik.setFieldValue(
+        "addressLineOne",
+        userData?.recruiterDetails?.address_line_one
+      );
+
+      formik.setFieldValue(
+        "addressLineTwo",
+        userData?.recruiterDetails?.address_line_two
+      );
+      formik.setFieldValue("country", userData?.recruiterDetails?.country);
+      formik.setFieldValue("state", userData?.recruiterDetails?.state);
+      formik.setFieldValue("city", userData?.recruiterDetails?.city);
+      formik.setFieldValue(
+        "postalCode",
+        userData?.recruiterDetails?.postal_code
+      );
+      formik.setFieldValue("longitude", userData?.recruiterDetails?.longitude);
+      formik.setFieldValue("latitude", userData?.recruiterDetails?.latitude);
+      setLat(userData?.recruiterDetails?.latitude);
+      setLng(userData?.recruiterDetails?.longitude);
+    }
+  }, [userData, isEdit]);
+  const handleEdit = () => {
+    setIsEdit(!isEdit);
+  };
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader />
+        <UserProfileHeader
+          userData={userData}
+          handleEdit={handleEdit}
+          isEdit={isEdit}
+        />
       </Grid>
       <Grid item md={12} xs={12}>
         <Card>
           <CardContent
           //sx={{ display: "flex", justifyContent: "center", mx: 32, mt: 4 }}
           >
+            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+              <TextField
+                sx={{ mb: 2 }}
+                label={"Full Name"}
+                disabled={!isEdit}
+                required
+                fullWidth
+                name="fullname"
+                error={
+                  formik.touched.fullname && Boolean(formik.errors.fullname)
+                }
+                value={formik.values.fullname
+                  .trimStart()
+                  .replace(/\s\s+/g, "")
+                  .replace(/\p{Emoji_Presentation}/gu, "")}
+                onChange={(e) => formik.handleChange(e)}
+                helperText={
+                  formik.touched.fullname &&
+                  formik.errors.fullname &&
+                  formik.errors.fullname
+                }
+              />
+            </Grid>
             <Grid container spacing={2} py={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  label={"Full Name"}
+                  label={"Company Name"}
+                  disabled={!isEdit}
                   required
                   fullWidth
-                  name="fullname"
+                  name="companyName"
                   error={
-                    formik.touched.fullname && Boolean(formik.errors.fullname)
+                    formik.touched.companyName &&
+                    Boolean(formik.errors.companyName)
                   }
-                  value={formik.values.fullname
+                  value={formik.values.companyName
                     .trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
                   onChange={(e) => formik.handleChange(e)}
                   helperText={
-                    formik.touched.fullname &&
-                    formik.errors.fullname &&
-                    formik.errors.fullname
+                    formik.touched.companyName &&
+                    formik.errors.companyName &&
+                    formik.errors.companyName
                   }
                 />
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
+                  disabled={!isEdit}
                   label={"Designation"}
                   required
                   fullWidth
@@ -206,7 +351,7 @@ const Profile = () => {
             </Grid>
             <Grid container spacing={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <FormControl fullWidth>
+                <FormControl fullWidth disabled={!isEdit}>
                   <InputLabel id="demo-simple-select-label">
                     Company Type *
                   </InputLabel>
@@ -273,6 +418,7 @@ const Profile = () => {
                 <TextField
                   sx={{ mb: 2 }}
                   label={"Alternate Mobile Number"}
+                  disabled={!isEdit}
                   fullWidth
                   name="alternateMobile"
                   error={
@@ -298,6 +444,7 @@ const Profile = () => {
                 name="location"
                 label="Location*"
                 variant="outlined"
+                disabled={!isEdit}
                 fullWidth
                 sx={{ my: 2, mt: 4 }}
                 value={formik.values.location}
@@ -346,9 +493,10 @@ const Profile = () => {
             </Grid>
             <TextField
               id="addressLineOne"
-              label="Address Line 1 (e.g. Street
+              label="Address Line 1 (e.g. House No. Street
             Name) *"
               variant={"outlined"}
+              disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
               name="addressLineOne"
@@ -366,8 +514,9 @@ const Profile = () => {
             />
             <TextField
               id="addressLineTwo"
-              label="Address Line 2 (e.g. Neighborhood/ Locality)"
+              label="Address Line 2 (e.g. Landmark/ Locality)"
               variant={"outlined"}
+              disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
               name="addressLineTwo"
@@ -378,8 +527,9 @@ const Profile = () => {
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
                 <TextField
                   id="country"
-                  label="Country/Region *"
+                  label="Country *"
                   variant="outlined"
+                  disabled={!isEdit}
                   fullWidth
                   name="country"
                   value={formik.values.country}
@@ -403,8 +553,9 @@ const Profile = () => {
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
                 <TextField
                   id="state"
-                  label="State/Province *"
+                  label="State *"
                   variant="outlined"
+                  disabled={!isEdit}
                   fullWidth
                   name="state"
                   value={formik.values.state}
@@ -430,6 +581,7 @@ const Profile = () => {
                   id="city"
                   label="City *"
                   variant="outlined"
+                  disabled={!isEdit}
                   fullWidth
                   name="city"
                   value={formik.values.city}
@@ -452,8 +604,9 @@ const Profile = () => {
                 <TextField
                   id="postalCode"
                   name="postalCode"
-                  label="Post Code *"
+                  label="Postal Code *"
                   variant="outlined"
+                  disabled={!isEdit}
                   fullWidth
                   value={formik.values.postalCode}
                   onChange={(e) => {
@@ -485,6 +638,7 @@ const Profile = () => {
                   label="Longitude "
                   variant={"outlined"}
                   type="number"
+                  disabled={!isEdit}
                   fullWidth
                   value={formik.values.longitude}
                   onChange={(e) => {
@@ -511,6 +665,7 @@ const Profile = () => {
                   label="Latitude "
                   variant={"outlined"}
                   type="number"
+                  disabled={!isEdit}
                   fullWidth
                   value={formik.values.latitude}
                   onChange={(e) => {
@@ -532,7 +687,14 @@ const Profile = () => {
               </Grid>
             </Grid>
             <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-              <LoadingButton fullWidth variant="contained" sx={{ my: 3 }}>
+              <LoadingButton
+                fullWidth
+                loading={isLoading}
+                variant="contained"
+                sx={{ my: 4 }}
+                disabled={!isEdit}
+                onClick={() => formik.handleSubmit()}
+              >
                 Save
               </LoadingButton>
             </Grid>
