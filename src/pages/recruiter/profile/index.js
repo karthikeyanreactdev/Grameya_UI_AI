@@ -30,13 +30,24 @@ import { updateProfile } from "src/api-services/recruiter/profile";
 import useNotification from "src/hooks/useNotification";
 import * as yup from "yup";
 import { getUserData } from "src/store/apps/auth";
-// import { makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
 Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
-// const useStyles = makeStyles({});
+const useStyles = makeStyles({
+  root: {
+    "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
+      color: "black",
+    },
+    "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
+      color: "black",
+      webkitTextFillColor: "balck",
+    },
+  },
+});
 const Profile = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
+  const classes = useStyles();
   const [sendNotification] = useNotification();
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.auth);
@@ -265,7 +276,7 @@ const Profile = () => {
     setIsEdit(!isEdit);
   };
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={6} className={classes.root}>
       <Grid item xs={12}>
         <UserProfileHeader
           userData={userData}
