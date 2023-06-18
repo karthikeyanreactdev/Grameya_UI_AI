@@ -53,6 +53,12 @@ import { useTheme } from "@mui/material/styles";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
 import { getJobList } from "src/store/apps/recruiter/manageJob";
+import {
+  getJobCategory,
+  getJobType,
+  getNoticePeriod,
+  getSkills,
+} from "src/store/apps/misc/index";
 
 const userStatusObj = {
   active: "success",
@@ -218,6 +224,10 @@ const ManageJob = () => {
   };
   useEffect(() => {
     getJobs();
+    // dispatch(getJobCategory({}));
+    // dispatch(getJobType({}));
+    dispatch(getSkills({}));
+    // dispatch(getNoticePeriod({}));
   }, []);
   useEffect(() => {
     console.log("ca");

@@ -52,11 +52,18 @@ import { LoadingButton } from "@mui/lab";
 import {
   createJob,
   getJobById,
+  getJobSubCategoryById,
   updateJobById,
 } from "src/api-services/recruiter/jobs";
+import Geocode from "react-geocode";
+
+import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteService";
+import GoogleApiWrapper from "../../../../utils/GoogleMap/index";
 import useNotification from "src/hooks/useNotification";
 // import { validationSchema } from "../validation";
 
+Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
+Geocode.setLanguage("en");
 const Header = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -115,21 +122,20 @@ const SideBarJob = (props) => {
   const [sendNotification] = useNotification();
   const { userData } = useSelector((state) => state.auth);
 
+  const { jobCategory, skills, noticePeriod, jobType } = useSelector(
+    (state) => state.misc
+  );
+  console.log("msi", jobCategory, skills, noticePeriod, jobType);
   const [salary, setSalary] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(false);
   const [jobData, setJobData] = useState(null);
   const [experiance, setExperiance] = useState([0, 0]);
   const [jd, setJd] = useState(EditorState.createEmpty());
-  const [categoryList, setCategoryList] = useState([
-    { id: 1, jobCategory: "IT" },
-    { id: 2, jobCategory: "BPO" },
-    { id: 3, jobCategory: "Banking" },
-    { id: 4, jobCategory: "HR" },
-  ]);
-  const [subCategoryList, setSubCategoryList] = useState([
-    { id: 101, pid: 1, category: "React" },
-    { id: 102, pid: 2, category: "CRE" },
-  ]);
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
+
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
   const handleChange = (event, newValue) => {
     console.log(newValue);
     setSalary(newValue);
@@ -151,6 +157,14 @@ const SideBarJob = (props) => {
       noticePeriod: "",
       shortDescription: "",
       location: "",
+      addressLineOne: "",
+      addressLineTwo: "",
+      city: "",
+      country: "",
+      state: "",
+      postalCode: "",
+      latitude: "",
+      longitude: "",
       email: "",
       // addressLineOne: "",
       // addressLineTwo: "",
@@ -185,13 +199,15 @@ const SideBarJob = (props) => {
           // .replace(/\"/g, '"')
           .replace(/\"/g, '"'),
         email: values.email,
-        address_line_one: "Kulithalai bus stand",
-        address_line_two: "Kulithalai",
-        city: "Karur",
-        state: "Tamilnadu",
-        postal_code: "639120",
-        latitude: "10.77348284",
-        longitude: "78.8874482492",
+        //address: values.location,
+        address_line_one: values.addressLineOne,
+        address_line_two: values.addressLineTwo,
+        city: values.city,
+        state: values.state,
+        country: values.country,
+        postal_code: values.postalCode,
+        latitude: values.latitude,
+        longitude: values.longitude,
       };
 
       try {
@@ -239,12 +255,13 @@ const SideBarJob = (props) => {
         formik.setFieldValue("email", data?.email);
         formik.setFieldValue("jobCategory", data?.job_category);
         formik.setFieldValue("jobSubCategory", data?.job_sub_category);
-        if (Array.isArray(data?.skills)) {
-          let mapping_value = data?.skills.map((item) =>
-            categoryList.find((e) => e.jobCategory === item)
-          );
-          formik.setFieldValue("skills", mapping_value);
-        }
+        // if (Array.isArray(data?.skills)) {
+        //   let mapping_value = data?.skills.map((item) =>
+        //     categoryList.find((e) => e.jobCategory === item)
+        //   );
+        //   formik.setFieldValue("skills", mapping_value);
+        formik.setFieldValue("skills", data?.skills);
+        // }
         setExperiance([data?.experience_from, data?.experience_to]);
         setSalary([data?.salary_from, data?.salary_to]);
 
@@ -271,9 +288,106 @@ const SideBarJob = (props) => {
     } else {
       if (userData) {
         formik.setFieldValue("email", userData?.email);
+        formik.setFieldValue(
+          "companyName",
+          userData?.recruiterDetails?.company_name
+        );
+        formik.setFieldValue("location", userData?.recruiterDetails?.address);
+        formik.setFieldValue(
+          "addressLineOne",
+          userData?.recruiterDetails?.address_line_one
+        );
+
+        formik.setFieldValue(
+          "addressLineTwo",
+          userData?.recruiterDetails?.address_line_two
+        );
+        formik.setFieldValue("country", userData?.recruiterDetails?.country);
+        formik.setFieldValue("state", userData?.recruiterDetails?.state);
+        formik.setFieldValue("city", userData?.recruiterDetails?.city);
+        formik.setFieldValue(
+          "postalCode",
+          userData?.recruiterDetails?.postal_code
+        );
+        formik.setFieldValue(
+          "longitude",
+          userData?.recruiterDetails?.longitude
+        );
+        formik.setFieldValue("latitude", userData?.recruiterDetails?.latitude);
+        setLat(userData?.recruiterDetails?.latitude);
+        setLng(userData?.recruiterDetails?.longitude);
       }
     }
   }, [id]);
+
+  const handleJobCategory = async (id) => {
+    try {
+      const result = await getJobSubCategoryById(id);
+      console.log(result?.data?.data?.records);
+      setSubCategoryList(result?.data?.data?.records);
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+  function getLatLngByAddress(address) {
+    Geocode.fromAddress(address).then(
+      (response) => {
+        let address_components = response.results[0].address_components;
+        let formatted_address = response.results[0].formatted_address;
+        if (formatted_address) {
+          let formatted_address_split = formatted_address.match(/[^,]+,[^,]+/g);
+          formik.setFieldValue(
+            "addressLineOne",
+            `${formatted_address_split[0]}`
+          );
+          formatted_address_split.shift();
+          formik.setFieldValue(
+            "addressLineTwo",
+            formatted_address_split?.join(" ")
+          );
+        }
+        setAddressFieldValue(address_components, "country", "country");
+        setAddressFieldValue(
+          address_components,
+          "administrative_area_level_1",
+          "state"
+        );
+        setAddressFieldValue(
+          address_components,
+          "administrative_area_level_3",
+          "city"
+        );
+        if (formik.values.registration !== "Ghana") {
+          setAddressFieldValue(address_components, "postal_code", "postalCode");
+        }
+        const { lat, lng } = response.results[0].geometry.location;
+        setLat(lat);
+        setLng(lng);
+        formik.setFieldValue("longitude", String(lng));
+        formik.setFieldValue("latitude", String(lat));
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  function setAddressFieldValue(address_components = [], key, field) {
+    let findValue = address_components.find((item) => item.types.includes(key));
+    if (findValue) {
+      formik.setFieldValue(field, findValue?.long_name);
+    } else {
+      formik.setFieldValue(field, "");
+    }
+  }
+  const { placePredictions, getPlacePredictions } = useGoogle({
+    apiKey: process.env.REACT_APP_GMAP_API_KEY,
+  });
   return (
     <Drawer
       open={open}
@@ -313,6 +427,7 @@ const SideBarJob = (props) => {
               sx={{ my: 2 }}
               label={"Company Name"}
               required
+              // disabled
               fullWidth
               name="companyName"
               error={
@@ -385,14 +500,18 @@ const SideBarJob = (props) => {
                 value={formik.values.jobCategory}
                 onChange={(event, item) => {
                   formik.setFieldValue("jobCategory", item?.label);
+                  handleJobCategory(item?.id);
                 }}
-                options={categoryList
-                  ?.sort((a, b) => a?.jobCategory - b?.jobCategory)
+                options={jobCategory
+                  // ?.sort((a, b) => a?.jobCategory - b?.name)
                   .map((item) => ({
-                    label: item.jobCategory,
-                    value: item.jobCategory,
+                    label: item?.name,
+                    value: item?.name,
+                    id: item?.id,
                   }))}
-                isOptionEqualToValue={(option, value) => option.value === value}
+                isOptionEqualToValue={(option, value) =>
+                  option?.value === value
+                }
                 freeSolo={false}
                 renderInput={(params) => (
                   <TextField
@@ -429,12 +548,14 @@ const SideBarJob = (props) => {
                   formik.setFieldValue("jobSubCategory", item?.label);
                 }}
                 options={subCategoryList
-                  ?.sort((a, b) => a?.category - b?.category)
+                  ?.sort((a, b) => a?.name - b?.name)
                   .map((item) => ({
-                    label: item.category,
-                    value: item.category,
+                    label: item?.name,
+                    value: item?.name,
                   }))}
-                isOptionEqualToValue={(option, value) => option.value === value}
+                isOptionEqualToValue={(option, value) =>
+                  option?.value === value
+                }
                 freeSolo={false}
                 renderInput={(params) => (
                   <TextField
@@ -460,49 +581,7 @@ const SideBarJob = (props) => {
               />
             </Grid>
           </Grid>
-          <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-            <FormControl
-              fullWidth
-              sx={{ my: 2 }}
-              error={formik.touched.location && Boolean(formik.errors.location)}
-            >
-              <InputLabel
-                id="demo-simple-select-label"
-                error={
-                  formik.touched.location && Boolean(formik.errors.location)
-                }
-              >
-                Job Location *
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={formik.values.location}
-                label="Job Location *"
-                error={
-                  formik.touched.location && Boolean(formik.errors.location)
-                }
-                helperText={
-                  formik.touched.location &&
-                  formik.errors.location &&
-                  formik.errors.location
-                }
-                onChange={(e) =>
-                  formik.setFieldValue("location", e.target.value)
-                }
-              >
-                <MenuItem value={"Chennai"}>Chennai</MenuItem>
-                <MenuItem value={"Delhi"}>Delhi</MenuItem>
-                <MenuItem value={"Mumbai"}>Mumbai</MenuItem>
-                <MenuItem value={"Bangalore"}>Bangalore</MenuItem>
-              </Select>
-              <FormHelperText>
-                {formik.touched.location &&
-                  formik.errors.location &&
-                  formik.errors.location}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
+
           <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
             <Autocomplete
               required
@@ -510,12 +589,12 @@ const SideBarJob = (props) => {
               label={"Skills"}
               name={"skills"}
               fullWidth
-              defaultValue={formik.values.skills}
+              value={formik.values.skills}
               multiple
               onChange={(event, item) => {
                 formik.setFieldValue("skills", item);
               }}
-              options={categoryList.map((option) => option.jobCategory)}
+              options={skills?.map((option) => option.name)}
               limitTags={10}
               freeSolo
               filterSelectedOptions
@@ -766,6 +845,258 @@ const SideBarJob = (props) => {
               onEditorStateChange={(data) => setJd(data)}
               labelId="jd"
             />
+          </Grid>
+          <Grid
+            item
+            lg={12}
+            xl={12}
+            xs={12}
+            md={12}
+            sm={6}
+            sx={{ my: 2, mx: 2 }}
+          >
+            <Autocomplete
+              id="location"
+              name="location"
+              label="Job Location*"
+              variant="outlined"
+              fullWidth
+              sx={{ my: 2, mt: 4 }}
+              value={formik.values.location}
+              onChange={(event, item) => {
+                if (item) {
+                  getLatLngByAddress(item?.description);
+
+                  formik.setFieldValue("location", item?.label);
+                }
+              }}
+              onInputChange={(event) => {
+                if (event?.target?.value) {
+                  getPlacePredictions({ input: event?.target?.value });
+                }
+              }}
+              options={placePredictions.map((item) => ({
+                ...item,
+                label: item.description,
+                value: item.place_id,
+              }))}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Job Location *"
+                  error={
+                    formik.touched.location && Boolean(formik.errors.location)
+                  }
+                  helperText={
+                    formik.touched.location &&
+                    formik.errors.location &&
+                    formik.errors.location
+                  }
+                />
+              )}
+            />
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid
+              item
+              lg={12}
+              xl={12}
+              xs={12}
+              md={12}
+              sm={6}
+              sx={{ my: 2, ml: 2 }}
+            >
+              <Box
+                className="form-map form-item"
+                sx={{ height: "221px", position: "relative" }}
+              >
+                <GoogleApiWrapper lat={lat} lng={lng} />
+              </Box>
+            </Grid>
+          </Grid>
+          <TextField
+            id="addressLineOne"
+            label="Address Line 1 (e.g. House No./ Street
+            Name) *"
+            variant={"outlined"}
+            fullWidth
+            sx={{ my: 2, mx: 2 }}
+            name="addressLineOne"
+            value={formik.values.addressLineOne}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.addressLineOne &&
+              Boolean(formik.errors.addressLineOne)
+            }
+            helperText={
+              formik.touched.addressLineOne &&
+              formik.errors.addressLineOne &&
+              formik.errors.addressLineOne
+            }
+          />
+          <TextField
+            id="addressLineTwo"
+            label="Address Line 2 (e.g. Landmark/ Locality)"
+            variant={"outlined"}
+            fullWidth
+            sx={{ my: 2, mx: 2 }}
+            name="addressLineTwo"
+            value={formik.values.addressLineTwo}
+            onChange={formik.handleChange}
+          />
+          <Grid container spacing={2} sx={{ mx: 0.2 }}>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="country"
+                label="Country *"
+                variant="outlined"
+                fullWidth
+                name="country"
+                value={formik.values.country}
+                onChange={(e) => {
+                  //  formik.handleChange(e);
+                  formik.setFieldValue(
+                    "country",
+                    e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                  );
+                }}
+                error={formik.touched.country && Boolean(formik.errors.country)}
+                helperText={
+                  formik.touched.country &&
+                  formik.errors.country &&
+                  formik.errors.country
+                }
+              />
+            </Grid>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="state"
+                label="State *"
+                variant="outlined"
+                fullWidth
+                name="state"
+                value={formik.values.state}
+                onChange={(e) => {
+                  //  formik.handleChange(e);
+                  formik.setFieldValue(
+                    "state",
+                    e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                  );
+                }}
+                error={formik.touched.state && Boolean(formik.errors.state)}
+                helperText={
+                  formik.touched.state &&
+                  formik.errors.state &&
+                  formik.errors.state
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} sx={{ mx: 0.2 }}>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="city"
+                label="City *"
+                variant="outlined"
+                fullWidth
+                name="city"
+                value={formik.values.city}
+                onChange={(e) => {
+                  //  formik.handleChange(e);
+                  formik.setFieldValue(
+                    "city",
+                    e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                  );
+                }}
+                error={formik.touched.city && Boolean(formik.errors.city)}
+                helperText={
+                  formik.touched.city &&
+                  formik.errors.city &&
+                  formik.errors.city
+                }
+              />
+            </Grid>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="postalCode"
+                name="postalCode"
+                label="Postal Code *"
+                variant="outlined"
+                fullWidth
+                value={formik.values.postalCode}
+                onChange={(e) => {
+                  //  formik.handleChange(e);
+                  if (formik.values.registration !== "Ghana") {
+                    formik.setFieldValue(
+                      "postalCode",
+                      e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                    );
+                  }
+                }}
+                error={
+                  formik.touched.postalCode && Boolean(formik.errors.postalCode)
+                }
+                helperText={
+                  formik.touched.postalCode &&
+                  formik.errors.postalCode &&
+                  formik.errors.postalCode
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} sx={{ mx: 0.2 }}>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="longitude"
+                name="longitude"
+                label="Longitude "
+                variant={"outlined"}
+                type="number"
+                fullWidth
+                value={formik.values.longitude}
+                onChange={(e) => {
+                  setLng(e.target.value);
+                  formik.setFieldValue(
+                    "longitude",
+                    e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                  );
+                }}
+                error={
+                  formik.touched.longitude && Boolean(formik.errors.longitude)
+                }
+                helperText={
+                  formik.touched.longitude &&
+                  formik.errors.longitude &&
+                  formik.errors.longitude
+                }
+              />
+            </Grid>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+              <TextField
+                id="latitude"
+                name="latitude"
+                label="Latitude "
+                variant={"outlined"}
+                type="number"
+                fullWidth
+                value={formik.values.latitude}
+                onChange={(e) => {
+                  setLat(e.target.value);
+                  formik.setFieldValue(
+                    "latitude",
+                    e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                  );
+                }}
+                error={
+                  formik.touched.latitude && Boolean(formik.errors.latitude)
+                }
+                helperText={
+                  formik.touched.latitude &&
+                  formik.errors.latitude &&
+                  formik.errors.latitude
+                }
+              />
+            </Grid>
           </Grid>
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <LoadingButton

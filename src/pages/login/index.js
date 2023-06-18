@@ -54,6 +54,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { authLogin, getUserData } from "src/store/apps/auth";
 import { validateEmail } from "src/utils/commonUtils";
 import useNotification from "src/hooks/useNotification";
+import {
+  getJobCategory,
+  getJobType,
+  getNoticePeriod,
+  getSkills,
+} from "src/store/apps/misc";
 
 // ** Styled Components
 const LoginIllustration = styled("img")(({ theme }) => ({
@@ -172,7 +178,10 @@ const LoginPage = () => {
         response.payload?.data?.data?.refreshToken
       );
       dispatch(getUserData({}));
-
+      dispatch(getJobCategory({}));
+      dispatch(getJobType({}));
+      dispatch(getSkills({}));
+      dispatch(getNoticePeriod({}));
       sendNotification({
         message: response.payload?.data?.message,
         variant: "success",

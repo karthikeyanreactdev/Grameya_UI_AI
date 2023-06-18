@@ -12,7 +12,7 @@ import auth from "src/store/apps/auth/index";
 import manageJob from "src/store/apps/recruiter/manageJob/index";
 import applications from "src/store/apps/recruiter/applications/index";
 import resumeSearch from "src/store/apps/recruiter/resume-search/index";
-
+import misc from "src/store/apps/misc/index";
 export const store = configureStore({
   reducer: {
     user,
@@ -25,6 +25,7 @@ export const store = configureStore({
     manageJob,
     resumeSearch,
     applications,
+    misc,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

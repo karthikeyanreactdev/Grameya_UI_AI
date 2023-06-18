@@ -12,7 +12,12 @@ import authConfig from "src/configs/auth";
 import { getUserData, handleUserData } from "src/store/apps/auth";
 import { userProfileUrl } from "src/utils/pathConst";
 import { useDispatch, useSelector } from "react-redux";
-
+import {
+  getJobCategory,
+  getJobType,
+  getNoticePeriod,
+  getSkills,
+} from "src/store/apps/misc";
 // ** Defaults
 const defaultProvider = {
   user: null,
@@ -53,6 +58,10 @@ const AuthProvider = ({ children }) => {
             setLoading(false);
             setUser(response?.data?.data);
             dispatch(handleUserData(response?.data?.data));
+            dispatch(getJobCategory({}));
+            dispatch(getJobType({}));
+            dispatch(getSkills({}));
+            dispatch(getNoticePeriod({}));
             const redirectURL =
               returnUrl && returnUrl !== "/" ? returnUrl : "/";
             router.replace(redirectURL);

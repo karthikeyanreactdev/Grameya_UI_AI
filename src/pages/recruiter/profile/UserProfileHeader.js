@@ -44,6 +44,7 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
       fullName: userData?.full_name,
       designation: userData?.recruiterDetails?.designation,
       profileImg: "/images/g.jpg",
+      companyName: userData?.recruiterDetails?.company_name,
       designationIcon: "tabler:color-swatch",
       coverImg: "/images/pages/profile-banner.png",
     });
@@ -118,9 +119,9 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
                   "& svg": { mr: 1.5, color: "text.secondary" },
                 }}
               >
-                <Icon fontSize="1.25rem" icon="tabler:map-pin" />
+                <Icon fontSize="1.25rem" icon="tabler:building-skyscraper" />
                 <Typography sx={{ color: "text.secondary" }}>
-                  {data.location}
+                  {data.companyName}
                 </Typography>
               </Box>
               {/* <Box
