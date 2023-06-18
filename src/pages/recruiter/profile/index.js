@@ -38,9 +38,11 @@ const useStyles = makeStyles({
     "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
       color: "black",
     },
-    "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
+    // "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
+    "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
       color: "black",
-      webkitTextFillColor: "balck",
+      "-webkit-text-fill-color": "black",
+      opacity: 0.6,
     },
   },
 });

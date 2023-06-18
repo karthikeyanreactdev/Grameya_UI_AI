@@ -133,6 +133,8 @@ const SideBarJob = (props) => {
   const [jd, setJd] = useState(EditorState.createEmpty());
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
 
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
@@ -175,18 +177,28 @@ const SideBarJob = (props) => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log(values);
-      setIsLoading(true);
-      // let skills = [];
-      // if (values.skills && values.skills.length > 0) {
-      //   values.skills.map((item) => skills.push(item.jobCategory));
-      // }
+      console.log(values.skills);
+      // setIsLoading(true);
+      let addedSkills = [];
+      let skills = [];
+      if (values.skills && values.skills.length > 0) {
+        values.skills.map((item) => {
+          const val = typeof item;
+          if (val === "string" && val !== "object") {
+            addedSkills.push(item);
+          } else {
+            skills.push(item?.value);
+          }
+        });
+      }
       const params = {
         company_name: values.companyName,
         job_title: values.jobTitle,
-        job_category: values.jobCategory,
-        job_sub_category: values.jobSubCategory,
+        job_category: category,
+        job_sub_category: subCategory,
         location: values.location,
-        skills: values.skills,
+        skills: skills,
+        added_skills: addedSkills,
         experience_from: `${experiance[0]}`,
         experience_to: `${experiance[1]}`,
         salary_from: `${salary[0]}`,
@@ -209,8 +221,10 @@ const SideBarJob = (props) => {
         latitude: values.latitude,
         longitude: values.longitude,
       };
-
+      console.log(params);
       try {
+        setIsLoading(true);
+
         let result = null;
         if (id === "") {
           result = await createJob(params);
@@ -218,8 +232,9 @@ const SideBarJob = (props) => {
           params["job_id"] = id;
           result = await updateJobById(params);
         }
-        toggle();
         formik.resetForm();
+        toggle();
+
         sendNotification({
           message: result?.data?.message,
           variant: "success",
@@ -283,6 +298,8 @@ const SideBarJob = (props) => {
     }
   };
   useEffect(() => {
+    formik.resetForm();
+
     if (id !== "") {
       getJob();
     } else {
@@ -318,10 +335,11 @@ const SideBarJob = (props) => {
         setLng(userData?.recruiterDetails?.longitude);
       }
     }
-  }, [id]);
+  }, [id, userData]);
 
   const handleJobCategory = async (id) => {
     try {
+      formik.setFieldValue("jobSubCategory", "");
       const result = await getJobSubCategoryById(id);
       console.log(result?.data?.data?.records);
       setSubCategoryList(result?.data?.data?.records);
@@ -501,6 +519,7 @@ const SideBarJob = (props) => {
                 onChange={(event, item) => {
                   formik.setFieldValue("jobCategory", item?.label);
                   handleJobCategory(item?.id);
+                  setCategory(item?.id);
                 }}
                 options={jobCategory
                   // ?.sort((a, b) => a?.jobCategory - b?.name)
@@ -546,12 +565,14 @@ const SideBarJob = (props) => {
                 value={formik.values.jobSubCategory}
                 onChange={(event, item) => {
                   formik.setFieldValue("jobSubCategory", item?.label);
+                  setSubCategory(item?.id);
                 }}
                 options={subCategoryList
                   ?.sort((a, b) => a?.name - b?.name)
                   .map((item) => ({
                     label: item?.name,
                     value: item?.name,
+                    id: item?.id,
                   }))}
                 isOptionEqualToValue={(option, value) =>
                   option?.value === value
@@ -594,7 +615,13 @@ const SideBarJob = (props) => {
               onChange={(event, item) => {
                 formik.setFieldValue("skills", item);
               }}
-              options={skills?.map((option) => option.name)}
+              // options={skills?.map((option) => option?.name)}
+              options={skills
+                // ?.sort((a, b) => a?.name - b?.name)
+                .map((item) => ({
+                  label: item?.name,
+                  value: item?.id,
+                }))}
               limitTags={10}
               freeSolo
               filterSelectedOptions

@@ -15,6 +15,12 @@ import axios from "axios";
 
 // ** Icon Imports
 import Icon from "src/@core/components/icon";
+import { IconButton } from "@mui/material";
+import {
+  CameraAltOutlined,
+  CameraAltSharp,
+  PhotoCameraFront,
+} from "@mui/icons-material";
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -70,6 +76,32 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
         }}
       >
         <ProfilePicture src={data.profileImg} alt="profile-picture" />
+        {/* <IconButton
+          color="primary"
+          aria-label="add an alarm"
+          sx={{
+            position: "relative",
+            right: "24px",
+            top: "20px",
+            // color: "black",
+            opacity: 0.8,
+          }}
+        >
+          <PhotoCameraFront />
+        </IconButton> */}
+        {/* <Button
+          sx={{
+            position: "relative",
+            right: "24px",
+            top: "20px",
+            color: "black",
+            opacity: 0.8,
+          }}
+        >
+          {" "}
+          <Icon icon={"tabler:camera-filled"} fontSize="1.725rem" />
+        </Button> */}
+
         <Box
           sx={{
             width: "100%",

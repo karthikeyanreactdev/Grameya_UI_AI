@@ -6,7 +6,8 @@ import { baseURL } from "src/utils/pathConst";
 const enumUrl = `${baseURL}/enum_by_type?type=`;
 const jobCategoryUrl = `${enumUrl}JobCategory`;
 // const jobSubCategoryUrl = `${enumUrl}job_applications`;
-const skillUrl = `${enumUrl}Skills&search=dev`;
+// const skillUrl = `${enumUrl}Skills&search=dev`;
+const skillUrl = `${enumUrl}Skills`;
 const jobTypeUrl = `${enumUrl}JobTypes`;
 const noticePeriodUrl = `${enumUrl}NoticePeriod`;
 
