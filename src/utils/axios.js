@@ -23,7 +23,7 @@ function removeAllCookies() {
 }
 
 axios.interceptors.response.use(null, (error) => {
-  if (!error.response.config.isNormal) {
+  if (!error?.response?.config?.isNormal) {
     if (error && error.response) {
       if (error.response.status === 401) {
         // initial call to whoami will get intercepted here and redirect, need to throw log event

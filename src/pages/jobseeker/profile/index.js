@@ -21,8 +21,13 @@ import AddNewEducation from "./components/AddNewEducation";
 import EditEducation from "./components/EditEducation";
 import AddNewExperiance from "./components/AddNewExperiance";
 import EditExperiance from "./components/EditExperiance";
-import { getProfile } from "src/api-services/seeker/profile";
+import {
+  getProfile,
+  removeJobseekerEducation,
+  removeJobseekerExperience,
+} from "src/api-services/seeker/profile";
 import EditBasicInfo from "./components/EditBasicInfo";
+import useNotification from "src/hooks/useNotification";
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: "0 !important",
@@ -59,6 +64,8 @@ const ACLPage = () => {
   const [activeTab, setActiveTab] = useState("info");
   const hideText = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const [selectedExp, setSelectedExp] = useState(null);
+  const [selectedEducation, setSelectedEducation] = useState(null);
+  const [sendNotification] = useNotification();
 
   const [drawerState, setDrawerState] = useState({
     isBasicInfoEdit: false,
@@ -106,6 +113,50 @@ const ACLPage = () => {
   useEffect(() => {
     getProfileDetail();
   }, []);
+
+  const handleDeleteEducation = async (formValue) => {
+    console.log("check");
+    // setSubmitted(true);
+    try {
+      const apiData = {
+        education_id: formValue,
+      };
+      const response = await removeJobseekerEducation(apiData);
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        // handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+    }
+  };
+
+  const handleDeleteExpirince = async (formValue) => {
+    console.log("check");
+    // setSubmitted(true);
+    try {
+      const apiData = {
+        experience_id: formValue,
+      };
+      const response = await removeJobseekerExperience(apiData);
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        // handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+    }
+  };
 
   return (
     <Grid container spacing={6}>
@@ -570,14 +621,31 @@ const ACLPage = () => {
                                       <Card sx={{ mt: 3 }} key={key}>
                                         <CardActionArea>
                                           <CardContent>
-                                            <Typography
-                                              gutterBottom
-                                              variant="h5"
-                                              component="div"
-                                            >
-                                              {item?.degree} {item?.grade_point}{" "}
-                                              %
-                                            </Typography>
+                                            {item?.education_type === "10th" ||
+                                            item?.education_type === "12th" ? (
+                                              <>
+                                                <Typography
+                                                  gutterBottom
+                                                  variant="h5"
+                                                  component="div"
+                                                >
+                                                  {item?.education_type}{" "}
+                                                  {item?.grade_or_marks} %
+                                                </Typography>
+                                              </>
+                                            ) : (
+                                              <>
+                                                <Typography
+                                                  gutterBottom
+                                                  variant="h5"
+                                                  component="div"
+                                                >
+                                                  {item?.course}{" "}
+                                                  {item?.grade_or_marks} %
+                                                </Typography>
+                                              </>
+                                            )}
+
                                             <Typography
                                               gutterBottom
                                               variant="h5"
@@ -596,7 +664,8 @@ const ACLPage = () => {
                                               color="text.secondary"
                                             >
                                               year of pased out:{" "}
-                                              {item?.year_of_passout}
+                                              {item?.year_of_passout ||
+                                                item?.course_duration_end}
                                             </Typography>
                                           </CardContent>
                                         </CardActionArea>
@@ -604,13 +673,23 @@ const ACLPage = () => {
                                           <Button
                                             size="small"
                                             color="primary"
-                                            onClick={() =>
+                                            onClick={() => {
+                                              setSelectedEducation(item);
                                               handleDrawerStateChangeOpen(
                                                 "isEditEducation"
-                                              )
-                                            }
+                                              );
+                                            }}
                                           >
                                             Edit
+                                          </Button>
+                                          <Button
+                                            size="small"
+                                            color="error"
+                                            onClick={() =>
+                                              handleDeleteEducation(item?.id)
+                                            }
+                                          >
+                                            Remove
                                           </Button>
                                         </CardActions>
                                       </Card>
@@ -645,14 +724,22 @@ const ACLPage = () => {
                             </Grid>
                           </CardContent>
                         </Card>
-                        <EditEducation
-                          isOpen={drawerState.isEditEducation}
-                          onClose={handleDrawerStateChangeClose}
-                        />
-                        <AddNewEducation
-                          isOpen={drawerState.isAddNewEducation}
-                          onClose={handleDrawerStateChangeClose}
-                        />
+                        {drawerState.isEditEducation && (
+                          <EditEducation
+                            isOpen={drawerState.isEditEducation}
+                            onClose={handleDrawerStateChangeClose}
+                            getProfileDetail={getProfileDetail}
+                            selectedEducation={selectedEducation}
+                          />
+                        )}
+
+                        {drawerState.isAddNewEducation && (
+                          <AddNewEducation
+                            isOpen={drawerState.isAddNewEducation}
+                            onClose={handleDrawerStateChangeClose}
+                            getProfileDetail={getProfileDetail}
+                          />
+                        )}
                       </Grid>
                     )}
                     {activeTab === "work" && (
@@ -720,6 +807,15 @@ const ACLPage = () => {
                                             }}
                                           >
                                             Edit
+                                          </Button>
+                                          <Button
+                                            size="small"
+                                            color="error"
+                                            onClick={() => {
+                                              handleDeleteExpirince(item.id);
+                                            }}
+                                          >
+                                            Remove
                                           </Button>
                                         </CardActions>
                                       </Card>
