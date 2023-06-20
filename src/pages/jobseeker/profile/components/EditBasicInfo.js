@@ -84,13 +84,14 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
     newFormValue.alternate_phone = userDetail.alternate_phone || "";
     newFormValue.current_location =
       userDetail?.jobseekerDetails?.current_location || "";
+    newFormValue.degree = userDetail?.jobseekerDetails?.degree || "";
     newFormValue.total_years_of_experience =
       userDetail.jobseekerDetails?.total_years_of_experience || "";
 
     newFormValue.current_salary =
-      userDetail.jobseekerDetails?.current_salary || "";
+      userDetail.jobseekerDetails?.current_salary.toString() || "";
     newFormValue.expected_salary =
-      userDetail.jobseekerDetails?.expected_salary || "";
+      userDetail.jobseekerDetails?.expected_salary.toString() || "";
     newFormValue.notice_period =
       userDetail.jobseekerDetails?.notice_period || "";
     newFormValue.skills = userDetail.jobseekerDetails?.skills || [];

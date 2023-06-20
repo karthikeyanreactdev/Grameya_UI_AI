@@ -28,7 +28,7 @@ export const updateJobseekerExperience = (bodyParams) => {
 };
 
 export const removeJobseekerExperience = (bodyParams) => {
-  return apiPut(removeJobseekerExperienceUrl, bodyParams);
+  return apiDelete(removeJobseekerExperienceUrl, bodyParams);
 };
 
 export const getEnumByType = (type) => {

@@ -42,7 +42,20 @@ const EditEducation = ({
 }) => {
   const [mainCourse, setMainCourse] = useState(null);
   const [subCourse, setSubCourse] = useState(null);
-  const [formValue, setFormValue] = useState(null);
+  const [formValue, setFormValue] = useState({
+    education_type: "",
+    board: "",
+    course: "",
+    course_duration_start: "",
+    course_type: "",
+    education_type: "",
+    grade_or_marks: "",
+    school_medium: "",
+    specialization: "",
+    university_or_institute_address: "",
+    university_or_institute_name: "",
+    year_of_passout: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [sendNotification] = useNotification();
 
@@ -120,7 +133,32 @@ const EditEducation = ({
 
   const handleFormSubmit = async () => {
     setSubmitted(true);
-    const apiData = formValue;
+    let apiData = null;
+    if (
+      formValue.education_type === "10th" ||
+      formValue.education_type === "12th"
+    ) {
+      apiData = {
+        education_type: formValue.education_type,
+        board: formValue.board,
+        year_of_passout: formValue.year_of_passout,
+        school_medium: formValue.school_medium,
+        grade_or_marks: formValue.grade_or_marks,
+      };
+    } else {
+      apiData = {
+        education_type: formValue.education_type,
+        university_or_institute_name: formValue.university_or_institute_name,
+        university_or_institute_address:
+          formValue.university_or_institute_address,
+        course: formValue.course,
+        specialization: formValue.specialization,
+        course_type: formValue.course_type,
+        course_duration_start: formValue.course_duration_start,
+        course_duration_end: formValue.course_duration_end,
+        grade_or_marks: formValue.grade_or_marks,
+      };
+    }
     apiData.education_id = selectedEducation?.id;
     console.log("apiData", apiData);
     try {
@@ -136,6 +174,10 @@ const EditEducation = ({
       }
     } catch (e) {
       console.log("e", e);
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
     }
   };
 
@@ -154,7 +196,7 @@ const EditEducation = ({
             }}
           >
             <Typography variant="h3" component="div">
-              Add Education
+              Edit Education
             </Typography>
 
             <IconButton aria-label="close" onClick={handleClose}>
@@ -179,7 +221,7 @@ const EditEducation = ({
                       label="Education *"
                       name="education_type"
                       onChange={handleInputChange}
-                      value={formValue?.education_type}
+                      value={formValue.education_type}
                       error={submitted && !formValue?.education_type}
                     >
                       <MenuItem value={"10th"}>10th</MenuItem>
@@ -310,7 +352,7 @@ const EditEducation = ({
                       <FormControl fullWidth sx={{ my: 2 }}>
                         <TextField
                           sx={{ mb: 2 }}
-                          label={"year of passout"}
+                          label={"Year of passout"}
                           // required
                           fullWidth
                           onChange={handleInputChange}
@@ -318,7 +360,7 @@ const EditEducation = ({
                           helperText={
                             submitted &&
                             !formValue?.year_of_passout && (
-                              <>Start Year is required</>
+                              <>Year of passout is required</>
                             )
                           }
                           error={submitted && !formValue?.year_of_passout}

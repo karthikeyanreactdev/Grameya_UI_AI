@@ -102,6 +102,10 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
       }
     } catch (e) {
       console.log("e", e);
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
     }
   };
 
@@ -172,7 +176,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                       <FormControl fullWidth sx={{ my: 2 }}>
                         <InputLabel
                           id="demo-simple-select-label"
-                          error={submitted && !formValue?.course}
+                          error={submitted && !formValue?.board}
                         >
                           Board *
                         </InputLabel>
@@ -185,7 +189,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                           name="board"
                           error={submitted && !formValue?.board}
                         >
-                          <MenuItem value="State Board" sx={{ width: "10rem" }}>
+                          <MenuItem value="State Board" sx={{ width: 200 }}>
                             State Board
                           </MenuItem>
                           <MenuItem
@@ -209,7 +213,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                       <FormControl fullWidth sx={{ my: 2 }}>
                         <InputLabel
                           id="demo-simple-select-label"
-                          error={submitted && !formValue?.course}
+                          error={submitted && !formValue?.school_medium}
                         >
                           Medium *
                         </InputLabel>
@@ -220,7 +224,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                           MenuProps={menuProps}
                           onChange={handleMainCourseChange}
                           name="school_medium"
-                          error={submitted && !formValue?.board}
+                          error={submitted && !formValue?.school_medium}
                         >
                           <MenuItem value="English" sx={{ width: "10rem" }}>
                             English
@@ -229,7 +233,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                             Tamil
                           </MenuItem>
                         </Select>
-                        {submitted && !formValue?.board && (
+                        {submitted && !formValue?.school_medium && (
                           <FormHelperText error={true}>
                             Board is required
                           </FormHelperText>
@@ -270,16 +274,14 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
                       <FormControl fullWidth sx={{ my: 2 }}>
                         <TextField
                           sx={{ mb: 2 }}
-                          label={"year of passout"}
+                          label={"Year of passout"}
                           // required
                           fullWidth
                           onChange={handleInputChange}
                           name="year_of_passout"
                           helperText={
                             submitted &&
-                            !formValue?.year_of_passout && (
-                              <>Start Year is required</>
-                            )
+                            !formValue?.year_of_passout && <>Year of passout</>
                           }
                           error={submitted && !formValue?.year_of_passout}
                           //   value={formik.values.aboutMe
