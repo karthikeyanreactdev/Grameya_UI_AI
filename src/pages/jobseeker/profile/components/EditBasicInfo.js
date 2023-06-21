@@ -279,19 +279,6 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
                       "Alternate Mobile Number is required"
                     }
                     onChange={handleFormInputChange}
-                    // error={
-                    //   formik.touched.mobile && Boolean(formik.errors.mobile)
-                    // }
-                    // value={formik.values.mobile
-                    //   .trimStart()
-                    //   .replace(/\s\s+/g, "")
-                    //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                    // onChange={(e) => formik.handleChange(e)}
-                    // helperText={
-                    //   formik.touched.mobile &&
-                    //   formik.errors.mobile &&
-                    //   formik.errors.mobile
-                    // }
                   />
                 </Grid>
                 {/* <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>

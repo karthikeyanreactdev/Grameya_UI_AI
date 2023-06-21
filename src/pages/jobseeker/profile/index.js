@@ -28,6 +28,7 @@ import {
 } from "src/api-services/seeker/profile";
 import EditBasicInfo from "./components/EditBasicInfo";
 import useNotification from "src/hooks/useNotification";
+import BasicInfo from "./components/BasicInfo";
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: "0 !important",
@@ -66,6 +67,7 @@ const ACLPage = () => {
   const [selectedExp, setSelectedExp] = useState(null);
   const [selectedEducation, setSelectedEducation] = useState(null);
   const [sendNotification] = useNotification();
+  const [isEditMode, setIsEditMode] = useState(true);
 
   const [drawerState, setDrawerState] = useState({
     isBasicInfoEdit: false,
@@ -158,10 +160,18 @@ const ACLPage = () => {
     }
   };
 
+  const handleEditChange = () => {
+    setIsEditMode(false);
+  };
+
+  const handleEditCloseChange = () => {
+    setIsEditMode(true);
+  };
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader />
+        <UserProfileHeader onHandleEdit={handleEditChange} />
       </Grid>
       {activeTab === undefined ? null : (
         <Grid item xs={12}>
@@ -237,359 +247,20 @@ const ACLPage = () => {
                 ) : (
                   <TabPanel sx={{ p: 0 }} value={activeTab}>
                     {activeTab === "info" && (
-                      <Grid item md={12} xs={12}>
-                        <Card>
-                          {/* <CardHeader title='Basic Info' /> */}
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.full_name && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      First Name
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {userdetail.full_name}
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
+                      <>
+                        {userdetail && (
+                          <>
+                            <BasicInfo
+                              userDetail={userdetail}
+                              handleDrawerStateChangeOpen={
+                                handleDrawerStateChangeOpen
+                              }
+                              isEditMode={isEditMode}
+                              onHandleEditCloseChange={handleEditCloseChange}
+                            />
+                          </>
+                        )}
 
-                              {/* {userdetail?.last_name && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Last Name
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {userdetail.last_name}
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )} */}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.email && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Email
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {userdetail?.email}
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-
-                              {userdetail?.phone && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Phone
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {userdetail?.phone}
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.jobseekerDetails
-                                ?.current_location && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Current Location
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {
-                                        userdetail?.jobseekerDetails
-                                          ?.current_location
-                                      }
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                              {userdetail?.jobseekerDetails
-                                ?.preferred_job_location &&
-                                userdetail?.jobseekerDetails
-                                  ?.preferred_job_location.length && (
-                                  <>
-                                    <Grid
-                                      item
-                                      lg={6}
-                                      xl={6}
-                                      xs={12}
-                                      md={12}
-                                      sm={12}
-                                    >
-                                      <Typography variant="h3" component="div">
-                                        Preferred Job Location
-                                      </Typography>
-                                      <Typography variant="h5" component="div">
-                                        {userdetail?.jobseekerDetails?.preferred_job_location.map(
-                                          (element, index) => (
-                                            <span key={index}>
-                                              {element}
-                                              {index !==
-                                                userdetail?.jobseekerDetails
-                                                  ?.preferred_job_location
-                                                  .length -
-                                                  1 && ", "}
-                                            </span>
-                                          )
-                                        )}
-                                      </Typography>
-                                    </Grid>
-                                  </>
-                                )}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.jobseekerDetails
-                                ?.current_location && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Current CTC
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {
-                                        userdetail?.jobseekerDetails
-                                          ?.current_salary
-                                      }
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                              {userdetail?.jobseekerDetails
-                                ?.total_years_of_experience && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Total years of experience
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {
-                                        userdetail?.jobseekerDetails
-                                          ?.total_years_of_experience
-                                      }
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.jobseekerDetails?.notice_period && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Notice Period
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {
-                                        userdetail?.jobseekerDetails
-                                          ?.notice_period
-                                      }
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              {userdetail?.jobseekerDetails?.skills &&
-                                userdetail?.jobseekerDetails?.skills.length && (
-                                  <>
-                                    <Grid
-                                      item
-                                      lg={6}
-                                      xl={6}
-                                      xs={12}
-                                      md={12}
-                                      sm={12}
-                                    >
-                                      <Typography variant="h3" component="div">
-                                        Skils
-                                      </Typography>
-                                      <Typography variant="h5" component="div">
-                                        {userdetail?.jobseekerDetails?.skills.map(
-                                          (element, index) => (
-                                            <span key={index}>
-                                              {element}
-                                              {index !==
-                                                userdetail?.jobseekerDetails
-                                                  ?.skills.length -
-                                                  1 && ", "}
-                                            </span>
-                                          )
-                                        )}
-                                      </Typography>
-                                    </Grid>
-                                  </>
-                                )}
-                              {userdetail?.jobseekerDetails?.designation && (
-                                <>
-                                  <Grid
-                                    item
-                                    lg={6}
-                                    xl={6}
-                                    xs={12}
-                                    md={12}
-                                    sm={12}
-                                  >
-                                    <Typography variant="h3" component="div">
-                                      Current Designation
-                                    </Typography>
-                                    <Typography variant="h5" component="div">
-                                      {
-                                        userdetail?.jobseekerDetails
-                                          ?.designation
-                                      }
-                                    </Typography>
-                                  </Grid>
-                                </>
-                              )}
-                            </Grid>
-                          </CardContent>
-
-                          <CardContent
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              mx: 32,
-                              mt: 4,
-                            }}
-                          >
-                            <Grid container spacing={2} py={2}>
-                              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                                <Button
-                                  variant="contained"
-                                  onClick={() =>
-                                    handleDrawerStateChangeOpen(
-                                      "isBasicInfoEdit"
-                                    )
-                                  }
-                                >
-                                  Edit Profile
-                                </Button>
-                              </Grid>
-                            </Grid>
-                          </CardContent>
-                        </Card>
                         {drawerState.isBasicInfoEdit && (
                           <>
                             <EditBasicInfo
@@ -600,7 +271,7 @@ const ACLPage = () => {
                             />
                           </>
                         )}
-                      </Grid>
+                      </>
                     )}
                     {activeTab === "education" && (
                       <Grid item md={12} xs={12}>
