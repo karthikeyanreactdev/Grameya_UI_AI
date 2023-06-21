@@ -3,5 +3,5 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/login": "pages/login.js",
-  "/jobseeker/profile": "pages/jobseeker/profile.js"
+  "/jobseeker/job-search": "pages/jobseeker/job-search.js"
 }

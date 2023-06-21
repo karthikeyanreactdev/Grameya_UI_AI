@@ -73,7 +73,13 @@ const navigation = () => {
       title: "Applied Jobs",
       icon: "tabler:notes",
     },
-
+    {
+      path: "/jobseeker/job-search",
+      action: "read",
+      subject: "jssearch",
+      title: "Job Search",
+      icon: "tabler:search",
+    },
     {
       path: "/jobseeker/profile",
       action: "read",

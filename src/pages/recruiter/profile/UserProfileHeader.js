@@ -15,7 +15,7 @@ import axios from "axios";
 
 // ** Icon Imports
 import Icon from "src/@core/components/icon";
-import { IconButton } from "@mui/material";
+import { Fab, IconButton } from "@mui/material";
 import {
   CameraAltOutlined,
   CameraAltSharp,
@@ -89,24 +89,29 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
         >
           <PhotoCameraFront />
         </IconButton> */}
-        {/* <Button
+        <Fab
+          color="primary"
           sx={{
             position: "relative",
             right: "24px",
             top: "20px",
-            color: "black",
-            opacity: 0.8,
+            height: "24px",
+            width: "40px",
+            // borderRadius: "24px",
+            // color: "black",
+            // background: "primary",
+            // opacity: 0.8,
           }}
         >
           {" "}
-          <Icon icon={"tabler:camera-filled"} fontSize="1.725rem" />
-        </Button> */}
+          <Icon icon={"tabler:camera-heart"} fontSize="1.325rem" />
+        </Fab>
 
         <Box
           sx={{
             width: "100%",
             display: "flex",
-            ml: { xs: 0, md: 6 },
+            // ml: { xs: 0, md: 6 },
             alignItems: "flex-end",
             flexWrap: ["wrap", "nowrap"],
             justifyContent: ["center", "space-between"],
