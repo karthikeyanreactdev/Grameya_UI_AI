@@ -89,7 +89,7 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
         >
           <PhotoCameraFront />
         </IconButton> */}
-        <Fab
+        {/* <Fab
           color="primary"
           sx={{
             position: "relative",
@@ -105,13 +105,13 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
         >
           {" "}
           <Icon icon={"tabler:camera-heart"} fontSize="1.325rem" />
-        </Fab>
+        </Fab> */}
 
         <Box
           sx={{
             width: "100%",
             display: "flex",
-            // ml: { xs: 0, md: 6 },
+            ml: { xs: 0, md: 6 },
             alignItems: "flex-end",
             flexWrap: ["wrap", "nowrap"],
             justifyContent: ["center", "space-between"],

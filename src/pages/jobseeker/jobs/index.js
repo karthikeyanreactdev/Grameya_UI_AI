@@ -252,7 +252,7 @@ const ManageAppliedJob = () => {
       </Grid> */}
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Applied Jobs" />
+          <CardHeader title="Dashboard" />
           <Divider sx={{ m: "0 !important" }} />
 
           <CardContent></CardContent>

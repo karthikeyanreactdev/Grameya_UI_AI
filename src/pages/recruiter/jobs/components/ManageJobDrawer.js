@@ -39,7 +39,7 @@ import { useDispatch, useSelector } from "react-redux";
 // ** Actions Imports
 // import { addUser } from "src/store/apps/user";
 import {
-  Autocomplete,
+  // Autocomplete,
   Chip,
   FormControl,
   FormHelperText,
@@ -48,6 +48,12 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+
+const filterOptions = createFilterOptions({
+  matchFrom: "start",
+  stringify: (option) => option.name,
+});
 import { LoadingButton } from "@mui/lab";
 import {
   createJob,
@@ -61,7 +67,19 @@ import useGoogle from "react-google-autocomplete/lib/usePlacesAutocompleteServic
 import GoogleApiWrapper from "../../../../utils/GoogleMap/index";
 import useNotification from "src/hooks/useNotification";
 // import { validationSchema } from "../validation";
+import { makeStyles } from "@mui/styles";
 
+const useStyles = makeStyles({
+  root: {
+    "& .wrapper-class.rdw-editor-wrapper": {
+      borderRadius: " 0px 0px 8px 8px",
+      border: "1px solid #e0e0e0",
+      "& .notranslate.public-DraftEditor-content": {
+        padding: "0px 16px 0px 16px",
+      },
+    },
+  },
+});
 Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
 const Header = styled(Box)(({ theme }) => ({
@@ -119,6 +137,8 @@ const SideBarJob = (props) => {
 
   // ** Hooks
   const dispatch = useDispatch();
+  const classes = useStyles();
+
   const [sendNotification] = useNotification();
   const { userData } = useSelector((state) => state.auth);
 
@@ -187,7 +207,7 @@ const SideBarJob = (props) => {
           if (val === "string" && val !== "object") {
             addedSkills.push(item);
           } else {
-            skills.push(item?.value);
+            skills.push(item?.id);
           }
         });
       }
@@ -413,6 +433,7 @@ const SideBarJob = (props) => {
       variant="temporary"
       onClose={handleClose}
       ModalProps={{ keepMounted: true }}
+      className={classes.root}
       sx={{
         "& .MuiDrawer-paper": { width: { xs: "100%", sm: "100%", lg: "50%" } },
       }}
@@ -490,7 +511,7 @@ const SideBarJob = (props) => {
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <TextField
               sx={{ my: 2 }}
-              label={"Email for notification"}
+              label={"Email for Communication"}
               required
               fullWidth
               name="email"
@@ -615,17 +636,38 @@ const SideBarJob = (props) => {
               onChange={(event, item) => {
                 formik.setFieldValue("skills", item);
               }}
-              // options={skills?.map((option) => option?.name)}
-              options={skills
-                // ?.sort((a, b) => a?.name - b?.name)
-                .map((item) => ({
-                  label: item?.name,
-                  value: item?.id,
-                }))}
-              limitTags={10}
+              options={skills}
+              getOptionLabel={(option) =>
+                option?.name === null || option?.name === undefined
+                  ? option
+                  : option?.name
+              }
+              // options={skills
+              //   // ?.sort((a, b) => a?.name - b?.name)
+              //   .map((item) => ({
+              //     label: item?.name,
+              //     name: item?.id,
+              //   }))}
+              limitTags={2}
               freeSolo
               filterSelectedOptions
+              // filterOptions={filterOptions}
               disableClearable
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    // color="black"
+                    // sx={{ color: "#" }}
+                    label={
+                      option?.name === null || option?.name === undefined
+                        ? option
+                        : option?.name
+                    }
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
               renderInput={(params) => (
                 <TextField
                   required
@@ -844,12 +886,13 @@ const SideBarJob = (props) => {
                     formik.setFieldValue("jobType", e.target.value)
                   }
                 >
-                  <MenuItem value={"internship"}>Internship</MenuItem>
-                  <MenuItem value={"permenant"}>Permenant</MenuItem>
-                  <MenuItem value={"temporary"}>Temporary</MenuItem>
-                  <MenuItem value={"onsite"}>On Site</MenuItem>
-                  <MenuItem value={"wfh"}>WFH</MenuItem>
                   <MenuItem value={"contract"}>Contract</MenuItem>
+                  <MenuItem value={"internship"}>Internship</MenuItem>
+                  <MenuItem value={"onsite"}>On Site</MenuItem>
+                  <MenuItem value={"permenant"}>Permenant</MenuItem>
+                  <MenuItem value={"parttime"}>Part Time</MenuItem>
+                  <MenuItem value={"temporary"}>Temporary</MenuItem>
+                  <MenuItem value={"wfh"}>WFH</MenuItem>
                 </Select>
                 <FormHelperText>
                   {formik.touched.jobType &&
@@ -871,17 +914,16 @@ const SideBarJob = (props) => {
               editorState={jd}
               onEditorStateChange={(data) => setJd(data)}
               labelId="jd"
+              // toolbar={{
+              //   inline: { inDropdown: true },
+              //   list: { inDropdown: true },
+              //   // textAlign: { inDropdown: true },
+              //   // link: { inDropdown: true },
+              //   history: { inDropdown: true },
+              // }}
             />
           </Grid>
-          <Grid
-            item
-            lg={12}
-            xl={12}
-            xs={12}
-            md={12}
-            sm={6}
-            sx={{ my: 2, mx: 2 }}
-          >
+          <Grid item lg={12} xl={12} xs={12} md={12} sm={6} sx={{ my: 2 }}>
             <Autocomplete
               id="location"
               name="location"
@@ -1071,7 +1113,7 @@ const SideBarJob = (props) => {
               />
             </Grid>
           </Grid>
-          <Grid container spacing={2} sx={{ mx: 0.2 }}>
+          {/* <Grid container spacing={2} sx={{ mx: 0.2 }}>
             <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
               <TextField
                 id="longitude"
@@ -1124,7 +1166,7 @@ const SideBarJob = (props) => {
                 }
               />
             </Grid>
-          </Grid>
+          </Grid> */}
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <LoadingButton
               fullWidth

@@ -39,7 +39,7 @@ const navigation = () => {
       action: "read",
       subject: "search",
       title: "Resume Search",
-      icon: "tabler:list-search",
+      icon: "tabler:user-search",
     },
     {
       path: "/recruiter/jobs",
@@ -60,19 +60,19 @@ const navigation = () => {
       sectionTitle: "Job Seeker Menu",
     },
     {
-      path: "/jobseeker/dashboard",
-      action: "read",
-      subject: "jsdashboard",
+      path: "/jobseeker/jobs",
+      action: "manage",
+      subject: "jsajobs",
       title: "Dashboard",
       icon: "tabler:layout-dashboard",
     },
-    {
-      path: "/jobseeker/jobs",
-      action: "read",
-      subject: "jsajobs",
-      title: "Applied Jobs",
-      icon: "tabler:notes",
-    },
+    // {
+    //   path: "/jobseeker/jobs",
+    //   action: "read",
+    //   subject: "jsajobs",
+    //   title: "Applied Jobs",
+    //   icon: "tabler:notes",
+    // },
     {
       path: "/jobseeker/job-search",
       action: "read",

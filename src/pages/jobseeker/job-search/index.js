@@ -61,11 +61,15 @@ import {
 import {
   Button,
   CardActions,
+  CircularProgress,
   FormControl,
   InputLabel,
   Select,
+  TablePagination,
   TextField,
 } from "@mui/material";
+import { jobSearchSeeker } from "src/store/apps/jobseeker/job-search";
+import { LoadingButton } from "@mui/lab";
 
 const userStatusObj = {
   active: "success",
@@ -112,7 +116,6 @@ const CandidateJobSearch = () => {
   const dispatch = useDispatch();
   const { direction } = theme;
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
-  const [location, setLocation] = useState("");
   const [plan, setPlan] = useState("");
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("");
@@ -129,9 +132,9 @@ const CandidateJobSearch = () => {
     setValue(val);
   }, []);
 
-  const handleLocationChange = useCallback((e) => {
-    setLocation(e.target.value);
-  }, []);
+  // const handleLocationChange = useCallback((e) => {
+  //   setLocation(e.target.value);
+  // }, []);
 
   const handlePlanChange = useCallback((e) => {
     setPlan(e.target.value);
@@ -162,374 +165,57 @@ const CandidateJobSearch = () => {
       />
     );
   });
-  const searchListColumns = [
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "full_name",
-    //   headerName: "First Name",
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "last_name",
-    //   headerName: "Last Name",
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "job_title",
-    //   headerName: "Job Title",
-    //   renderCell: ({ row }) => {
-    //     const { full_name, email } = row;
 
-    //     return (
-    //       <Box sx={{ display: "flex", alignItems: "center" }}>
-    //         {renderClient(row)}
-    //         <Box
-    //           sx={{
-    //             display: "flex",
-    //             alignItems: "flex-start",
-    //             flexDirection: "column",
-    //           }}
-    //         >
-    //           <Typography
-    //             noWrap
-    //             // component={Link}
-    //             // href="/apps/user/view/account"
-    //             sx={{
-    //               fontWeight: 500,
-    //               textDecoration: "none",
-    //               color: "text.secondary",
-    //               "&:hover": { color: "primary.main" },
-    //             }}
-    //           >
-    //             {full_name}
-    //           </Typography>
-    //           <Typography
-    //             noWrap
-    //             variant="body2"
-    //             sx={{ color: "text.disabled" }}
-    //           >
-    //             {email}
-    //           </Typography>
-    //         </Box>
-    //       </Box>
-    //     );
-    //   },
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "company_name",
-    //   headerName: "Company Name",
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "phone",
-    //   headerName: "Mobile",
-    //   renderCell: ({ row }) => {
-    //     `${row.country_code}` + "-" + `${row.phone}`;
-    //   },
-    //},
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: false,
-      // field: "Action",
-      headerName: "Mached Jobs",
-      renderCell: ({ row }) => {
-        // return <Button onClick={() => {}}>View Candidate</Button>;
-        return (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sx={12} lg={12} xl={12}>
-              <Card>
-                <CardContent>
-                  <Grid
-                    container
-                    spacing={2}
-                    sx={{ display: "flex", alignItems: "center" }}
-                  >
-                    <Grid item xs={12} sm={12} md={3} lg={3}>
-                      <Typography
-                        // sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        variant="h5"
-                        gutterBottom
-                      >
-                        {row.job_title}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          "&:not(:last-of-type)": { mb: 3 },
-                          "& svg": { color: "text.secondary" },
-                        }}
-                      >
-                        <Box sx={{ display: "flex", mr: 2 }}>
-                          <Icon fontSize="1.25rem" icon="tabler:building" />
-                        </Box>
-
-                        <Box
-                          sx={{
-                            columnGap: 2,
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography sx={{ color: "text.secondary" }}>
-                            {row.company_name?.substring(0, 35)}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          "&:not(:last-of-type)": { mb: 3 },
-                          "& svg": { color: "text.secondary" },
-                        }}
-                      >
-                        <Box sx={{ display: "flex", mr: 2 }}>
-                          <Icon fontSize="1.25rem" icon="tabler:map-pin" />
-                        </Box>
-
-                        <Box
-                          sx={{
-                            columnGap: 2,
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography sx={{ color: "text.secondary" }}>
-                            {row.location}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={4} md={3} lg={3}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          "&:not(:last-of-type)": { mb: 3 },
-                          "& svg": { color: "text.secondary" },
-                        }}
-                      >
-                        <Box sx={{ display: "flex", mr: 2 }}>
-                          <Icon
-                            fontSize="1.25rem"
-                            icon="tabler:brand-google-analytics"
-                          />
-                        </Box>
-
-                        <Box
-                          sx={{
-                            columnGap: 2,
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography sx={{ color: "text.secondary" }}>
-                            {row.experience_from + "-" + row.experience_to}{" "}
-                            Years
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={4} md={3} lg={3}>
-                      {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {`₹${row.salary_from + "-" + row.salary_to} LPA`}
-                      </Typography> */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          "&:not(:last-of-type)": { mb: 3 },
-                          "& svg": { color: "text.secondary" },
-                        }}
-                      >
-                        <Box sx={{ display: "flex", mr: 2 }}>₹</Box>
-
-                        <Box
-                          sx={{
-                            columnGap: 2,
-                            display: "flex",
-                            flexWrap: "wrap",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography sx={{ color: "text.secondary" }}>
-                            {`${row.salary_from + "-" + row.salary_to} LPA`}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={4} md={3} lg={3}>
-                      <CustomChip
-                        rounded
-                        skin="light"
-                        size="small"
-                        label={row.job_type}
-                        color={userStatusObj[row.status]}
-                        sx={{ textTransform: "capitalize" }}
-                      />
-                    </Grid>
-                  </Grid>
-                  {/* <Grid container spacing={2}>
-                    <Grid item xs={12} sx={3} lg={2}>
-                      <Button size="">
-                        {row.experience_from + "-" + row.experience_to}
-                      </Button>
-                    </Grid>
-                  </Grid> */}
-                  {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                    adjective
-                  </Typography>
-                  <Typography variant="body2">
-                    well meaning and kindly.
-                    <br />
-                    {'"a benevolent smile"'}
-                  </Typography> */}
-                </CardContent>
-                <CardActions>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} lg={6}>
-                      <Typography
-                        // component="div"
-                        color="text.secondary"
-                        sx={{ fontSize: 16 }}
-                      ></Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={12}
-                      lg={6}
-                      sx={{ display: "flex", justifyContent: "flex-end" }}
-                    >
-                      <Button size="">Apply</Button>
-                    </Grid>
-                  </Grid>
-                </CardActions>
-              </Card>
-            </Grid>
-          </Grid>
-        );
-      },
-    },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "posted_on",
-    //   headerName: "Posted On",
-    //   // renderHeader: (params) => (
-    //   //   <strong>
-    //   //     {"Company Name "}
-    //   //     <span role="img" aria-label="enjoy">
-    //   //       🏢
-    //   //     </span>
-    //   //   </strong>
-    //   // ),
-    //   renderCell: ({ row }) => `${moment(row.posted_on).format("DD/MM/YYYY")}`,
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "total_applications",
-    //   headerName: "Total Applicants",
-    //   // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    // },
-
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "status",
-    //   headerName: "Status",
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <CustomChip
-    //         rounded
-    //         skin="light"
-    //         size="small"
-    //         label={row.status}
-    //         color={userStatusObj[row.status]}
-    //         sx={{ textTransform: "capitalize" }}
-    //       />
-    //     );
-    //   },
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: false,
-    //   // field: "Action",
-    //   headerName: "Action",
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Button
-    //         onClick={() => {
-    //           setId(row.id);
-    //           toggleAddUserDrawer();
-    //         }}
-    //       >
-    //         Edit
-    //       </Button>
-    //     );
-    //   },
-    // },
-  ];
   const [jobRole, setjobRole] = useState("");
   const [experience, setExperiance] = useState("");
+  const [salaryFrom, setSalaryFrom] = useState("");
+  const [salaryTo, setSalaryTo] = useState("");
   const [jobType, setJobType] = useState("");
   const [noticePeriod, setNoticePeriod] = useState("");
-  const [skills, setSkills] = useState([]);
-  const { resumeSearchList, isLoading } = useSelector(
-    (state) => state.resumeSearch
+  const [location, setLocation] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const { machedJobList, isLoading, pageCount } = useSelector(
+    (state) => state.jobSearch
   );
-  console.log("resumeSearch", resumeSearchList);
   const handleSearch = async () => {
+    if (keyword === "") {
+      return;
+    }
     const params = {
-      page: paginationModel?.page,
-      size: paginationModel?.pageSize,
-      job_role: "Node js Developer",
-      experience: "4-5 years",
-      job_type: "permanant",
-      notice_period: "30 days",
-      skills: "",
+      page: page,
+      size: rowsPerPage,
+      search_keyword: keyword,
+      experience_from: "0",
+      experience_to: experience,
+      job_type: jobType,
+      notice_period: noticePeriod,
+      salary_from: salaryFrom,
+      salary_to: salaryTo,
+      job_location: location,
     };
-    dispatch(resumeCandidates(params));
+    dispatch(jobSearchSeeker(params));
   };
 
   useEffect(() => {
-    handleSearch();
+    // handleSearch();
   }, []);
   useEffect(() => {
     handleSearch();
-  }, [paginationModel?.page, paginationModel?.pageSize]);
+  }, [rowsPerPage, page]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   return (
     <Grid container spacing={6} className={classes.root}>
-      {/* <Grid item md={6} xs={12}>
-        <Card>
-          <CardHeader title='Employer Dashboard' />
-          <CardContent>
-            <Typography sx={{ mb: 4 }}>Employer Dashboard</Typography>
-            <Typography sx={{ color: 'primary.main' }}>This card is visible to 'user' and 'admin' both</Typography>
-          </CardContent>
-        </Card>
-      </Grid> */}
       <Grid item xs={12}>
         <Card>
           <CardHeader title="Job Search " />
@@ -546,47 +232,28 @@ const CandidateJobSearch = () => {
                   size="small"
                   name="Search"
                   placeholder="Search skills, resume headline..etc"
-                  // error={formik.touched.email && Boolean(formik.errors.email)}
-                  // value={formik.values.email
-                  //   ?.trimStart()
-                  //   .replace(/\s\s+/g, "")
-                  //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                  // // onChange={(e) => formik.handleChange(e)}
-                  // helperText={
-                  //   formik.touched.email &&
-                  //   formik.errors.email &&
-                  //   formik.errors.email
-                  // }
+                  value={keyword
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setKeyword(e.target.value || "")}
                 />
               </Grid>
               <Grid item sm={3} xs={12} lg={3} mt={0}>
-                <FormControl fullWidth sx={{ my: 2 }} size="small">
-                  <InputLabel id="demo-simple-select-label">
-                    Job Location
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    // value={formik.values.location}
-                    label="Job Location "
-                    // error={
-                    //   formik.touched.location && Boolean(formik.errors.location)
-                    // }
-                    // helperText={
-                    //   formik.touched.location &&
-                    //   formik.errors.location &&
-                    //   formik.errors.location
-                    // }
-                    // onChange={(e) =>
-                    //   formik.setFieldValue("location", e.target.value)
-                    // }
-                  >
-                    <MenuItem value={"Chennai"}>Chennai</MenuItem>
-                    <MenuItem value={"Delhi"}>Delhi</MenuItem>
-                    <MenuItem value={"Mumbai"}>Mumbai</MenuItem>
-                    <MenuItem value={"Bangalore"}>Bangalore</MenuItem>
-                  </Select>
-                </FormControl>
+                <TextField
+                  sx={{ my: 2 }}
+                  label={"Job Location"}
+                  required
+                  fullWidth
+                  size="small"
+                  name="Job Location"
+                  placeholder="Chennai, Delhi, Mumbai..."
+                  value={location
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setLocation(e.target.value || "")}
+                />
               </Grid>
               <Grid item sm={3} xs={12} lg={3} mt={0}>
                 <TextField
@@ -597,17 +264,11 @@ const CandidateJobSearch = () => {
                   size="small"
                   name="Experiance"
                   placeholder="Experiance (in years)"
-                  // error={formik.touched.email && Boolean(formik.errors.email)}
-                  // value={formik.values.email
-                  //   ?.trimStart()
-                  //   .replace(/\s\s+/g, "")
-                  //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                  // // onChange={(e) => formik.handleChange(e)}
-                  // helperText={
-                  //   formik.touched.email &&
-                  //   formik.errors.email &&
-                  //   formik.errors.email
-                  // }
+                  value={experience
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setExperiance(e.target.value || "")}
                 />
               </Grid>
             </Grid>
@@ -623,17 +284,11 @@ const CandidateJobSearch = () => {
                       size="small"
                       name="salaryFrom"
                       placeholder="Salary from (in LPA)"
-                      // error={formik.touched.email && Boolean(formik.errors.email)}
-                      // value={formik.values.email
-                      //   ?.trimStart()
-                      //   .replace(/\s\s+/g, "")
-                      //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                      // // onChange={(e) => formik.handleChange(e)}
-                      // helperText={
-                      //   formik.touched.email &&
-                      //   formik.errors.email &&
-                      //   formik.errors.email
-                      // }
+                      value={salaryFrom
+                        ?.trimStart()
+                        .replace(/\s\s+/g, "")
+                        .replace(/\p{Emoji_Presentation}/gu, "")}
+                      onChange={(e) => setSalaryFrom(e.target.value)}
                     />
                   </Grid>
                   <Grid item sm={6} xs={12} lg={6}>
@@ -645,17 +300,11 @@ const CandidateJobSearch = () => {
                       size="small"
                       name="salaryTo"
                       placeholder="Salary To (in LPA)"
-                      // error={formik.touched.email && Boolean(formik.errors.email)}
-                      // value={formik.values.email
-                      //   ?.trimStart()
-                      //   .replace(/\s\s+/g, "")
-                      //   .replace(/\p{Emoji_Presentation}/gu, "")}
-                      // // onChange={(e) => formik.handleChange(e)}
-                      // helperText={
-                      //   formik.touched.email &&
-                      //   formik.errors.email &&
-                      //   formik.errors.email
-                      // }
+                      value={salaryTo
+                        ?.trimStart()
+                        .replace(/\s\s+/g, "")
+                        .replace(/\p{Emoji_Presentation}/gu, "")}
+                      onChange={(e) => setSalaryTo(e.target.value)}
                     />
                   </Grid>
                 </Grid>
@@ -669,14 +318,19 @@ const CandidateJobSearch = () => {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    // value={formik.values.jobType}
+                    value={jobType}
+                    onChange={(e) => setJobType(e.target.value || "")}
                     label="Job Type"
                   >
-                    <MenuItem value={0}>Permenant</MenuItem>
-                    <MenuItem value={15}>Temporary</MenuItem>
-                    <MenuItem value={30}>OnSite</MenuItem>
-                    <MenuItem value={90}>WFH</MenuItem>
-                    <MenuItem value={90}>Contract</MenuItem>
+                    <MenuItem value={""}>All</MenuItem>
+
+                    <MenuItem value={"contract"}>Contract</MenuItem>
+                    <MenuItem value={"internship"}>Internship</MenuItem>
+                    <MenuItem value={"onsite"}>On Site</MenuItem>
+                    <MenuItem value={"permenant"}>Permenant</MenuItem>
+                    <MenuItem value={"parttime"}>Part Time</MenuItem>
+                    <MenuItem value={"temporary"}>Temporary</MenuItem>
+                    <MenuItem value={"wfh"}>WFH</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -688,137 +342,309 @@ const CandidateJobSearch = () => {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    // value={formik.values.noticePeriod}
+                    value={noticePeriod}
+                    onChange={(e) => setNoticePeriod(e.target.value || "")}
                     label="Notice Period"
                   >
-                    <MenuItem value={0}>Immediate</MenuItem>
-                    <MenuItem value={15}>15 Days</MenuItem>
-                    <MenuItem value={30}>30 Days</MenuItem>
-                    <MenuItem value={90}>90 Days</MenuItem>
+                    <MenuItem value={""}>All</MenuItem>
+                    <MenuItem value={"immediate"}>Immediate</MenuItem>
+                    <MenuItem value={"15 Days"}>15 Days</MenuItem>
+                    <MenuItem value={"30 Days"}>30 Days</MenuItem>
+                    <MenuItem value={"45 Days"}>45 Days</MenuItem>
+                    <MenuItem value={"60 Days"}>60 Days</MenuItem>
+                    <MenuItem value={"90 Days"}>90 Days</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
             </Grid>
+            <Grid
+              item
+              sm={12}
+              xs={12}
+              lg={12}
+              mt={2}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <LoadingButton
+                loading={isLoading}
+                variant="contained"
+                onClick={() => handleSearch()}
+                disabled={keyword === ""}
+              >
+                Search
+              </LoadingButton>
+            </Grid>
           </CardContent>
-          {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
-          <Box p={4}>
-            <DataGrid
-              autoHeight
-              // rowHeight={62}
-              rows={[
-                {
-                  id: "648dec595428d50008ed1ee5",
-                  company_name: "ABC Private Limited",
-                  job_title: "Backend Developer",
-                  location: "Chennai",
-                  experience_from: 5,
-                  experience_to: 10,
-                  salary_from: 5,
-                  salary_to: 10,
-                  notice_period: "30 days",
-                  job_type: "permanant",
-                  short_description: "This is a full time job.",
-                  email: "sarolove001@gmail.com",
-                  address_line_one: "Kulithalai bus stand",
-                  address_line_two: "Kulithalai",
-                  city: "Karur",
-                  state: "Tamilnadu",
-                  postal_code: "639120",
-                  latitude: "10.77348284",
-                  longitude: "78.8874482492",
-                  status: "active",
-                  verification_status: "pending",
-                  history_of_status: [],
-                  created: "2023-06-17T17:24:41.562Z",
-                  updated: "2023-06-19T01:12:52.509Z",
-                  country: "India",
-                  job_category_id: "648d7ce99b577c0b90803671",
-                  job_category: "Information Technology (IT)",
-                  job_sub_category_id: "648d806c8ab51d180bbdad20",
-                  job_sub_category: "Software Developer/Engineer",
-                  skills_ids: [
-                    "648db7560bde93631a5d4cd3",
-                    "648db7560bde93631a5d4cd7",
-                    "648db7560bde93631a5d4ce8",
-                    "648db7560bde93631a5d4d07",
-                    "648fab947e4a153bc8910ba6",
-                  ],
-                  skills: [
-                    "React",
-                    "Java",
-                    "Angular Developer",
-                    "Backend development",
-                    "JavaScript",
-                  ],
-                },
-                {
-                  id: "648faab24ed50f392ab83272",
-                  company_name: "Instrive Softlabs Private Ltd",
-                  job_title: "Node.js Developer",
-                  location: "Chennai",
-                  experience_from: 5,
-                  experience_to: 10,
-                  salary_from: 5,
-                  salary_to: 10,
-                  notice_period: "30 days",
-                  job_type: "permanant",
-                  short_description: "This is a full time job.",
-                  email: "sarolove001@gmail.com",
-                  address_line_one: "Kulithalai bus stand",
-                  address_line_two: "Kulithalai",
-                  city: "Karur",
-                  state: "Tamilnadu",
-                  country: "India",
-                  postal_code: "639120",
-                  latitude: "10.77348284",
-                  longitude: "78.8874482492",
-                  status: "active",
-                  verification_status: "pending",
-                  history_of_status: [],
-                  created: "2023-06-19T01:09:06.422Z",
-                  updated: "2023-06-21T01:29:27.431Z",
-                  job_category_id: "648d7ce99b577c0b90803671",
-                  job_category: "Information Technology (IT)",
-                  job_sub_category_id: "648d806c8ab51d180bbdad20",
-                  job_sub_category: "Software Developer/Engineer",
-                  skills_ids: [
-                    "648db7560bde93631a5d4cd3",
-                    "648db7560bde93631a5d4cd7",
-                    "648db7560bde93631a5d4ce8",
-                    "648db7560bde93631a5d4d07",
-                  ],
-                  skills: [
-                    "Backend development",
-                    "Java",
-                    "JavaScript",
-                    "React",
-                  ],
-                },
-              ]}
-              // sx={{
-              //   "& .MuiDataGrid-root.MuiDataGrid-cell": {
-              //     border: "none",
-              //     borderColor: "transparent",
-              // }}
+          {machedJobList.length > 0 && (
+            <Grid item xs={12}>
+              <Box pb={2} pl={6}>
+                <Typography variant="h6">Mached Jobs</Typography>
+              </Box>
+            </Grid>
+          )}
+          {isLoading && (
+            <Box
               sx={{
-                "& .MuiDataGrid-root.MuiDataGrid-cell": {
-                  borderColor: "transparent",
-                  borderBottom: "0px soild !important",
-                },
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mb: 16,
               }}
-              loading={isLoading}
-              rowHeight={window.innerHeight > 1024 ? 200 : 300}
-              columns={searchListColumns}
-              disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-            />
-          </Box>
+            >
+              <CircularProgress />
+            </Box>
+          )}
+          {machedJobList.length > 0 && (
+            <Box p={4}>
+              <Grid container spacing={2}>
+                {machedJobList?.map((row) => {
+                  return (
+                    <Grid item xs={12} sx={12} lg={12} xl={12}>
+                      <Card
+                        raised={false}
+                        sx={{
+                          mb: 2,
+                          border: "1px solid rgba(0, 0, 0, 0.5)",
+                          // boxShadow: "0 0 2px 2px #187de4",
+                          "&:hover": {
+                            // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+
+                            boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                            transform: "translateY(-5px)",
+                          },
+                        }}
+                      >
+                        <CardContent sx={{ pb: 0 }}>
+                          <Grid
+                            container
+                            spacing={2}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Grid item xs={11} sm={11} md={11} lg={11}>
+                              <Typography
+                                sx={{ mb: 4 }}
+                                color="text.primary"
+                                variant="h5"
+                                gutterBottom
+                              >
+                                {row.job_title?.substring(0, 75)}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={1} sm={1} md={1} lg={1}>
+                              <Box sx={{ display: "flex", mr: 2 }}>
+                                <Icon
+                                  fontSize="1.25rem"
+                                  icon="tabler:heart"
+                                  color="#D2042D"
+                                />
+                              </Box>
+                            </Grid>
+                          </Grid>
+                          <Grid
+                            container
+                            spacing={2}
+                            sx={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Grid item xs={12} sm={12} md={3} lg={3}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.secondary" },
+                                }}
+                              >
+                                <Box sx={{ display: "flex", mr: 2 }}>
+                                  <Icon
+                                    fontSize="1.25rem"
+                                    icon="tabler:building"
+                                    color="brown"
+                                  />
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography sx={{ color: "text.primary" }}>
+                                    {row.company_name?.substring(0, 35)}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.secondary" },
+                                }}
+                              >
+                                <Box sx={{ display: "flex", mr: 2 }}>
+                                  <Icon
+                                    fontSize="1.25rem"
+                                    icon="tabler:map-pin"
+                                    color="red"
+                                  />
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography sx={{ color: "text.primary" }}>
+                                    {row.city}, {row.state}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={3} lg={3}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.primary" },
+                                }}
+                              >
+                                <Box sx={{ display: "flex", mr: 2 }}>
+                                  <Icon
+                                    fontSize="1.25rem"
+                                    icon="tabler:brand-google-analytics"
+                                    color="darkgreen"
+                                  />
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography sx={{ color: "text.primary" }}>
+                                    {row.experience_from +
+                                      "-" +
+                                      row.experience_to}{" "}
+                                    Years
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={3} lg={3}>
+                              {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {`₹${row.salary_from + "-" + row.salary_to} LPA`}
+                      </Typography> */}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.primary" },
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    mr: 2,
+                                    color: "warning",
+                                  }}
+                                >
+                                  ₹
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography sx={{ color: "text.primary" }}>
+                                    {`${
+                                      row.salary_from + "-" + row.salary_to
+                                    } LPA`}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={3} lg={3}>
+                              <CustomChip
+                                rounded
+                                skin="light"
+                                size="small"
+                                label={row.job_type}
+                                color={userStatusObj[row.status]}
+                                sx={{ textTransform: "capitalize" }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                        <CardActions sx={{ pb: 3, pl: 0 }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} lg={6}>
+                              <Typography
+                                // component="div"
+                                color="text.secondary"
+                                sx={{ fontSize: 16 }}
+                              ></Typography>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              sm={12}
+                              lg={6}
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <Button size="small" variant="contained">
+                                View Job
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+              {machedJobList.length > 0 && (
+                <TablePagination
+                  component="div"
+                  count={pageCount?.totalPages}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              )}
+            </Box>
+          )}
+          {!isLoading && machedJobList.length === 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mb: 16,
+              }}
+            >
+              <Typography>No Match Found</Typography>
+            </Box>
+          )}
         </Card>
       </Grid>
-
-      {/* <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} /> */}
     </Grid>
   );
 };

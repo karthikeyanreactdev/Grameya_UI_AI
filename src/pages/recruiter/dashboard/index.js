@@ -51,6 +51,14 @@ const Applications = () => {
       flex: 0.1,
       minWidth: 100,
       sortable: true,
+      field: "location",
+      headerName: "Location",
+      renderCell: ({ row }) => `${row.city}, ${row.state}`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
 
       field: "posted_on",
       headerName: "Posted On",
@@ -115,10 +123,10 @@ const Applications = () => {
     // },
   ];
   const getApplicants = () => {
-      const params = {
-        page: paginationModel?.page,
-        size: paginationModel?.pageSize,
-      };
+    const params = {
+      page: paginationModel?.page,
+      size: paginationModel?.pageSize,
+    };
     dispatch(getApplicantsList(params));
   };
   useEffect(() => {

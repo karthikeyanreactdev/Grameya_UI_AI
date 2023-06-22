@@ -63,6 +63,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 const userStatusObj = {
   active: "success",
@@ -99,7 +100,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { direction } = theme;
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
-  const [location, setLocation] = useState("");
+  // const [location, setLocation] = useState("");
   const [plan, setPlan] = useState("");
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("");
@@ -116,9 +117,9 @@ const Dashboard = () => {
     setValue(val);
   }, []);
 
-  const handleLocationChange = useCallback((e) => {
-    setLocation(e.target.value);
-  }, []);
+  // const handleLocationChange = useCallback((e) => {
+  //   setLocation(e.target.value);
+  // }, []);
 
   const handlePlanChange = useCallback((e) => {
     setPlan(e.target.value);
@@ -150,31 +151,17 @@ const Dashboard = () => {
     );
   });
   const searchListColumns = [
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "full_name",
-    //   headerName: "First Name",
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-    //   field: "last_name",
-    //   headerName: "Last Name",
-    // },
     {
       flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-      field: "job_title",
-      headerName: "Job Title",
+      minWidth: 300,
+      // sortable: true,
+      field: "full_name",
+      headerName: "Candidate Name",
       renderCell: ({ row }) => {
-        const { full_name, email } = row;
+        const { full_name, designation } = row;
 
         return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", width: "200px" }}>
             {renderClient(row)}
             <Box
               sx={{
@@ -201,7 +188,7 @@ const Dashboard = () => {
                 variant="body2"
                 sx={{ color: "text.disabled" }}
               >
-                {email}
+                {designation}
               </Typography>
             </Box>
           </Box>
@@ -225,6 +212,13 @@ const Dashboard = () => {
         `${row.country_code}` + "-" + `${row.phone}`;
       },
     },
+
+    {
+      flex: 0.1,
+      sortable: true,
+      field: "city",
+      headerName: "Location",
+    },
     {
       flex: 0.1,
       minWidth: 100,
@@ -235,119 +229,181 @@ const Dashboard = () => {
         return <Button onClick={() => {}}>View Candidate</Button>;
       },
     },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "posted_on",
-    //   headerName: "Posted On",
-    //   // renderHeader: (params) => (
-    //   //   <strong>
-    //   //     {"Company Name "}
-    //   //     <span role="img" aria-label="enjoy">
-    //   //       🏢
-    //   //     </span>
-    //   //   </strong>
-    //   // ),
-    //   renderCell: ({ row }) => `${moment(row.posted_on).format("DD/MM/YYYY")}`,
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "total_applications",
-    //   headerName: "Total Applicants",
-    //   // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    // },
-
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: true,
-
-    //   field: "status",
-    //   headerName: "Status",
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <CustomChip
-    //         rounded
-    //         skin="light"
-    //         size="small"
-    //         label={row.status}
-    //         color={userStatusObj[row.status]}
-    //         sx={{ textTransform: "capitalize" }}
-    //       />
-    //     );
-    //   },
-    // },
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: false,
-    //   // field: "Action",
-    //   headerName: "Action",
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Button
-    //         onClick={() => {
-    //           setId(row.id);
-    //           toggleAddUserDrawer();
-    //         }}
-    //       >
-    //         Edit
-    //       </Button>
-    //     );
-    //   },
-    // },
   ];
   const [jobRole, setjobRole] = useState("");
   const [experience, setExperiance] = useState("");
+  const [salaryFrom, setSalaryFrom] = useState("");
+  const [salaryTo, setSalaryTo] = useState("");
   const [jobType, setJobType] = useState("");
   const [noticePeriod, setNoticePeriod] = useState("");
-  const [skills, setSkills] = useState([]);
+  const [location, setLocation] = useState("");
+  const [keyword, setKeyword] = useState("");
   const { resumeSearchList, isLoading } = useSelector(
     (state) => state.resumeSearch
   );
   console.log("resumeSearch", resumeSearchList);
   const handleSearch = async () => {
+    if (keyword === "") {
+      return;
+    }
     const params = {
       page: paginationModel?.page,
       size: paginationModel?.pageSize,
-      job_role: "Node js Developer",
-      experience: "4-5 years",
-      job_type: "permanant",
-      notice_period: "30 days",
-      skills: "",
+      search_keyword: keyword,
+      experience_from: "0",
+      experience_to: experience,
+      job_type: jobType,
+      notice_period: noticePeriod,
+      salary_from: salaryFrom,
+      salary_to: salaryTo,
+      job_location: location,
     };
+
     dispatch(resumeCandidates(params));
   };
 
   useEffect(() => {
-    handleSearch();
+    // handleSearch();
   }, []);
   useEffect(() => {
     handleSearch();
   }, [paginationModel?.page, paginationModel?.pageSize]);
   return (
     <Grid container spacing={6}>
-      {/* <Grid item md={6} xs={12}>
-        <Card>
-          <CardHeader title='Employer Dashboard' />
-          <CardContent>
-            <Typography sx={{ mb: 4 }}>Employer Dashboard</Typography>
-            <Typography sx={{ color: 'primary.main' }}>This card is visible to 'user' and 'admin' both</Typography>
-          </CardContent>
-        </Card>
-      </Grid> */}
       <Grid item xs={12}>
         <Card>
           <CardHeader title="Resume Search " />
           <Divider sx={{ m: "0 !important" }} />
 
           <CardContent>
-            <Grid item sm={4} xs={12} lg={12} mt={0}>
+            <Grid container spacing={2}>
+              <Grid item sm={6} xs={12} lg={8} mt={0}>
+                <TextField
+                  sx={{ my: 2 }}
+                  label={"Search"}
+                  required
+                  fullWidth
+                  size="small"
+                  name="Search"
+                  placeholder="Search skills, resume headline..etc"
+                  value={keyword
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setKeyword(e.target.value || "")}
+                />
+              </Grid>
+              <Grid item sm={3} xs={12} lg={4} mt={0}>
+                <TextField
+                  sx={{ my: 2 }}
+                  label={"Job Location"}
+                  required
+                  fullWidth
+                  size="small"
+                  name="Job Location"
+                  placeholder="Chennai, Delhi, Mumbai..."
+                  value={location
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setLocation(e.target.value || "")}
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item sm={4} xs={12} lg={6}>
+                <Grid container spacing={2}>
+                  <Grid item sm={6} xs={12} lg={6}>
+                    <TextField
+                      sx={{ my: 2 }}
+                      label={"Salary from"}
+                      required
+                      fullWidth
+                      size="small"
+                      name="salaryFrom"
+                      placeholder="Salary from (in LPA)"
+                      value={salaryFrom
+                        ?.trimStart()
+                        .replace(/\s\s+/g, "")
+                        .replace(/\p{Emoji_Presentation}/gu, "")}
+                      onChange={(e) => setSalaryFrom(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item sm={6} xs={12} lg={6}>
+                    <TextField
+                      sx={{ my: 2 }}
+                      label={"Salary To"}
+                      fullWidth
+                      size="small"
+                      name="salaryTo"
+                      placeholder="Salary To (in LPA)"
+                      value={salaryTo
+                        ?.trimStart()
+                        .replace(/\s\s+/g, "")
+                        .replace(/\p{Emoji_Presentation}/gu, "")}
+                      onChange={(e) => setSalaryTo(e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item sm={4} xs={12} lg={3}>
+                <TextField
+                  sx={{ my: 2 }}
+                  label={"Experiance (in years)"}
+                  fullWidth
+                  size="small"
+                  name="Experiance"
+                  placeholder="Experiance (in years)"
+                  value={experience
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setExperiance(e.target.value || "")}
+                />
+              </Grid>
+              <Grid item sm={4} xs={12} lg={3}>
+                <FormControl fullWidth sx={{ my: 2 }} size="small">
+                  <InputLabel id="demo-simple-select-label ">
+                    Notice Period
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={noticePeriod}
+                    onChange={(e) => setNoticePeriod(e.target.value || "")}
+                    label="Notice Period"
+                  >
+                    <MenuItem value={""}>All</MenuItem>
+                    <MenuItem value={"immediate"}>Immediate</MenuItem>
+                    <MenuItem value={"15 Days"}>15 Days</MenuItem>
+                    <MenuItem value={"30 Days"}>30 Days</MenuItem>
+                    <MenuItem value={"45 Days"}>45 Days</MenuItem>
+                    <MenuItem value={"60 Days"}>60 Days</MenuItem>
+                    <MenuItem value={"90 Days"}>90 Days</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Grid
+              item
+              sm={12}
+              xs={12}
+              lg={12}
+              mt={2}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <LoadingButton
+                disabled={keyword === ""}
+                loading={isLoading}
+                variant="contained"
+                onClick={() => handleSearch()}
+              >
+                Search
+              </LoadingButton>
+            </Grid>
+            {/* <Grid item sm={4} xs={12} lg={12} mt={0}>
               <TextField
                 sx={{ my: 2 }}
                 label={"Search"}
@@ -435,7 +491,7 @@ const Dashboard = () => {
                   </Select>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
           </CardContent>
           {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
           <Box p={4}>

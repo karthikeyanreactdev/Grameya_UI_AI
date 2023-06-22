@@ -508,7 +508,7 @@ const Profile = () => {
             </Grid>
             <TextField
               id="addressLineOne"
-              label="Address Line 1 (e.g. House No./ Street
+              label="Address Line 1 (e.g. House No / Street
             Name) *"
               variant={"outlined"}
               disabled={!isEdit}
@@ -529,7 +529,7 @@ const Profile = () => {
             />
             <TextField
               id="addressLineTwo"
-              label="Address Line 2 (e.g. Landmark/ Locality)"
+              label="Address Line 2 (e.g. Landmark / Locality)"
               variant={"outlined"}
               disabled={!isEdit}
               fullWidth
@@ -619,7 +619,7 @@ const Profile = () => {
                 <TextField
                   id="postalCode"
                   name="postalCode"
-                  label="Postal Code *"
+                  label="Pin Code *"
                   variant="outlined"
                   disabled={!isEdit}
                   fullWidth
@@ -645,7 +645,7 @@ const Profile = () => {
                 />
               </Grid>
             </Grid>
-            <Grid container spacing={2}>
+            {/* <Grid container spacing={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
                 <TextField
                   id="longitude"
@@ -700,7 +700,7 @@ const Profile = () => {
                   }
                 />
               </Grid>
-            </Grid>
+            </Grid> */}
             <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
               <LoadingButton
                 fullWidth

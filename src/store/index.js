@@ -13,6 +13,7 @@ import manageJob from "src/store/apps/recruiter/manageJob/index";
 import applications from "src/store/apps/recruiter/applications/index";
 import resumeSearch from "src/store/apps/recruiter/resume-search/index";
 import appliedJobs from "src/store/apps/jobseeker/applications/index";
+import jobSearch from "src/store/apps/jobseeker/job-search/index";
 import misc from "src/store/apps/misc/index";
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     misc,
     //seeker
     appliedJobs,
+    jobSearch,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
