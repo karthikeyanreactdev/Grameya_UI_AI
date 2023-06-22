@@ -33,7 +33,12 @@ const menuProps = {
   },
 };
 
-const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
+const AddNewEducation = ({
+  isOpen,
+  onClose,
+  getProfileDetail,
+  onHandleChangeLoading,
+}) => {
   const [mainCourse, setMainCourse] = useState(null);
   const [subCourse, setSubCourse] = useState(null);
   const [formValue, setFormValue] = useState(null);
@@ -89,6 +94,7 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
 
   const handleFormSubmit = async () => {
     setSubmitted(true);
+    onHandleChangeLoading(true);
     try {
       const response = await addJobseekerEducation(formValue);
       console.log("response", response);
@@ -106,6 +112,8 @@ const AddNewEducation = ({ isOpen, onClose, getProfileDetail }) => {
         message: e,
         variant: "error",
       });
+    } finally {
+      onHandleChangeLoading(false);
     }
   };
 

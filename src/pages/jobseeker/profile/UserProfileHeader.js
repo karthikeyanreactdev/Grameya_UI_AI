@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // ** MUI Components
 import Box from "@mui/material/Box";
@@ -15,6 +15,8 @@ import axios from "axios";
 
 // ** Icon Imports
 import Icon from "src/@core/components/icon";
+import { updateResume } from "src/api-services/seeker/profile";
+import useNotification from "src/hooks/useNotification";
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -27,7 +29,12 @@ const ProfilePicture = styled("img")(({ theme }) => ({
   },
 }));
 
-const UserProfileHeader = ({ onHandleEdit }) => {
+const UserProfileHeader = ({
+  onHandleEdit,
+  getProfileDetail,
+  onHandleChangeLoading,
+}) => {
+  const [sendNotification] = useNotification();
   // ** State
   const [data, setData] = useState({
     location: "Chennai",
@@ -43,6 +50,43 @@ const UserProfileHeader = ({ onHandleEdit }) => {
   //   axios.get('/pages/profile-header').then(response => {})
   // }, [])
   const designationIcon = data?.designationIcon || "tabler:briefcase";
+
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    // Handle the file upload logic here
+    console.log("Selected file:", file);
+    if (file) {
+      onHandleChangeLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const response = await updateResume(formData);
+
+        console.log("response", response);
+        if (response.status === 200) {
+          sendNotification({
+            message: response?.data?.message,
+            variant: "success",
+          });
+          getProfileDetail();
+        }
+      } catch (e) {
+        console.log("e", e);
+        sendNotification({
+          message: e,
+          variant: "error",
+        });
+      } finally {
+        onHandleChangeLoading(false);
+      }
+    }
+  };
 
   return data !== null ? (
     <Card>
@@ -133,14 +177,31 @@ const UserProfileHeader = ({ onHandleEdit }) => {
               </Box>
             </Box>
           </Box>
-          <Button
-            variant="contained"
-            sx={{ "& svg": { mr: 2 } }}
-            onClick={onHandleEdit}
-          >
-            <Icon icon="tabler:pencil" fontSize="1.125rem" />
-            Edit
-          </Button>
+          <Box>
+            <Button
+              variant="contained"
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={onHandleEdit}
+            >
+              <Icon icon="tabler:pencil" fontSize="1.125rem" />
+              Edit
+            </Button>
+            <input
+              type="file"
+              accept=".doc,.pdf"
+              style={{ display: "none" }}
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+            <Button
+              variant="contained"
+              sx={{ "& svg": { mr: 2 } }}
+              onClick={handleFileUpload}
+            >
+              <Icon icon="tabler:pencil" fontSize="1.125rem" />
+              Upload Resume
+            </Button>
+          </Box>
         </Box>
       </CardContent>
     </Card>

@@ -10,9 +10,19 @@ const getEnumByTyUrl = `${baseURL}/enum_by_type`;
 const addJobseekerEducationUrl = `${baseURL}/job-seeker/add_education`;
 const updateJobseekerEducationUrl = `${baseURL}/job-seeker/update_education`;
 const deleteJobseekerEducationUrl = `${baseURL}/job-seeker/delete_education`;
+const updateResumeUrl = `${baseURL}/job-seeker/upload_resume`;
+const removeResumeUrl = `${baseURL}/job-seeker/delete_resume`;
 
 export const getProfile = () => {
   return apiGet(getProfileUrl);
+};
+
+export const updateResume = (bodyParams) => {
+  return apiPut(updateResumeUrl, bodyParams);
+};
+
+export const removeResume = () => {
+  return apiDelete(removeResumeUrl);
 };
 
 export const updateProfile = (bodyParams) => {

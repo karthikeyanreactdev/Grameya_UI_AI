@@ -20,7 +20,12 @@ import { useTheme } from "@mui/material/styles";
 import useNotification from "src/hooks/useNotification";
 import { addJobseekerExperience } from "src/api-services/seeker/profile";
 
-const AddNewExperiance = ({ isOpen, onClose, getProfileDetail }) => {
+const AddNewExperiance = ({
+  isOpen,
+  onClose,
+  getProfileDetail,
+  onHandleChangeLoading,
+}) => {
   const theme = useTheme();
   const { direction } = theme;
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
@@ -68,6 +73,7 @@ const AddNewExperiance = ({ isOpen, onClose, getProfileDetail }) => {
     ) {
       return;
     }
+    onHandleChangeLoading(true);
     try {
       const response = await addJobseekerExperience(formValue);
 
@@ -82,6 +88,8 @@ const AddNewExperiance = ({ isOpen, onClose, getProfileDetail }) => {
       }
     } catch (e) {
       console.log("e", e);
+    } finally {
+      onHandleChangeLoading(false);
     }
   };
 

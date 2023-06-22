@@ -6,16 +6,22 @@ import {
   Chip,
   FormControl,
   Grid,
+  IconButton,
+  Input,
   InputLabel,
+  List,
+  ListItem,
+  ListItemText,
   MenuItem,
   Select,
   TextField,
   Typography,
 } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 // import { makeStyles } from "@mui/styles";
 
 import React, { useEffect, useState } from "react";
-import { updateProfile } from "src/api-services/seeker/profile";
+import { removeResume, updateProfile } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
 
 // const useStyles = makeStyles((theme) => ({
@@ -29,7 +35,13 @@ import useNotification from "src/hooks/useNotification";
 //   },
 // }));
 
-function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
+function BasicInfo({
+  userDetail,
+  isEditMode,
+  onHandleEditCloseChange,
+  getProfileDetail,
+  onHandleChangeLoading,
+}) {
   const [sendNotification] = useNotification();
   const [location, setLocation] = useState([
     { id: 1, name: "Trichy" },
@@ -112,6 +124,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
     ) {
       return;
     }
+    onHandleChangeLoading(true);
     try {
       const response = await updateProfile(formValue);
 
@@ -123,10 +136,11 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
         });
         onHandleEditCloseChange();
         getProfileDetail();
-        handleClose();
       }
     } catch (e) {
       console.log("e", e);
+    } finally {
+      onHandleChangeLoading(false);
     }
   };
 
@@ -143,6 +157,37 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
     setFormValue(newFormValue);
   };
 
+  const handleResumeDownload = (url) => {
+    let link = document.createElement("a");
+    link.download = "resume";
+    link.target = "_blank";
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleResumeRemove = async () => {
+    onHandleChangeLoading(true);
+    try {
+      const response = await removeResume();
+
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        // onHandleEditCloseChange();
+        getProfileDetail();
+      }
+    } catch (e) {
+      console.log("e", e);
+    } finally {
+      onHandleChangeLoading(false);
+    }
+  };
+
   return (
     <>
       <Grid item md={12} xs={12}>
@@ -152,7 +197,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -225,7 +270,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -301,7 +346,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -363,6 +408,18 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
                             },
                         }}
                         disabled={isEditMode}
+                        // inputProps={{
+                        //   readOnly: isEditMode,
+                        //   disableUnderline: true,
+                        // }}
+                        input={
+                          isEditMode && (
+                            <Input
+                              readOnly={isEditMode}
+                              disableUnderline={isEditMode}
+                            />
+                          )
+                        }
                       >
                         <MenuItem value={"Chennai"}>Chennai</MenuItem>
                         <MenuItem value={"Delhi"}>Delhi</MenuItem>
@@ -442,7 +499,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -521,7 +578,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -599,7 +656,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
@@ -647,7 +704,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
                           <TextField
                             {...params}
                             label="Skills"
-                            placeholder="Skills"
+                            placeholder=""
                             // value={formValue.skills}
                             variant={isEditMode ? "standard" : "outlined"}
                             InputProps={{
@@ -700,11 +757,11 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
             sx={{
               display: "flex",
               justifyContent: "center",
-              mx: 32,
+              mx: 4,
               mt: 4,
             }}
           >
-            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
               <TextField
                 sx={{ mb: 2 }}
                 label={"Resume Headline"}
@@ -728,6 +785,36 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
                 }}
               />
             </Grid>
+
+            <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
+              {userDetail?.jobseekerDetails?.resume_url && (
+                <>
+                  <List>
+                    <ListItem
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={handleResumeRemove}
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText
+                        onClick={() =>
+                          handleResumeDownload(
+                            userDetail?.jobseekerDetails?.resume_url
+                          )
+                        }
+                        sx={{ cursor: "pointer" }}
+                        primary="Resume"
+                      />
+                    </ListItem>
+                  </List>
+                </>
+              )}
+            </Grid>
           </CardContent>
 
           {!isEditMode && (
@@ -736,7 +823,7 @@ function BasicInfo({ userDetail, isEditMode, onHandleEditCloseChange }) {
                 sx={{
                   display: "flex",
                   justifyContent: "center",
-                  mx: 32,
+                  mx: 4,
                   mt: 4,
                 }}
               >

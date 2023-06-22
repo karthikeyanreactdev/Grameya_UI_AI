@@ -39,6 +39,7 @@ const EditEducation = ({
   onClose,
   getProfileDetail,
   selectedEducation,
+  onHandleChangeLoading,
 }) => {
   const [mainCourse, setMainCourse] = useState(null);
   const [subCourse, setSubCourse] = useState(null);
@@ -161,6 +162,7 @@ const EditEducation = ({
     }
     apiData.education_id = selectedEducation?.id;
     console.log("apiData", apiData);
+    onHandleChangeLoading(true);
     try {
       const response = await updateJobseekerEducation(apiData);
       console.log("response", response);
@@ -178,6 +180,8 @@ const EditEducation = ({
         message: e,
         variant: "error",
       });
+    } finally {
+      onHandleChangeLoading(false);
     }
   };
 
