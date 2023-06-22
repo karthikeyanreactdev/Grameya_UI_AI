@@ -60,9 +60,9 @@ const navigation = () => {
       sectionTitle: "Job Seeker Menu",
     },
     {
-      path: "/jobseeker/jobs",
+      path: "/jobseeker/dashboard",
       action: "manage",
-      subject: "jsajobs",
+      subject: "jsdashboard",
       title: "Dashboard",
       icon: "tabler:layout-dashboard",
     },
