@@ -33,6 +33,7 @@ const UserProfileHeader = ({
   onHandleEdit,
   getProfileDetail,
   onHandleChangeLoading,
+  userDetail,
 }) => {
   const [sendNotification] = useNotification();
   // ** State
@@ -128,7 +129,7 @@ const UserProfileHeader = ({
             }}
           >
             <Typography variant="h5" sx={{ mb: 2.5 }}>
-              {data.fullName}
+              {userDetail?.full_name}
             </Typography>
             <Box
               sx={{
@@ -137,32 +138,41 @@ const UserProfileHeader = ({
                 justifyContent: ["center", "flex-start"],
               }}
             >
-              <Box
-                sx={{
-                  mr: 4,
-                  display: "flex",
-                  alignItems: "center",
-                  "& svg": { mr: 1.5, color: "text.secondary" },
-                }}
-              >
-                <Icon fontSize="1.25rem" icon={designationIcon} />
-                <Typography sx={{ color: "text.secondary" }}>
-                  {data.designation}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  mr: 4,
-                  display: "flex",
-                  alignItems: "center",
-                  "& svg": { mr: 1.5, color: "text.secondary" },
-                }}
-              >
-                <Icon fontSize="1.25rem" icon="tabler:map-pin" />
-                <Typography sx={{ color: "text.secondary" }}>
-                  {data.location}
-                </Typography>
-              </Box>
+              {userDetail?.jobseekerDetails.designation && (
+                <>
+                  <Box
+                    sx={{
+                      mr: 4,
+                      display: "flex",
+                      alignItems: "center",
+                      "& svg": { mr: 1.5, color: "text.secondary" },
+                    }}
+                  >
+                    <Icon fontSize="1.25rem" icon={designationIcon} />
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {userDetail?.jobseekerDetails.designation}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+              {userDetail?.jobseekerDetails.current_location && (
+                <>
+                  <Box
+                    sx={{
+                      mr: 4,
+                      display: "flex",
+                      alignItems: "center",
+                      "& svg": { mr: 1.5, color: "text.secondary" },
+                    }}
+                  >
+                    <Icon fontSize="1.25rem" icon="tabler:map-pin" />
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {userDetail?.jobseekerDetails.current_location}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+
               <Box
                 sx={{
                   display: "flex",

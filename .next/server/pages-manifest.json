@@ -2,7 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/jobseeker/dashboard": "pages/jobseeker/dashboard.js",
-  "/jobseeker/profile": "pages/jobseeker/profile.js",
-  "/jobseeker/job-search": "pages/jobseeker/job-search.js"
+  "/jobseeker/profile": "pages/jobseeker/profile.js"
 }

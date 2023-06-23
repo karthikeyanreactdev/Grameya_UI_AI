@@ -201,6 +201,69 @@ function BasicInfo({
               mt: 4,
             }}
           >
+            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+              <TextField
+                sx={{ mb: 2 }}
+                label={"Resume Headline"}
+                fullWidth
+                multiline
+                minRows={isEditMode ? 1 : 4}
+                name="resume_headline"
+                onChange={handleFormInputChange}
+                value={formValue.resume_headline}
+                error={submitted && !formValue.resume_headline}
+                helperText={
+                  submitted &&
+                  !formValue.resume_headline &&
+                  "Resume Headline is required"
+                }
+                freeSolo={isEditMode}
+                variant={isEditMode ? "standard" : "outlined"}
+                InputProps={{
+                  readOnly: isEditMode,
+                  disableUnderline: isEditMode,
+                }}
+              />
+            </Grid>
+
+            {/* <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
+              {userDetail?.jobseekerDetails?.resume_url && (
+                <>
+                  <List>
+                    <ListItem
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={handleResumeRemove}
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText
+                        onClick={() =>
+                          handleResumeDownload(
+                            userDetail?.jobseekerDetails?.resume_url
+                          )
+                        }
+                        sx={{ cursor: "pointer" }}
+                        primary="Resume"
+                      />
+                    </ListItem>
+                  </List>
+                </>
+              )}
+            </Grid> */}
+          </CardContent>
+          <CardContent
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mx: 4,
+              mt: 4,
+            }}
+          >
             <Grid container spacing={2} py={2}>
               {userDetail?.full_name && (
                 <>
@@ -241,18 +304,13 @@ function BasicInfo({
                   <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                     <TextField
                       sx={{ mb: 2 }}
-                      label={"Qulification"}
+                      label={"Email"}
                       required
                       fullWidth
-                      value={formValue.degree}
-                      name="degree"
-                      error={submitted && !formValue.degree}
-                      helperText={
-                        submitted &&
-                        !formValue.degree &&
-                        "Qulification is required"
-                      }
+                      name="full_name"
                       onChange={handleFormInputChange}
+                      value={userDetail?.email}
+                      disabled
                       freeSolo={isEditMode}
                       variant={isEditMode ? "standard" : "outlined"}
                       InputProps={{
@@ -287,13 +345,18 @@ function BasicInfo({
 
                     <TextField
                       sx={{ mb: 2 }}
-                      label={"Email"}
+                      label={"Designation"}
                       required
                       fullWidth
-                      name="full_name"
+                      value={formValue.designation}
+                      name="designation"
+                      error={submitted && !formValue.designation}
+                      helperText={
+                        submitted &&
+                        !formValue.designation &&
+                        "Designation is required"
+                      }
                       onChange={handleFormInputChange}
-                      value={userDetail?.email}
-                      disabled
                       freeSolo={isEditMode}
                       variant={isEditMode ? "standard" : "outlined"}
                       InputProps={{
@@ -749,69 +812,6 @@ function BasicInfo({
                       }}
                     />
                   </Grid>
-                </>
-              )}
-            </Grid>
-          </CardContent>
-          <CardContent
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              mx: 4,
-              mt: 4,
-            }}
-          >
-            <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-              <TextField
-                sx={{ mb: 2 }}
-                label={"Resume Headline"}
-                fullWidth
-                multiline
-                minRows={2}
-                name="resume_headline"
-                onChange={handleFormInputChange}
-                value={formValue.resume_headline}
-                error={submitted && !formValue.resume_headline}
-                helperText={
-                  submitted &&
-                  !formValue.resume_headline &&
-                  "Resume Headline is required"
-                }
-                freeSolo={isEditMode}
-                variant={isEditMode ? "standard" : "outlined"}
-                InputProps={{
-                  readOnly: isEditMode,
-                  disableUnderline: isEditMode,
-                }}
-              />
-            </Grid>
-
-            <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-              {userDetail?.jobseekerDetails?.resume_url && (
-                <>
-                  <List>
-                    <ListItem
-                      secondaryAction={
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={handleResumeRemove}
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      }
-                    >
-                      <ListItemText
-                        onClick={() =>
-                          handleResumeDownload(
-                            userDetail?.jobseekerDetails?.resume_url
-                          )
-                        }
-                        sx={{ cursor: "pointer" }}
-                        primary="Resume"
-                      />
-                    </ListItem>
-                  </List>
                 </>
               )}
             </Grid>

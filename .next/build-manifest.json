@@ -25,16 +25,6 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/jobseeker/dashboard": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/dashboard.js"
-    ],
-    "/jobseeker/job-search": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/job-search.js"
-    ],
     "/jobseeker/profile": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

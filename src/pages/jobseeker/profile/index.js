@@ -2,7 +2,17 @@
 import { useContext, useEffect, useState } from "react";
 
 // ** Context Imports
-import { Grid, Box, Button, CardActionArea, CardActions } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Button,
+  CardActionArea,
+  CardActions,
+  List,
+  ListItem,
+  IconButton,
+  ListItemText,
+} from "@mui/material";
 import Icon from "src/@core/components/icon";
 import { useTheme } from "@mui/material/styles";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +40,9 @@ import EditBasicInfo from "./components/EditBasicInfo";
 import useNotification from "src/hooks/useNotification";
 import BasicInfo from "./components/BasicInfo";
 import CommonLoader from "src/shared/CommonLoader";
+import ClearIcon from "@mui/icons-material/Clear";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ResumeSection from "./components/ResumeSection";
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: "0 !important",
@@ -79,7 +92,7 @@ const ACLPage = () => {
     isEditExperiance: false,
   });
 
-  const [userdetail, setUserDetail] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
 
   const handleChangeLoading = (status) => {
     setIsLoading(status);
@@ -195,6 +208,7 @@ const ACLPage = () => {
             onHandleEdit={handleEditChange}
             getProfileDetail={getProfileDetail}
             onHandleChangeLoading={handleChangeLoading}
+            userDetail={userDetail}
           />
         </Grid>
         {activeTab === undefined ? null : (
@@ -253,6 +267,24 @@ const ACLPage = () => {
                         </Box>
                       }
                     />
+                    <Tab
+                      value="resume"
+                      label={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            ...(!hideText && { "& svg": { mr: 2 } }),
+                          }}
+                        >
+                          <Icon
+                            fontSize="1.125rem"
+                            icon="mingcute:profile-line"
+                          />
+                          {!hideText && "Resume"}
+                        </Box>
+                      }
+                    />
                   </TabList>
                 </Grid>
                 <Grid item xs={12}>
@@ -272,10 +304,10 @@ const ACLPage = () => {
                     <TabPanel sx={{ p: 0 }} value={activeTab}>
                       {activeTab === "info" && (
                         <>
-                          {userdetail && (
+                          {userDetail && (
                             <>
                               <BasicInfo
-                                userDetail={userdetail}
+                                userDetail={userDetail}
                                 isEditMode={isEditMode}
                                 onHandleEditCloseChange={handleEditCloseChange}
                                 getProfileDetail={getProfileDetail}
@@ -290,7 +322,7 @@ const ACLPage = () => {
                                 getProfileDetail={getProfileDetail}
                                 isOpen={drawerState.isBasicInfoEdit}
                                 onClose={handleDrawerStateChangeClose}
-                                userDetail={userdetail}
+                                userDetail={userDetail}
                               />
                             </>
                           )}
@@ -316,7 +348,7 @@ const ACLPage = () => {
                                   md={12}
                                   sm={12}
                                 >
-                                  {userdetail?.jobseekerDetails?.educations?.map(
+                                  {userDetail?.jobseekerDetails?.educations?.map(
                                     (item, key) => {
                                       return (
                                         <Card sx={{ mt: 3 }} key={key}>
@@ -474,7 +506,7 @@ const ACLPage = () => {
                                   md={12}
                                   sm={12}
                                 >
-                                  {userdetail?.jobseekerDetails?.experiences?.map(
+                                  {userDetail?.jobseekerDetails?.experiences?.map(
                                     (item, index) => {
                                       return (
                                         <Card sx={{ mt: 3 }} key={index}>
@@ -504,7 +536,7 @@ const ACLPage = () => {
                                                     <span key={index}>
                                                       {element}
                                                       {index !==
-                                                        userdetail
+                                                        userDetail
                                                           ?.jobseekerDetails
                                                           ?.skills.length -
                                                           1 && ", "}
@@ -595,6 +627,14 @@ const ACLPage = () => {
                             />
                           )}
                         </Grid>
+                      )}
+
+                      {activeTab === "resume" && (
+                        <ResumeSection
+                          userDetail={userDetail}
+                          getProfileDetail={getProfileDetail}
+                          onHandleChangeLoading={handleChangeLoading}
+                        />
                       )}
                     </TabPanel>
                   )}
