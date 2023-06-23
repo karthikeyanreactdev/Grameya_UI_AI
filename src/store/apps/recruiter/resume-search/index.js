@@ -10,7 +10,7 @@ export const resumeCandidates = createAsyncThunk(
   async (params, { rejectWithValue }) => {
     try {
       const response = await apiPost(`${resumeSearchUrl}`, params);
-      return response?.data?.data?.data;
+      return response?.data?.data;
     } catch (error) {
       return rejectWithValue(errorHandler(error));
     }
@@ -22,6 +22,7 @@ export const resumeSearchSlice = createSlice({
   initialState: {
     isLoading: false,
     resumeSearchList: [],
+    pageCount: "",
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -30,7 +31,8 @@ export const resumeSearchSlice = createSlice({
     });
     builder.addCase(resumeCandidates.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.resumeSearchList = action.payload;
+      state.resumeSearchList = action.payload?.data;
+      state.pageCount = action.payload;
     });
     builder.addCase(resumeCandidates.rejected, (state, action) => {
       state.isLoading = false;

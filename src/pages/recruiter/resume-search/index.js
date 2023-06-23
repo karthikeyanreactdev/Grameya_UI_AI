@@ -257,16 +257,19 @@ const Dashboard = () => {
   const [noticePeriod, setNoticePeriod] = useState("");
   const [location, setLocation] = useState("");
   const [keyword, setKeyword] = useState("");
-  const { resumeSearchList, isLoading } = useSelector(
+
+  const { resumeSearchList, isLoading, pageCount } = useSelector(
     (state) => state.resumeSearch
   );
+  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
+
   console.log("resumeSearch", resumeSearchList);
   const handleSearch = async () => {
     if (keyword === "") {
       return;
     }
     const params = {
-      page: paginationModel?.page,
+      page: paginationModel?.page + 1,
       size: paginationModel?.pageSize,
       search_keyword: keyword,
       experience_from: "0",
@@ -286,7 +289,12 @@ const Dashboard = () => {
   }, []);
   useEffect(() => {
     handleSearch();
-  }, [paginationModel?.page, paginationModel?.pageSize]);
+  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
+    );
+  }, [pageCount?.total, setRowCountState]);
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -520,6 +528,8 @@ const Dashboard = () => {
               rows={resumeSearchList}
               loading={isLoading}
               columns={searchListColumns}
+              rowCount={rowCountState}
+              paginationMode="server"
               disableRowSelectionOnClick
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}

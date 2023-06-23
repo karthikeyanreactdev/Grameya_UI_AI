@@ -215,11 +215,10 @@ const ManageJob = () => {
     );
   });
   const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
-
+  console.log(pageCount);
   const getJobs = () => {
-    console.log(rowCountState);
     const params = {
-      page: paginationModel?.page,
+      page: paginationModel?.page + 1,
       size: paginationModel?.pageSize,
     };
     dispatch(getJobList(params));
@@ -320,8 +319,9 @@ const ManageJob = () => {
               // getRowId={(row) => row.job_id}
               // autoPageSize
               rowCount={rowCountState}
+              paginationMode="server"
               disableRowSelectionOnClick
-              pageSizeOptions={[5, 10, 25]}
+              pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
             />

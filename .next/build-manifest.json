@@ -25,20 +25,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/login": [
+    "/jobseeker/dashboard": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/login.js"
+      "static/chunks/pages/jobseeker/dashboard.js"
     ],
-    "/recruiter/dashboard": [
+    "/jobseeker/job-search": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/recruiter/dashboard.js"
-    ],
-    "/recruiter/jobs": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/recruiter/jobs.js"
+      "static/chunks/pages/jobseeker/job-search.js"
     ]
   },
   "ampFirstPages": []

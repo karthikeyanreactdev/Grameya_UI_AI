@@ -29,7 +29,7 @@ const Applications = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
   const dispatch = useDispatch();
-  const { recruiterApplicantsList, isLoading } = useSelector(
+  const { recruiterApplicantsList, isLoading, pageCount } = useSelector(
     (state) => state.applications
   );
   console.log("recruiterApplicantsList", recruiterApplicantsList);
@@ -130,9 +130,10 @@ const Applications = () => {
     //   },
     // },
   ];
+  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
   const getApplicants = () => {
     const params = {
-      page: paginationModel?.page,
+      page: paginationModel?.page + 1,
       size: paginationModel?.pageSize,
     };
     dispatch(getApplicantsList(params));
@@ -142,7 +143,12 @@ const Applications = () => {
   }, []);
   useEffect(() => {
     getApplicants();
-  }, [paginationModel?.page, paginationModel?.pageSize]);
+  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
+    );
+  }, [pageCount?.total, setRowCountState]);
   return (
     <Grid container spacing={6}>
       {/* <Grid item md={6} xs={12}>
@@ -169,6 +175,8 @@ const Applications = () => {
               loading={isLoading}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
+              rowCount={rowCountState}
+              paginationMode="server"
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}

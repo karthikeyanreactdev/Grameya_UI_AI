@@ -174,9 +174,11 @@ const ManageAppliedJob = () => {
     // },
   ];
 
-  const { recruiterJobList, isLoading } = useSelector(
+  const { recruiterJobList, isLoading, pageCount } = useSelector(
     (state) => state?.manageJob
   );
+  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
+
   console.log("ddd", recruiterJobList);
   const handleFilter = useCallback((val) => {
     setValue(val);
@@ -218,7 +220,7 @@ const ManageAppliedJob = () => {
 
   const getJobs = () => {
     const params = {
-      page: paginationModel?.page,
+      page: paginationModel?.page + 1,
       size: paginationModel?.pageSize,
     };
     dispatch(getAppliedJobs(params));
@@ -233,12 +235,17 @@ const ManageAppliedJob = () => {
   useEffect(() => {
     console.log("ca");
     getJobs();
-  }, [paginationModel?.page, paginationModel?.pageSize]);
+  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
   useEffect(() => {
     if (addUserOpen === false) {
       getJobs();
     }
   }, [addUserOpen]);
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
+    );
+  }, [pageCount?.total, setRowCountState]);
   return (
     <Grid container spacing={6}>
       {/* <Grid item md={6} xs={12}>
@@ -307,6 +314,8 @@ const ManageAppliedJob = () => {
               columns={jobListColumns}
               loading={isLoading}
               // getRowId={(row) => row.job_id}
+              rowCount={rowCountState}
+              paginationMode="server"
               disableRowSelectionOnClick
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
