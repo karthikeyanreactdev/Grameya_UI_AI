@@ -58,6 +58,7 @@ import {
 } from "src/store/apps/recruiter/resume-search";
 import {
   Button,
+  Chip,
   FormControl,
   InputLabel,
   Select,
@@ -195,30 +196,48 @@ const Dashboard = () => {
         );
       },
     },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-      field: "email",
-      headerName: "Email",
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-      field: "phone",
-      headerName: "Mobile",
-      renderCell: ({ row }) => {
-        `${row.country_code}` + "-" + `${row.phone}`;
-      },
-    },
 
     {
       flex: 0.1,
+      minWidth: 100,
       sortable: true,
-      field: "city",
-      headerName: "Location",
+      field: "resume_headline",
+      headerName: "Resume Headline",
+      renderCell: ({ row }) => `${row.resume_headline}`,
     },
+    {
+      flex: 0.1,
+      minWidth: 50,
+      sortable: true,
+      field: "total_years_of_experience",
+      headerName: "Experience",
+      renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 300,
+      sortable: true,
+
+      field: "preferred_job_location",
+      headerName: "Prefered Job Location",
+      renderCell: ({ row }) =>
+        row?.preferred_job_location?.map((e) => {
+          return (
+            <Chip
+              size="small"
+              label={e}
+              color={"info"}
+              sx={{
+                mr: 2,
+                height: 24,
+                minWidth: 24,
+                "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+              }}
+            />
+          );
+        }),
+    },
+
     {
       flex: 0.1,
       minWidth: 100,
@@ -226,7 +245,7 @@ const Dashboard = () => {
       // field: "Action",
       headerName: "Action",
       renderCell: ({ row }) => {
-        return <Button onClick={() => {}}>View Candidate</Button>;
+        return <Button onClick={() => {}}>View</Button>;
       },
     },
   ];
@@ -280,7 +299,7 @@ const Dashboard = () => {
               <Grid item sm={6} xs={12} lg={8} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
-                  label={"Search"}
+                  label={"Search keywords"}
                   required
                   fullWidth
                   size="small"
@@ -350,11 +369,11 @@ const Dashboard = () => {
               <Grid item sm={4} xs={12} lg={3}>
                 <TextField
                   sx={{ my: 2 }}
-                  label={"Experiance (in years)"}
+                  label={"Experience (in years)"}
                   fullWidth
                   size="small"
-                  name="Experiance"
-                  placeholder="Experiance (in years)"
+                  name="Experience"
+                  placeholder="Experience (in years)"
                   value={experience
                     ?.trimStart()
                     .replace(/\s\s+/g, "")

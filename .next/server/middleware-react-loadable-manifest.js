@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST={}
+self.__REACT_LOADABLE_MANIFEST={"..\\@core\\components\\react-draft-wysiwyg\\index.js -> react-draft-wysiwyg":{"id":"..\\@core\\components\\react-draft-wysiwyg\\index.js -> react-draft-wysiwyg","files":["static/chunks/node_modules_react-draft-wysiwyg_dist_react-draft-wysiwyg_js.js"]}}

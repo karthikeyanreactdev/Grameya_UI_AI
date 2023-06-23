@@ -12,6 +12,7 @@ const MapContainer = React.memo(function MapContainer(props) {
     <Map
       google={props.google}
       //  google={""}
+      draggable={false}
       zoom={16}
       style={mapStyles}
       center={{

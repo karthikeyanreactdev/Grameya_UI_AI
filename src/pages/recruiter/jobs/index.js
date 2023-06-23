@@ -127,8 +127,8 @@ const ManageJob = () => {
       minWidth: 100,
       sortable: true,
 
-      field: "experiance",
-      headerName: "Experiance",
+      field: "experience",
+      headerName: "Experience",
       renderCell: ({ row }) =>
         `${row.experience_from}-${row.experience_to} years`,
     },
@@ -173,7 +173,7 @@ const ManageJob = () => {
     },
   ];
 
-  const { recruiterJobList, isLoading } = useSelector(
+  const { recruiterJobList, isLoading, pageCount } = useSelector(
     (state) => state?.manageJob
   );
   console.log("ddd", recruiterJobList);
@@ -214,8 +214,10 @@ const ManageJob = () => {
       />
     );
   });
+  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
 
   const getJobs = () => {
+    console.log(rowCountState);
     const params = {
       page: paginationModel?.page,
       size: paginationModel?.pageSize,
@@ -232,12 +234,17 @@ const ManageJob = () => {
   useEffect(() => {
     console.log("ca");
     getJobs();
-  }, [paginationModel?.page, paginationModel?.pageSize]);
+  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
   useEffect(() => {
     if (addUserOpen === false) {
       getJobs();
     }
   }, [addUserOpen]);
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
+    );
+  }, [pageCount?.total, setRowCountState]);
   return (
     <Grid container spacing={6}>
       {/* <Grid item md={6} xs={12}>
@@ -305,9 +312,16 @@ const ManageJob = () => {
               rows={recruiterJobList}
               columns={jobListColumns}
               loading={isLoading}
+              // {...recruiterJobList}
+              // initialState={{
+              //   // ...data.initialState,
+              //   pagination: { paginationModel: { pageSize: 5 } },
+              // }}
               // getRowId={(row) => row.job_id}
+              // autoPageSize
+              rowCount={rowCountState}
               disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
+              pageSizeOptions={[5, 10, 25]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
             />

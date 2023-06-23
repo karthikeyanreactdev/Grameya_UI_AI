@@ -50,10 +50,7 @@ import {
 } from "@mui/material";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
-const filterOptions = createFilterOptions({
-  matchFrom: "start",
-  stringify: (option) => option.name,
-});
+const filter = createFilterOptions();
 import { LoadingButton } from "@mui/lab";
 import {
   createJob,
@@ -103,15 +100,16 @@ const validationSchema = yup.object({
     .email("Enter the valid email")
     .trim()
     .required("Email is Required"),
-  jobCategory: yup
-    .string("Job Category is required")
-    .required("Job Category is required"),
+  // jobCategory: yup
+  //   .string("Job Category is required")
+  //   .required("Job Category is required"),
+  //   jobSubCategory: yup
+  //   .string("Job Sub Category is required")
+  //   .required("Job Sub Category is required"),
   location: yup
     .string("Job Location is required")
     .required("Job Location is required"),
-  jobSubCategory: yup
-    .string("Job Sub Category is required")
-    .required("Job Sub Category is required"),
+
   noticePeriod: yup
     .string("Notice Period is required")
     .required("Notice Period is required"),
@@ -211,6 +209,7 @@ const SideBarJob = (props) => {
           }
         });
       }
+
       const params = {
         company_name: values.companyName,
         job_title: values.jobTitle,
@@ -290,6 +289,17 @@ const SideBarJob = (props) => {
         formik.setFieldValue("email", data?.email);
         formik.setFieldValue("jobCategory", data?.job_category);
         formik.setFieldValue("jobSubCategory", data?.job_sub_category);
+        formik.setFieldValue("addressLineOne", data?.address_line_one);
+
+        formik.setFieldValue("addressLineTwo", data?.address_line_two);
+        formik.setFieldValue("country", data?.country);
+        formik.setFieldValue("state", data?.state);
+        formik.setFieldValue("city", data?.city);
+        formik.setFieldValue("postalCode", data?.postal_code);
+        formik.setFieldValue("longitude", data?.longitude);
+        formik.setFieldValue("latitude", data?.latitude);
+        setLat(data?.latitude);
+        setLng(data?.longitude);
         // if (Array.isArray(data?.skills)) {
         //   let mapping_value = data?.skills.map((item) =>
         //     categoryList.find((e) => e.jobCategory === item)
@@ -537,22 +547,81 @@ const SideBarJob = (props) => {
                 name={"jobCategory"}
                 fullWidth
                 value={formik.values.jobCategory}
-                onChange={(event, item) => {
-                  formik.setFieldValue("jobCategory", item?.label);
-                  handleJobCategory(item?.id);
-                  setCategory(item?.id);
+                selectOnFocus
+                // clearOnBlur
+                handleHomeEndKeys
+                onChange={(event, newValue) => {
+                  console.log(newValue);
+                  if (typeof newValue === "string") {
+                    formik.setFieldValue("jobCategory", newValue);
+
+                    setCategory(newValue);
+                  } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+
+                    formik.setFieldValue("jobCategory", newValue.inputValue);
+
+                    setCategory(newValue.inputValue);
+                  } else {
+                    formik.setFieldValue("jobCategory", newValue?.name);
+                    handleJobCategory(newValue?.id);
+                    setCategory(newValue?.id);
+                  }
                 }}
-                options={jobCategory
-                  // ?.sort((a, b) => a?.jobCategory - b?.name)
-                  .map((item) => ({
-                    label: item?.name,
-                    value: item?.name,
-                    id: item?.id,
-                  }))}
-                isOptionEqualToValue={(option, value) =>
-                  option?.value === value
-                }
-                freeSolo={false}
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+
+                  const { inputValue } = params;
+                  // Suggest the creation of a new value
+                  const isExisting = options.some(
+                    (option) => inputValue === option?.name
+                  );
+                  if (inputValue !== "" && !isExisting) {
+                    filtered.push({
+                      inputValue,
+                      title: `Add "${inputValue}"`,
+                    });
+                  }
+
+                  return filtered;
+                }}
+                // onChange={(event, item) => {
+                //   formik.setFieldValue("jobCategory", item?.label);
+                //   handleJobCategory(item?.id);
+                //   setCategory(item?.id);
+                // }}
+                // options={jobCategory
+                //   // ?.sort((a, b) => a?.jobCategory - b?.name)
+                //   .map((item) => ({
+                //     label: item?.name,
+                //     value: item?.name,
+                //     id: item?.id,
+                //   }))}
+                // isOptionEqualToValue={(option, value) =>
+                //   option?.value === value
+                // }
+                options={jobCategory}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === "string") {
+                    return option;
+                  }
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
+                  }
+                  // Regular option
+                  return option?.name;
+                }}
+                // getOptionLabel={(option) =>
+                //   option?.name === null || option?.name === undefined
+                //     ? option
+                //     : option?.name
+                // }
+                freeSolo={true}
+                // renderOption={(props, option) => (
+                //   <li {...props}>{option?.name}</li>
+                // )}
                 renderInput={(params) => (
                   <TextField
                     required
@@ -584,21 +653,76 @@ const SideBarJob = (props) => {
                 name={"jobSubCategory"}
                 fullWidth
                 value={formik.values.jobSubCategory}
-                onChange={(event, item) => {
-                  formik.setFieldValue("jobSubCategory", item?.label);
-                  setSubCategory(item?.id);
+                selectOnFocus
+                // clearOnBlur
+                handleHomeEndKeys
+                // onChange={(event, item) => {
+                //   formik.setFieldValue("jobSubCategory", item?.label);
+                //   setSubCategory(item?.id);
+                // }}
+
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+
+                  const { inputValue } = params;
+                  // Suggest the creation of a new value
+                  const isExisting = options.some(
+                    (option) => inputValue === option?.name
+                  );
+                  if (inputValue !== "" && !isExisting) {
+                    filtered.push({
+                      inputValue,
+                      title: `Add "${inputValue}"`,
+                    });
+                  }
+
+                  return filtered;
                 }}
-                options={subCategoryList
-                  ?.sort((a, b) => a?.name - b?.name)
-                  .map((item) => ({
-                    label: item?.name,
-                    value: item?.name,
-                    id: item?.id,
-                  }))}
-                isOptionEqualToValue={(option, value) =>
-                  option?.value === value
-                }
-                freeSolo={false}
+                onChange={(event, newValue) => {
+                  if (typeof newValue === "string") {
+                    formik.setFieldValue("jobSubCategory", newValue);
+
+                    setSubCategory(newValue);
+                  } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+
+                    formik.setFieldValue("jobSubCategory", newValue.inputValue);
+
+                    setSubCategory(newValue.inputValue);
+                  } else {
+                    formik.setFieldValue("jobSubCategory", newValue?.name);
+                    setSubCategory(newValue?.id);
+                  }
+                }}
+                options={subCategoryList}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === "string") {
+                    return option;
+                  }
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
+                  }
+                  // Regular option
+                  return option?.name;
+                }}
+                // getOptionLabel={(option) =>
+                //   option?.name === null || option?.name === undefined
+                //     ? option
+                //     : option?.name
+                // }
+                // options={subCategoryList
+                //   ?.sort((a, b) => a?.name - b?.name)
+                //   .map((item) => ({
+                //     label: item?.name,
+                //     value: item?.name,
+                //     id: item?.id,
+                //   }))}
+                // isOptionEqualToValue={(option, value) =>
+                //   option?.value === value
+                // }
+                freeSolo={true}
                 renderInput={(params) => (
                   <TextField
                     required
@@ -695,7 +819,7 @@ const SideBarJob = (props) => {
                 <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
                   <TextField
                     sx={{ my: 2 }}
-                    label={"Experiance From "}
+                    label={"Experience From "}
                     type="number"
                     fullWidth
                     name="from"
@@ -708,7 +832,7 @@ const SideBarJob = (props) => {
                 <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
                   <TextField
                     sx={{ my: 2 }}
-                    label={" Experiance To "}
+                    label={" Experience To "}
                     type="number"
                     fullWidth
                     name="to"
@@ -905,7 +1029,7 @@ const SideBarJob = (props) => {
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <InputLabel id="jd" sx={{ my: 2 }}>
               {" "}
-              Job Shot Description
+              Job Short Description
             </InputLabel>
             <ReactDraftWysiwyg
               wrapperClassName="wrapper-class"

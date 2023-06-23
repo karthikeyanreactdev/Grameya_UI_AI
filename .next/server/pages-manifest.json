@@ -2,5 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/jobseeker/profile": "pages/jobseeker/profile.js"
+  "/recruiter/jobs": "pages/recruiter/jobs.js",
+  "/login": "pages/login.js",
+  "/recruiter/dashboard": "pages/recruiter/dashboard.js"
 }

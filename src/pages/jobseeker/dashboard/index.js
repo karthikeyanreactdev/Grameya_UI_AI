@@ -128,8 +128,8 @@ const ManageAppliedJob = () => {
       minWidth: 100,
       sortable: true,
 
-      field: "experiance",
-      headerName: "Experiance",
+      field: "experience",
+      headerName: "Experience",
       renderCell: ({ row }) =>
         `${row.experience_from}-${row.experience_to} years`,
     },

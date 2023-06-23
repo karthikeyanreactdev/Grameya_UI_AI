@@ -499,7 +499,7 @@ const SidebarAddUser = (props) => {
                 <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
                   <TextField
                     sx={{ my: 2 }}
-                    label={"Experiance From "}
+                    label={"Experience From "}
                     type="number"
                     fullWidth
                     name="from"
@@ -512,7 +512,7 @@ const SidebarAddUser = (props) => {
                 <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
                   <TextField
                     sx={{ my: 2 }}
-                    label={" Experiance To "}
+                    label={" Experience To "}
                     type="number"
                     fullWidth
                     name="to"
@@ -661,7 +661,7 @@ const SidebarAddUser = (props) => {
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <InputLabel id="jd" sx={{ my: 2 }}>
               {" "}
-              Job Shot Description
+              Job Short Description
             </InputLabel>
             <ReactDraftWysiwyg
               wrapperClassName="wrapper-class"

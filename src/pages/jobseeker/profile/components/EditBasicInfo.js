@@ -542,7 +542,7 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
               <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
                 <TextField
                   sx={{ my: 2 }}
-                  label={"Total Experiance (in Years) "}
+                  label={"Total Experience (in Years) "}
                   type="text"
                   fullWidth
                   name="total_years_of_experience"
@@ -551,7 +551,7 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
                   helperText={
                     submitted &&
                     !formValue.total_years_of_experience &&
-                    "Total Experiance (in Years) is required"
+                    "Total Experience (in Years) is required"
                   }
                   onChange={handleFormInputChange}
                   //   onChange={(e) => {

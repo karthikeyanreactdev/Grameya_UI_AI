@@ -167,7 +167,7 @@ const CandidateJobSearch = () => {
   });
 
   const [jobRole, setjobRole] = useState("");
-  const [experience, setExperiance] = useState("");
+  const [experience, setExperience] = useState("");
   const [salaryFrom, setSalaryFrom] = useState("");
   const [salaryTo, setSalaryTo] = useState("");
   const [jobType, setJobType] = useState("");
@@ -258,17 +258,17 @@ const CandidateJobSearch = () => {
               <Grid item sm={3} xs={12} lg={3} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
-                  label={"Experiance (in years)"}
+                  label={"Experience (in years)"}
                   required
                   fullWidth
                   size="small"
-                  name="Experiance"
-                  placeholder="Experiance (in years)"
+                  name="Experience"
+                  placeholder="Experience (in years)"
                   value={experience
                     ?.trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  onChange={(e) => setExperiance(e.target.value || "")}
+                  onChange={(e) => setExperience(e.target.value || "")}
                 />
               </Grid>
             </Grid>
@@ -399,7 +399,7 @@ const CandidateJobSearch = () => {
               <Grid container spacing={2}>
                 {machedJobList?.map((row) => {
                   return (
-                    <Grid item xs={12} sx={12} lg={12} xl={12}>
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                       <Card
                         raised={false}
                         sx={{
@@ -408,6 +408,7 @@ const CandidateJobSearch = () => {
                           // boxShadow: "0 0 2px 2px #187de4",
                           "&:hover": {
                             // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                            cursor: "pointer",
 
                             boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                             transform: "translateY(-5px)",
@@ -435,12 +436,18 @@ const CandidateJobSearch = () => {
                               </Typography>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1}>
-                              <Box sx={{ display: "flex", mr: 2 }}>
-                                <Icon
-                                  fontSize="1.25rem"
-                                  icon="tabler:heart"
-                                  color="#D2042D"
-                                />
+                              <Box
+                                sx={{ display: "flex", mr: 2, mb: 4 }}
+                                // onClick={() => (row.is_saved = !row.is_saved)}
+                              >
+                                {row?.is_saved ? (
+                                  <Icon
+                                    fontSize="1.25rem"
+                                    icon="tabler:star-filled"
+                                  />
+                                ) : (
+                                  <Icon fontSize="1.25rem" icon="tabler:star" />
+                                )}
                               </Box>
                             </Grid>
                           </Grid>
@@ -449,7 +456,7 @@ const CandidateJobSearch = () => {
                             spacing={2}
                             sx={{ display: "flex", alignItems: "center" }}
                           >
-                            <Grid item xs={12} sm={12} md={3} lg={3}>
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
                               <Box
                                 sx={{
                                   display: "flex",
@@ -474,7 +481,7 @@ const CandidateJobSearch = () => {
                                   }}
                                 >
                                   <Typography sx={{ color: "text.primary" }}>
-                                    {row.company_name?.substring(0, 35)}
+                                    {row.company_name?.substring(0, 30)}
                                   </Typography>
                                 </Box>
                               </Box>
