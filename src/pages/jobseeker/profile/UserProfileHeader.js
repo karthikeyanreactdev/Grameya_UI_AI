@@ -52,43 +52,6 @@ const UserProfileHeader = ({
   // }, [])
   const designationIcon = data?.designationIcon || "tabler:briefcase";
 
-  const fileInputRef = useRef(null);
-
-  const handleFileUpload = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    // Handle the file upload logic here
-    console.log("Selected file:", file);
-    if (file) {
-      onHandleChangeLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const response = await updateResume(formData);
-
-        console.log("response", response);
-        if (response.status === 200) {
-          sendNotification({
-            message: response?.data?.message,
-            variant: "success",
-          });
-          getProfileDetail();
-        }
-      } catch (e) {
-        console.log("e", e);
-        sendNotification({
-          message: e,
-          variant: "error",
-        });
-      } finally {
-        onHandleChangeLoading(false);
-      }
-    }
-  };
-
   return data !== null ? (
     <Card>
       <CardMedia
@@ -195,21 +158,6 @@ const UserProfileHeader = ({
             >
               <Icon icon="tabler:pencil" fontSize="1.125rem" />
               Edit
-            </Button>
-            <input
-              type="file"
-              accept=".doc,.pdf"
-              style={{ display: "none" }}
-              ref={fileInputRef}
-              onChange={handleFileChange}
-            />
-            <Button
-              variant="contained"
-              sx={{ "& svg": { mr: 2 } }}
-              onClick={handleFileUpload}
-            >
-              <Icon icon="tabler:pencil" fontSize="1.125rem" />
-              Upload Resume
             </Button>
           </Box>
         </Box>

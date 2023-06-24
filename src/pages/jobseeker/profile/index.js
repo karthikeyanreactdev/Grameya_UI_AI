@@ -43,6 +43,16 @@ import CommonLoader from "src/shared/CommonLoader";
 import ClearIcon from "@mui/icons-material/Clear";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ResumeSection from "./components/ResumeSection";
+import CustomChip from "src/@core/components/mui/chip";
+import CertificationDetail from "./components/CertificationDetail";
+import AddCertification from "./components/AddCertification";
+import EditCertification from "./components/EditCertification";
+
+const userStatusObj = {
+  active: "success",
+  pending: "warning",
+  inactive: "secondary",
+};
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: "0 !important",
@@ -83,6 +93,7 @@ const ACLPage = () => {
   const [sendNotification] = useNotification();
   const [isEditMode, setIsEditMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
 
   const [drawerState, setDrawerState] = useState({
     isBasicInfoEdit: false,
@@ -199,6 +210,16 @@ const ACLPage = () => {
     setIsEditMode(true);
   };
 
+  const formatDate = (dateValue) => {
+    const inputDate = new Date(dateValue);
+    const formattedDate = inputDate.toLocaleDateString("en-GB");
+    return formattedDate;
+  };
+
+  const handleSelectCertification = (item) => {
+    setSelectedCertificate(item);
+  };
+
   return (
     <>
       <CommonLoader isLoading={isLoading} />
@@ -285,6 +306,21 @@ const ACLPage = () => {
                         </Box>
                       }
                     />
+                    <Tab
+                      value="certification"
+                      label={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            ...(!hideText && { "& svg": { mr: 2 } }),
+                          }}
+                        >
+                          <Icon fontSize="1.125rem" icon="bxs:certification" />
+                          {!hideText && "Certification"}
+                        </Box>
+                      }
+                    />
                   </TabList>
                 </Grid>
                 <Grid item xs={12}>
@@ -348,88 +384,426 @@ const ACLPage = () => {
                                   md={12}
                                   sm={12}
                                 >
-                                  {userDetail?.jobseekerDetails?.educations?.map(
-                                    (item, key) => {
-                                      return (
-                                        <Card sx={{ mt: 3 }} key={key}>
-                                          <CardActionArea>
-                                            <CardContent>
-                                              {item?.education_type ===
-                                                "10th" ||
-                                              item?.education_type ===
-                                                "12th" ? (
-                                                <>
-                                                  <Typography
-                                                    gutterBottom
-                                                    variant="h5"
-                                                    component="div"
-                                                  >
-                                                    {item?.education_type}{" "}
-                                                    {item?.grade_or_marks} %
-                                                  </Typography>
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <Typography
-                                                    gutterBottom
-                                                    variant="h5"
-                                                    component="div"
-                                                  >
-                                                    {item?.course}{" "}
-                                                    {item?.grade_or_marks} %
-                                                  </Typography>
-                                                </>
-                                              )}
+                                  {userDetail?.jobseekerDetails?.educations
+                                    .length > 0 && (
+                                    <Box p={4}>
+                                      <Grid container spacing={2}>
+                                        {userDetail?.jobseekerDetails?.educations?.map(
+                                          (row, index) => {
+                                            return (
+                                              <Grid
+                                                item
+                                                xs={12}
+                                                sx={12}
+                                                lg={12}
+                                                xl={12}
+                                              >
+                                                <Card
+                                                  raised={false}
+                                                  sx={{
+                                                    mb: 2,
+                                                    border:
+                                                      "1px solid rgba(0, 0, 0, 0.5)",
+                                                    "&:hover": {
+                                                      boxShadow:
+                                                        "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                                      transform:
+                                                        "translateY(-5px)",
+                                                    },
+                                                  }}
+                                                >
+                                                  <CardContent sx={{ pb: 0 }}>
+                                                    <Grid
+                                                      container
+                                                      spacing={2}
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                          "space-between",
+                                                      }}
+                                                    >
+                                                      <Grid
+                                                        item
+                                                        xs={11}
+                                                        sm={11}
+                                                        md={11}
+                                                        lg={11}
+                                                      >
+                                                        <Typography
+                                                          sx={{ mb: 4 }}
+                                                          color="text.primary"
+                                                          variant="h5"
+                                                          gutterBottom
+                                                        >
+                                                          {row?.education_type ===
+                                                            "10th" ||
+                                                          row?.education_type ===
+                                                            "12th" ? (
+                                                            <>
+                                                              <Typography
+                                                                gutterBottom
+                                                                variant="h5"
+                                                                component="div"
+                                                              >
+                                                                {
+                                                                  row?.education_type
+                                                                }{" "}
+                                                                {
+                                                                  row?.grade_or_marks
+                                                                }{" "}
+                                                                %
+                                                              </Typography>
+                                                            </>
+                                                          ) : (
+                                                            <>
+                                                              <Typography
+                                                                gutterBottom
+                                                                variant="h5"
+                                                                component="div"
+                                                              >
+                                                                {row?.course}{" "}
+                                                                {
+                                                                  row?.grade_or_marks
+                                                                }{" "}
+                                                                %
+                                                              </Typography>
+                                                            </>
+                                                          )}
+                                                        </Typography>
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={1}
+                                                        sm={1}
+                                                        md={1}
+                                                        lg={1}
+                                                      >
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            mr: 2,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
+                                                          <Icon
+                                                            onClick={() =>
+                                                              handleDeleteEducation(
+                                                                row?.id
+                                                              )
+                                                            }
+                                                            fontSize="1.25rem"
+                                                            icon="tabler:trash"
+                                                            color="#D2042D"
+                                                          />
+                                                        </Box>
+                                                      </Grid>
+                                                    </Grid>
+                                                    <Grid
+                                                      container
+                                                      spacing={2}
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                      }}
+                                                    >
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={12}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        {(row.university_or_institute_name ||
+                                                          row.board) && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.secondary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              <Box
+                                                                sx={{
+                                                                  display:
+                                                                    "flex",
+                                                                  mr: 2,
+                                                                }}
+                                                              >
+                                                                <Icon
+                                                                  fontSize="1.25rem"
+                                                                  icon="tabler:building"
+                                                                  color="brown"
+                                                                />
+                                                              </Box>
 
-                                              <Typography
-                                                gutterBottom
-                                                variant="h5"
-                                                component="div"
-                                              >
-                                                {item?.institution_name}
-                                              </Typography>
-                                              <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                              >
-                                                {item?.institution_address}
-                                              </Typography>
-                                              <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                              >
-                                                year of pased out:{" "}
-                                                {item?.year_of_passout ||
-                                                  item?.course_duration_end}
-                                              </Typography>
-                                            </CardContent>
-                                          </CardActionArea>
-                                          <CardActions>
-                                            <Button
-                                              size="small"
-                                              color="primary"
-                                              onClick={() => {
-                                                setSelectedEducation(item);
-                                                handleDrawerStateChangeOpen(
-                                                  "isEditEducation"
-                                                );
-                                              }}
-                                            >
-                                              Edit
-                                            </Button>
-                                            <Button
-                                              size="small"
-                                              color="error"
-                                              onClick={() =>
-                                                handleDeleteEducation(item?.id)
-                                              }
-                                            >
-                                              Remove
-                                            </Button>
-                                          </CardActions>
-                                        </Card>
-                                      );
-                                    }
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  {row.university_or_institute_name ||
+                                                                    row.board}
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+
+                                                        {row.university_or_institute_address && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.secondary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              <Box
+                                                                sx={{
+                                                                  display:
+                                                                    "flex",
+                                                                  mr: 2,
+                                                                }}
+                                                              >
+                                                                <Icon
+                                                                  fontSize="1.25rem"
+                                                                  icon="tabler:map-pin"
+                                                                  color="red"
+                                                                />
+                                                              </Box>
+
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  {
+                                                                    row.university_or_institute_address
+                                                                  }
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        {(row.year_of_passout ||
+                                                          row.course_duration_end) && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.primary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              {/* <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              mr: 2,
+                                                            }}
+                                                          >
+                                                            <Icon
+                                                              fontSize="1.25rem"
+                                                              icon="tabler:brand-google-analytics"
+                                                              color="darkgreen"
+                                                            />
+                                                          </Box> */}
+
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  Years of
+                                                                  passed out{" "}
+                                                                  {row.year_of_passout ||
+                                                                    row.course_duration_end}
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+                                                      </Grid>
+                                                      {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            "&:not(:last-of-type)":
+                                                              { mb: 3 },
+                                                            "& svg": {
+                                                              color:
+                                                                "text.primary",
+                                                            },
+                                                          }}
+                                                        >
+                                                          <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              mr: 2,
+                                                              color: "warning",
+                                                            }}
+                                                          >
+                                                            ₹
+                                                          </Box>
+
+                                                          <Box
+                                                            sx={{
+                                                              columnGap: 2,
+                                                              display: "flex",
+                                                              flexWrap: "wrap",
+                                                              alignItems:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            <Typography
+                                                              sx={{
+                                                                color:
+                                                                  "text.primary",
+                                                              }}
+                                                            >
+                                                              {`${
+                                                                row.salary_from +
+                                                                "-" +
+                                                                row.salary_to
+                                                              } LPA`}
+                                                            </Typography>
+                                                          </Box>
+                                                        </Box>
+                                                      </Grid> */}
+                                                      {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        <CustomChip
+                                                          rounded
+                                                          skin="light"
+                                                          size="small"
+                                                          label={row.job_type}
+                                                          color={
+                                                            userStatusObj[
+                                                              row.status
+                                                            ]
+                                                          }
+                                                          sx={{
+                                                            textTransform:
+                                                              "capitalize",
+                                                          }}
+                                                        />
+                                                      </Grid> */}
+                                                    </Grid>
+                                                  </CardContent>
+                                                  <CardActions
+                                                    sx={{ pb: 3, pl: 0 }}
+                                                  >
+                                                    <Grid container spacing={2}>
+                                                      <Grid item xs={12} lg={6}>
+                                                        <Typography
+                                                          // component="div"
+                                                          color="text.secondary"
+                                                          sx={{ fontSize: 16 }}
+                                                        ></Typography>
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={12}
+                                                        lg={6}
+                                                        sx={{
+                                                          display: "flex",
+                                                          justifyContent:
+                                                            "flex-end",
+                                                        }}
+                                                      >
+                                                        <Button
+                                                          size="small"
+                                                          variant="contained"
+                                                          onClick={() => {
+                                                            setSelectedEducation(
+                                                              row
+                                                            );
+                                                            handleDrawerStateChangeOpen(
+                                                              "isEditEducation"
+                                                            );
+                                                          }}
+                                                        >
+                                                          Edit
+                                                        </Button>
+                                                      </Grid>
+                                                    </Grid>
+                                                  </CardActions>
+                                                </Card>
+                                              </Grid>
+                                            );
+                                          }
+                                        )}
+                                      </Grid>
+                                    </Box>
                                   )}
                                 </Grid>
                               </Grid>
@@ -506,72 +880,427 @@ const ACLPage = () => {
                                   md={12}
                                   sm={12}
                                 >
-                                  {userDetail?.jobseekerDetails?.experiences?.map(
-                                    (item, index) => {
-                                      return (
-                                        <Card sx={{ mt: 3 }} key={index}>
-                                          <CardActionArea>
-                                            <CardContent>
-                                              <Typography
-                                                gutterBottom
-                                                variant="h5"
-                                                component="div"
+                                  {userDetail?.jobseekerDetails?.experiences
+                                    .length > 0 && (
+                                    <Box p={4}>
+                                      <Grid container spacing={2}>
+                                        {userDetail?.jobseekerDetails?.experiences?.map(
+                                          (row, index) => {
+                                            return (
+                                              <Grid
+                                                item
+                                                xs={12}
+                                                sx={12}
+                                                lg={12}
+                                                xl={12}
                                               >
-                                                {item?.company_name}
-                                              </Typography>
-                                              <Typography
-                                                gutterBottom
-                                                variant="h5"
-                                                component="div"
-                                              >
-                                                {item?.designation}
-                                              </Typography>
-                                              <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                              >
-                                                Skill:{" "}
-                                                {item?.skills.map(
-                                                  (element, index) => (
-                                                    <span key={index}>
-                                                      {element}
-                                                      {index !==
-                                                        userDetail
-                                                          ?.jobseekerDetails
-                                                          ?.skills.length -
-                                                          1 && ", "}
-                                                    </span>
-                                                  )
-                                                )}
-                                              </Typography>
-                                            </CardContent>
-                                          </CardActionArea>
-                                          <CardActions>
-                                            <Button
-                                              size="small"
-                                              color="primary"
-                                              onClick={() => {
-                                                handleSelectExp(item);
-                                                handleDrawerStateChangeOpen(
-                                                  "isEditExperiance"
-                                                );
-                                              }}
-                                            >
-                                              Edit
-                                            </Button>
-                                            <Button
-                                              size="small"
-                                              color="error"
-                                              onClick={() => {
-                                                handleDeleteExpirince(item.id);
-                                              }}
-                                            >
-                                              Remove
-                                            </Button>
-                                          </CardActions>
-                                        </Card>
-                                      );
-                                    }
+                                                <Card
+                                                  raised={false}
+                                                  sx={{
+                                                    mb: 2,
+                                                    border:
+                                                      "1px solid rgba(0, 0, 0, 0.5)",
+                                                    "&:hover": {
+                                                      boxShadow:
+                                                        "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                                      transform:
+                                                        "translateY(-5px)",
+                                                    },
+                                                  }}
+                                                >
+                                                  <CardContent sx={{ pb: 0 }}>
+                                                    <Grid
+                                                      container
+                                                      spacing={2}
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                          "space-between",
+                                                      }}
+                                                    >
+                                                      <Grid
+                                                        item
+                                                        xs={11}
+                                                        sm={11}
+                                                        md={11}
+                                                        lg={11}
+                                                      >
+                                                        <Typography
+                                                          sx={{ mb: 4 }}
+                                                          color="text.primary"
+                                                          variant="h5"
+                                                          gutterBottom
+                                                        >
+                                                          {row?.company_name && (
+                                                            <>
+                                                              <Typography
+                                                                gutterBottom
+                                                                variant="h5"
+                                                                component="div"
+                                                              >
+                                                                {
+                                                                  row.company_name
+                                                                }
+                                                              </Typography>
+                                                            </>
+                                                          )}
+                                                        </Typography>
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={1}
+                                                        sm={1}
+                                                        md={1}
+                                                        lg={1}
+                                                      >
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            mr: 2,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
+                                                          <Icon
+                                                            onClick={() => {
+                                                              handleDeleteExpirince(
+                                                                row.id
+                                                              );
+                                                            }}
+                                                            fontSize="1.25rem"
+                                                            icon="tabler:trash"
+                                                            color="#D2042D"
+                                                          />
+                                                        </Box>
+                                                      </Grid>
+                                                    </Grid>
+                                                    <Grid
+                                                      container
+                                                      spacing={2}
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                      }}
+                                                    >
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={12}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        {row.designation && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.secondary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              <Box
+                                                                sx={{
+                                                                  display:
+                                                                    "flex",
+                                                                  mr: 2,
+                                                                }}
+                                                              >
+                                                                <Icon
+                                                                  fontSize="1.25rem"
+                                                                  icon="eos-icons:cluster-role"
+                                                                  color="brown"
+                                                                />
+                                                              </Box>
+
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  {
+                                                                    row.designation
+                                                                  }
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+
+                                                        {row.skills.length >
+                                                          0 && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.secondary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              <Box
+                                                                sx={{
+                                                                  display:
+                                                                    "flex",
+                                                                  mr: 2,
+                                                                }}
+                                                              >
+                                                                <Icon
+                                                                  fontSize="1.25rem"
+                                                                  icon="carbon:skill-level"
+                                                                  color="red"
+                                                                />
+                                                              </Box>
+
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  Skill:{" "}
+                                                                  {row?.skills.map(
+                                                                    (
+                                                                      element,
+                                                                      index
+                                                                    ) => (
+                                                                      <span
+                                                                        key={
+                                                                          index
+                                                                        }
+                                                                      >
+                                                                        {
+                                                                          element
+                                                                        }
+                                                                        {index !==
+                                                                          userDetail
+                                                                            ?.jobseekerDetails
+                                                                            ?.skills
+                                                                            .length -
+                                                                            1 &&
+                                                                          ", "}
+                                                                      </span>
+                                                                    )
+                                                                  )}
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        {row.end_date && (
+                                                          <>
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                "&:not(:last-of-type)":
+                                                                  { mb: 3 },
+                                                                "& svg": {
+                                                                  color:
+                                                                    "text.primary",
+                                                                },
+                                                              }}
+                                                            >
+                                                              {/* <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              mr: 2,
+                                                            }}
+                                                          >
+                                                            <Icon
+                                                              fontSize="1.25rem"
+                                                              icon="tabler:brand-google-analytics"
+                                                              color="darkgreen"
+                                                            />
+                                                          </Box> */}
+
+                                                              <Box
+                                                                sx={{
+                                                                  columnGap: 2,
+                                                                  display:
+                                                                    "flex",
+                                                                  flexWrap:
+                                                                    "wrap",
+                                                                  alignItems:
+                                                                    "center",
+                                                                }}
+                                                              >
+                                                                <Typography
+                                                                  sx={{
+                                                                    color:
+                                                                      "text.primary",
+                                                                  }}
+                                                                >
+                                                                  Relieving
+                                                                  date:{" "}
+                                                                  {formatDate(
+                                                                    row.end_date
+                                                                  )}
+                                                                </Typography>
+                                                              </Box>
+                                                            </Box>
+                                                          </>
+                                                        )}
+                                                      </Grid>
+                                                      {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            "&:not(:last-of-type)":
+                                                              { mb: 3 },
+                                                            "& svg": {
+                                                              color:
+                                                                "text.primary",
+                                                            },
+                                                          }}
+                                                        >
+                                                          <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              mr: 2,
+                                                              color: "warning",
+                                                            }}
+                                                          >
+                                                            ₹
+                                                          </Box>
+
+                                                          <Box
+                                                            sx={{
+                                                              columnGap: 2,
+                                                              display: "flex",
+                                                              flexWrap: "wrap",
+                                                              alignItems:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            <Typography
+                                                              sx={{
+                                                                color:
+                                                                  "text.primary",
+                                                              }}
+                                                            >
+                                                              {`${
+                                                                row.salary_from +
+                                                                "-" +
+                                                                row.salary_to
+                                                              } LPA`}
+                                                            </Typography>
+                                                          </Box>
+                                                        </Box>
+                                                      </Grid> */}
+                                                      {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={4}
+                                                        md={3}
+                                                        lg={3}
+                                                      >
+                                                        <CustomChip
+                                                          rounded
+                                                          skin="light"
+                                                          size="small"
+                                                          label={row.job_type}
+                                                          color={
+                                                            userStatusObj[
+                                                              row.status
+                                                            ]
+                                                          }
+                                                          sx={{
+                                                            textTransform:
+                                                              "capitalize",
+                                                          }}
+                                                        />
+                                                      </Grid> */}
+                                                    </Grid>
+                                                  </CardContent>
+                                                  <CardActions
+                                                    sx={{ pb: 3, pl: 0 }}
+                                                  >
+                                                    <Grid container spacing={2}>
+                                                      <Grid item xs={12} lg={6}>
+                                                        <Typography
+                                                          // component="div"
+                                                          color="text.secondary"
+                                                          sx={{ fontSize: 16 }}
+                                                        ></Typography>
+                                                      </Grid>
+                                                      <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={12}
+                                                        lg={6}
+                                                        sx={{
+                                                          display: "flex",
+                                                          justifyContent:
+                                                            "flex-end",
+                                                        }}
+                                                      >
+                                                        <Button
+                                                          size="small"
+                                                          variant="contained"
+                                                          onClick={() => {
+                                                            handleSelectExp(
+                                                              item
+                                                            );
+                                                            handleDrawerStateChangeOpen(
+                                                              "isEditExperiance"
+                                                            );
+                                                          }}
+                                                        >
+                                                          Edit
+                                                        </Button>
+                                                      </Grid>
+                                                    </Grid>
+                                                  </CardActions>
+                                                </Card>
+                                              </Grid>
+                                            );
+                                          }
+                                        )}
+                                      </Grid>
+                                    </Box>
                                   )}
                                 </Grid>
                               </Grid>
@@ -581,7 +1310,7 @@ const ACLPage = () => {
                               sx={{
                                 display: "flex",
                                 justifyContent: "center",
-                                mx: 32,
+                                // mx: 32,
                                 mt: 4,
                               }}
                             >
@@ -635,6 +1364,40 @@ const ACLPage = () => {
                           getProfileDetail={getProfileDetail}
                           onHandleChangeLoading={handleChangeLoading}
                         />
+                      )}
+                      {activeTab === "certification" && (
+                        <>
+                          <CertificationDetail
+                            userDetail={userDetail}
+                            getProfileDetail={getProfileDetail}
+                            onHandleChangeLoading={handleChangeLoading}
+                            handleDrawerStateChangeOpen={
+                              handleDrawerStateChangeOpen
+                            }
+                            handleSelectCertification={
+                              handleSelectCertification
+                            }
+                          />
+
+                          {drawerState.isEditCertification && (
+                            <EditCertification
+                              isOpen={drawerState.isEditCertification}
+                              onClose={handleDrawerStateChangeClose}
+                              getProfileDetail={getProfileDetail}
+                              selectedCertificate={selectedCertificate}
+                              onHandleChangeLoading={handleChangeLoading}
+                            />
+                          )}
+
+                          {drawerState.isAddCertification && (
+                            <AddCertification
+                              isOpen={drawerState.isAddCertification}
+                              onClose={handleDrawerStateChangeClose}
+                              getProfileDetail={getProfileDetail}
+                              onHandleChangeLoading={handleChangeLoading}
+                            />
+                          )}
+                        </>
                       )}
                     </TabPanel>
                   )}

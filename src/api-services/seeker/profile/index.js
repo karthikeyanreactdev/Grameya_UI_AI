@@ -12,6 +12,9 @@ const updateJobseekerEducationUrl = `${baseURL}/job-seeker/update_education`;
 const deleteJobseekerEducationUrl = `${baseURL}/job-seeker/delete_education`;
 const updateResumeUrl = `${baseURL}/job-seeker/upload_resume`;
 const removeResumeUrl = `${baseURL}/job-seeker/delete_resume`;
+const addCertificationSeekerUrl = `${baseURL}/job-seeker/add_certification`;
+const updateCertificationSeekerUrl = `${baseURL}/job-seeker/update_certification`;
+const deleteCertificationSeekerUrl = `${baseURL}/job-seeker/delete_certification`;
 
 export const getProfile = () => {
   return apiGet(getProfileUrl);
@@ -55,4 +58,16 @@ export const updateJobseekerEducation = (bodyParams) => {
 
 export const removeJobseekerEducation = (bodyParams) => {
   return apiDelete(deleteJobseekerEducationUrl, bodyParams);
+};
+
+export const addCertificationSeeker = (bodyParams) => {
+  return apiPost(addCertificationSeekerUrl, bodyParams);
+};
+
+export const editCertificationSeeker = (bodyParams) => {
+  return apiPut(updateCertificationSeekerUrl, bodyParams);
+};
+
+export const removeCertificationSeeker = (bodyParams) => {
+  return apiDelete(deleteCertificationSeekerUrl, bodyParams);
 };

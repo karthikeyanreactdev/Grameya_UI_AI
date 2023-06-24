@@ -829,6 +829,14 @@ function BasicInfo({
               >
                 <Grid container spacing={2} py={2}>
                   <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={onHandleEditCloseChange}
+                      sx={{ mr: 2 }}
+                    >
+                      Cancel
+                    </Button>
                     <Button variant="contained" onClick={handleFormSubmit}>
                       Submit
                     </Button>
