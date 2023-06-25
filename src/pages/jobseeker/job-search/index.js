@@ -70,6 +70,7 @@ import {
 } from "@mui/material";
 import { jobSearchSeeker } from "src/store/apps/jobseeker/job-search";
 import { LoadingButton } from "@mui/lab";
+import { useRouter } from "next/router";
 
 const userStatusObj = {
   active: "success",
@@ -108,6 +109,7 @@ const useStyles = makeStyles({
   },
 });
 const CandidateJobSearch = () => {
+  const router = useRouter();
   // ** Hooks
   const ability = useContext(AbilityContext);
   const theme = useTheme();
@@ -131,6 +133,10 @@ const CandidateJobSearch = () => {
   const handleFilter = useCallback((val) => {
     setValue(val);
   }, []);
+
+  const handleNavigateJobDetail = () => {
+    router.push("/jobseeker/job-detail/");
+  };
 
   // const handleLocationChange = useCallback((e) => {
   //   setLocation(e.target.value);
@@ -615,7 +621,11 @@ const CandidateJobSearch = () => {
                                 justifyContent: "flex-end",
                               }}
                             >
-                              <Button size="small" variant="contained">
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={handleNavigateJobDetail}
+                              >
                                 View Job
                               </Button>
                             </Grid>

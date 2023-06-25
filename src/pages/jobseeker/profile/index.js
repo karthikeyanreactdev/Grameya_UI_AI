@@ -366,7 +366,7 @@ const ACLPage = () => {
                       )}
                       {activeTab === "education" && (
                         <Grid item md={12} xs={12}>
-                          <Card>
+                          <>
                             <CardContent
                               sx={{
                                 display: "flex",
@@ -378,25 +378,33 @@ const ACLPage = () => {
                               <Grid container spacing={2} py={2}>
                                 <Grid
                                   item
-                                  lg={6}
-                                  xl={6}
+                                  lg={12}
+                                  xl={12}
                                   xs={12}
                                   md={12}
                                   sm={12}
                                 >
                                   {userDetail?.jobseekerDetails?.educations
                                     .length > 0 && (
-                                    <Box p={4}>
-                                      <Grid container spacing={2}>
+                                    <Box>
+                                      <Grid
+                                        container
+                                        spacing={2}
+                                        columns={{ xs: 4, sm: 12, md: 12 }}
+                                      >
                                         {userDetail?.jobseekerDetails?.educations?.map(
                                           (row, index) => {
                                             return (
                                               <Grid
+                                                // item
+                                                // xs={12}
+                                                // sx={12}
+                                                // lg={12}
+                                                // xl={12}
                                                 item
                                                 xs={12}
-                                                sx={12}
-                                                lg={12}
-                                                xl={12}
+                                                sm={6}
+                                                md={6}
                                               >
                                                 <Card
                                                   raised={false}
@@ -839,7 +847,7 @@ const ACLPage = () => {
                                 </Grid>
                               </Grid>
                             </CardContent>
-                          </Card>
+                          </>
                           {drawerState.isEditEducation && (
                             <EditEducation
                               isOpen={drawerState.isEditEducation}
@@ -862,7 +870,7 @@ const ACLPage = () => {
                       )}
                       {activeTab === "work" && (
                         <Grid item md={12} xs={12}>
-                          <Card>
+                          <>
                             <CardContent
                               sx={{
                                 display: "flex",
@@ -874,26 +882,24 @@ const ACLPage = () => {
                               <Grid container spacing={2} py={2}>
                                 <Grid
                                   item
-                                  lg={6}
-                                  xl={6}
+                                  lg={12}
+                                  xl={12}
                                   xs={12}
                                   md={12}
                                   sm={12}
                                 >
                                   {userDetail?.jobseekerDetails?.experiences
                                     .length > 0 && (
-                                    <Box p={4}>
-                                      <Grid container spacing={2}>
+                                    <Box>
+                                      <Grid
+                                        container
+                                        spacing={2}
+                                        columns={{ xs: 4, sm: 12, md: 12 }}
+                                      >
                                         {userDetail?.jobseekerDetails?.experiences?.map(
                                           (row, index) => {
                                             return (
-                                              <Grid
-                                                item
-                                                xs={12}
-                                                sx={12}
-                                                lg={12}
-                                                xl={12}
-                                              >
+                                              <Grid item xs={12} sm={6} md={6}>
                                                 <Card
                                                   raised={false}
                                                   sx={{
@@ -1336,7 +1342,7 @@ const ACLPage = () => {
                                 </Grid>
                               </Grid>
                             </CardContent>
-                          </Card>
+                          </>
                           {drawerState.isEditExperiance && (
                             <EditExperiance
                               isOpen={drawerState.isEditExperiance}
