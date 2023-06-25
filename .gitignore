@@ -37,3 +37,4 @@ next
 .next/static/chunks/amp.js
 .next/static/chunks/main.js
 .next/static/chunks/webpack.js
+.next/build-manifest.json

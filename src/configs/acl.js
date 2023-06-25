@@ -18,6 +18,8 @@ const defineRulesFor = (role, subject) => {
     can("read", "profile");
     can("read", "jobs");
     can("read", "search");
+    can("read", "candidates");
+    can("read", "appliedCandidates");
   } else if (role === "jobseeker") {
     can("manage", "jsdashboard");
     can("read", "jsprofile");

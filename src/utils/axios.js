@@ -113,7 +113,8 @@ export async function apiPut(path, data, isNormal = false) {
   const authToken = await getAccessToken();
   const config = {
     headers: {
-      authorization: `Bearer ${authToken}`,
+      authorization: authToken ? `Bearer ${authToken}` : null,
+      "Content-Type": "application/json",
     },
     isNormal: isNormal,
   };
@@ -133,15 +134,21 @@ export async function apiDelete(path, data) {
   //     authorization: `Bearer ${authToken}`
   //   }
   // };
-  const headers = {
-    authorization: `Bearer ${authToken}`,
+  // const headers = {
+  //   authorization: `Bearer ${authToken}`,
+  // };
+  const config = {
+    headers: {
+      authorization: authToken ? `Bearer ${authToken}` : null,
+      "Content-Type": "application/json",
+    },
   };
-
   // return axios.delete(path, {
   //   ...data,
   //   ...config
   // });
-  return axios.delete(path, { data: data, headers: headers });
+  // return axios.delete(path, { data: data, headers: headers });
+  return axios.delete(path, { data: data, config });
 }
 
 /**

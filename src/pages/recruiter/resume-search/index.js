@@ -56,6 +56,8 @@ import {
   resumeCandidates,
   resumeSearchByFilter,
 } from "src/store/apps/recruiter/resume-search";
+import useNotification from "src/hooks/useNotification";
+
 import {
   Button,
   Chip,
@@ -63,8 +65,11 @@ import {
   InputLabel,
   Select,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { addShortList } from "src/api-services/recruiter/candidate";
+import Swal from "sweetalert2";
 
 const userStatusObj = {
   active: "success",
@@ -99,6 +104,8 @@ const Dashboard = () => {
   const ability = useContext(AbilityContext);
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [sendNotification] = useNotification();
+
   const { direction } = theme;
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
   // const [location, setLocation] = useState("");
@@ -106,6 +113,10 @@ const Dashboard = () => {
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("");
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [isShortListLoading, setIsShortListLoading] = useState(false);
+  const [isShortListLoadingId, setIsShortListLoadingId] = useState("");
+  const [isViewLoading, setIsViewLoading] = useState(false);
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -151,6 +162,86 @@ const Dashboard = () => {
       />
     );
   });
+
+  const [jobRole, setjobRole] = useState("");
+  const [experience, setExperiance] = useState("");
+  const [salaryFrom, setSalaryFrom] = useState("");
+  const [salaryTo, setSalaryTo] = useState("");
+  const [jobType, setJobType] = useState("");
+  const [noticePeriod, setNoticePeriod] = useState("");
+  const [location, setLocation] = useState("");
+  const [keyword, setKeyword] = useState("");
+
+  const { resumeSearchList, isLoading, pageCount } = useSelector(
+    (state) => state.resumeSearch
+  );
+  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
+
+  console.log("resumeSearch", resumeSearchList);
+  const handleSearch = async () => {
+    if (keyword === "") {
+      return;
+    }
+    const params = {
+      page: paginationModel?.page + 1,
+      size: paginationModel?.pageSize,
+      search_keyword: keyword,
+      experience_from: "0",
+      experience_to: experience,
+      job_type: jobType,
+      notice_period: noticePeriod,
+      salary_from: salaryFrom,
+      salary_to: salaryTo,
+      job_location: location,
+    };
+
+    dispatch(resumeCandidates(params));
+  };
+
+  useEffect(() => {
+    // handleSearch();
+  }, []);
+  useEffect(() => {
+    handleSearch();
+  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
+    );
+  }, [pageCount?.total, setRowCountState]);
+
+  const handleAddShortList = async (id) => {
+    Swal.fire({
+      title: "Do you want to shortlist this candidate?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const params = {
+            seeker_ids: [id],
+          };
+          setIsShortListLoading(true);
+          setIsShortListLoadingId(id);
+
+          const response = await addShortList(params);
+          sendNotification({
+            message: response?.data?.message,
+            variant: "success",
+          });
+        } catch (e) {
+          sendNotification({
+            message: e,
+            variant: "error",
+          });
+        } finally {
+          setIsShortListLoading(false);
+        }
+      }
+    });
+  };
   const searchListColumns = [
     {
       flex: 0.1,
@@ -199,15 +290,7 @@ const Dashboard = () => {
 
     {
       flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-      field: "resume_headline",
-      headerName: "Resume Headline",
-      renderCell: ({ row }) => `${row.resume_headline}`,
-    },
-    {
-      flex: 0.1,
-      minWidth: 50,
+      minWidth: 150,
       sortable: true,
       field: "total_years_of_experience",
       headerName: "Experience",
@@ -219,82 +302,100 @@ const Dashboard = () => {
       sortable: true,
 
       field: "preferred_job_location",
-      headerName: "Prefered Job Location",
-      renderCell: ({ row }) =>
-        row?.preferred_job_location?.map((e) => {
-          return (
-            <Chip
-              size="small"
-              label={e}
-              color={"info"}
-              sx={{
-                mr: 2,
-                height: 24,
-                minWidth: 24,
-                "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
-              }}
-            />
-          );
-        }),
-    },
+      headerName: "Prefered Location",
+      renderCell: ({ row }) => `${row.preferred_job_location}`,
 
+      // renderCell: ({ row }) =>
+      //   row?.preferred_job_location?.map((e) => {
+      //     return (
+      //       <Chip
+      //         size="small"
+      //         label={e}
+      //         color={"info"}
+      //         sx={{
+      //           mr: 2,
+      //           height: 24,
+      //           minWidth: 24,
+      //           "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+      //         }}
+      //       />
+      //     );
+      //   }),
+    },
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 500,
+      sortable: true,
+      field: "skills",
+      headerName: "Skills",
+      renderCell: ({ row }) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            wordWrap: "break-word",
+            whiteSpace: "normal",
+          }}
+        >
+          {row?.skills?.map((e) => {
+            return (
+              <Chip
+                size="small"
+                label={e}
+                color={"info"}
+                sx={{
+                  mr: 2,
+                  height: 24,
+                  minWidth: 24,
+                  wordWrap: "break-word",
+                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+                }}
+              />
+            );
+          })}
+        </Box>
+      ),
+    },
+    {
+      flex: 0.1,
+      minWidth: 300,
       sortable: false,
       // field: "Action",
       headerName: "Action",
       renderCell: ({ row }) => {
-        return <Button onClick={() => {}}>View</Button>;
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            {/* <Button onClick={() => {}}>View</Button> */}
+            <Tooltip title="View Candidate">
+              <LoadingButton
+                // isLoading={isViewLoading}
+                onClick={() => {}}
+                sx={{ fontSize: "18px" }}
+              >
+                {" "}
+                <Icon icon="tabler:eye" color="primary" />
+              </LoadingButton>
+            </Tooltip>
+            <Tooltip title="Shortlist Candidate">
+              <LoadingButton
+                // loading={isShortListLoading && isShortListLoadingId}
+                onClick={() => handleAddShortList(row.id)}
+                sx={{ fontSize: "18px" }}
+              >
+                {" "}
+                <Icon icon="tabler:user-check" color="primary" />
+              </LoadingButton>
+            </Tooltip>
+          </Box>
+        );
       },
     },
   ];
-  const [jobRole, setjobRole] = useState("");
-  const [experience, setExperiance] = useState("");
-  const [salaryFrom, setSalaryFrom] = useState("");
-  const [salaryTo, setSalaryTo] = useState("");
-  const [jobType, setJobType] = useState("");
-  const [noticePeriod, setNoticePeriod] = useState("");
-  const [location, setLocation] = useState("");
-  const [keyword, setKeyword] = useState("");
-
-  const { resumeSearchList, isLoading, pageCount } = useSelector(
-    (state) => state.resumeSearch
-  );
-  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
-
-  console.log("resumeSearch", resumeSearchList);
-  const handleSearch = async () => {
-    if (keyword === "") {
-      return;
-    }
-    const params = {
-      page: paginationModel?.page + 1,
-      size: paginationModel?.pageSize,
-      search_keyword: keyword,
-      experience_from: "0",
-      experience_to: experience,
-      job_type: jobType,
-      notice_period: noticePeriod,
-      salary_from: salaryFrom,
-      salary_to: salaryTo,
-      job_location: location,
-    };
-
-    dispatch(resumeCandidates(params));
-  };
-
-  useEffect(() => {
-    // handleSearch();
-  }, []);
-  useEffect(() => {
-    handleSearch();
-  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
-  useEffect(() => {
-    setRowCountState((prevRowCountState) =>
-      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
-    );
-  }, [pageCount?.total, setRowCountState]);
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -324,7 +425,6 @@ const Dashboard = () => {
                 <TextField
                   sx={{ my: 2 }}
                   label={"Job Location"}
-                  required
                   fullWidth
                   size="small"
                   name="Job Location"
@@ -343,12 +443,11 @@ const Dashboard = () => {
                   <Grid item sm={6} xs={12} lg={6}>
                     <TextField
                       sx={{ my: 2 }}
-                      label={"Salary from"}
-                      required
+                      label={"Salary From"}
                       fullWidth
                       size="small"
                       name="salaryFrom"
-                      placeholder="Salary from (in LPA)"
+                      placeholder="Salary From (in LPA)"
                       value={salaryFrom
                         ?.trimStart()
                         .replace(/\s\s+/g, "")
@@ -524,6 +623,28 @@ const Dashboard = () => {
           <Box p={4}>
             <DataGrid
               autoHeight
+              sx={{
+                "& .MuiDataGrid-columnHeaders ": {
+                  backgroundColor: theme.palette.primary.main,
+                  color: "#fff",
+                  "& .MuiButtonBase-root.MuiIconButton-root ": {
+                    color: "#fff",
+                  },
+                  borderTopLeftRadius: "6px",
+                  borderTopRightRadius: "6px",
+                },
+                "& .MuiDataGrid-columnSeparator ": {
+                  color: "#fff",
+                },
+                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
+                  borderColor: `${theme.palette.primary.main}`,
+                },
+
+                "& .MuiDataGrid-virtualScroller": {
+                  // border: `1px solid ${theme.palette.primary.main}`,
+                  border: `.25px solid grey`,
+                },
+              }}
               rowHeight={62}
               rows={resumeSearchList}
               loading={isLoading}

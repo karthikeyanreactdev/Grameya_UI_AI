@@ -20,15 +20,33 @@ import { getApplicantsList } from "src/store/apps/recruiter/applications";
 import { useDispatch, useSelector } from "react-redux";
 import CustomChip from "src/@core/components/mui/chip";
 import moment from "moment/moment";
+import { makeStyles } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/router";
+import { Tooltip } from "@mui/material";
+
 const userStatusObj = {
   active: "success",
   hired: "info",
   disabled: "error",
 };
+
+const useStyles = makeStyles({
+  root: {
+    // "& .MuiDataGrid-columnHeaders ": {
+    //   backgroundColor: (theme) => theme.palette.primary.main,
+    // },
+  },
+});
 const Applications = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
+  const classes = useStyles();
+  const theme = useTheme();
+  const router = useRouter();
+
   const dispatch = useDispatch();
+  // const navigate = useNavigate;
   const { recruiterApplicantsList, isLoading, pageCount } = useSelector(
     (state) => state.applications
   );
@@ -65,6 +83,42 @@ const Applications = () => {
     },
     {
       flex: 0.1,
+      minWidth: 300,
+      sortable: true,
+
+      field: "total_applications",
+      headerName: "Total Applicants (Click on to view details)",
+      renderCell: ({ row }) => {
+        return (
+          // <Tooltip title="Click here to view applicants list">
+          //   {" "}
+          <CustomChip
+            rounded
+            skin="light"
+            size="small"
+            title={
+              row.total_applications > 0
+                ? "Click here to view applicants list"
+                : "No Applicants"
+            }
+            onClick={() => {
+              if (row.total_applications > 0) {
+                handleApplications(row);
+              }
+            }}
+            label={row.total_applications}
+            color={row.total_applications > 0 ? "success" : "warning"}
+            sx={{
+              textTransform: "capitalize",
+              cursor: row.total_applications > 0 ? "pointer" : "not-allowed",
+            }}
+          />
+          // </Tooltip>
+        );
+      },
+    },
+    {
+      flex: 0.1,
       minWidth: 100,
       sortable: true,
 
@@ -80,36 +134,27 @@ const Applications = () => {
       // ),
       renderCell: ({ row }) => `${moment(row.posted_on).format("DD/MM/YYYY")}`,
     },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
 
-      field: "total_applications",
-      headerName: "Total Applicants",
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 100,
+    //   sortable: true,
 
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }) => {
-        return (
-          <CustomChip
-            rounded
-            skin="light"
-            size="small"
-            label={row.status}
-            color={userStatusObj[row.status]}
-            sx={{ textTransform: "capitalize" }}
-          />
-        );
-      },
-    },
+    //   field: "status",
+    //   headerName: "Status",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <CustomChip
+    //         rounded
+    //         skin="light"
+    //         size="small"
+    //         label={row.status}
+    //         color={userStatusObj[row.status]}
+    //         sx={{ textTransform: "capitalize" }}
+    //       />
+    //     );
+    //   },
+    // },
     // {
     //   flex: 0.1,
     //   minWidth: 100,
@@ -149,8 +194,18 @@ const Applications = () => {
       pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
     );
   }, [pageCount?.total, setRowCountState]);
+
+  const handleApplications = async (row) => {
+    router.push(
+      {
+        pathname: "/recruiter/applied-candiates",
+        query: { cid: row?.id },
+      },
+      "/recruiter/applied-candiates"
+    );
+  };
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={6} className={classes.root}>
       {/* <Grid item md={6} xs={12}>
       <Card>
         <CardHeader title='Employer Dashboard' />
@@ -169,6 +224,28 @@ const Applications = () => {
           {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
           <Box p={4}>
             <DataGrid
+              sx={{
+                "& .MuiDataGrid-columnHeaders ": {
+                  backgroundColor: theme.palette.primary.main,
+                  color: "#fff",
+                  "& .MuiButtonBase-root.MuiIconButton-root ": {
+                    color: "#fff",
+                  },
+                  borderTopLeftRadius: "6px",
+                  borderTopRightRadius: "6px",
+                },
+                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
+                  borderColor: `${theme.palette.primary.main}`,
+                },
+
+                "& .MuiDataGrid-columnSeparator ": {
+                  color: "#fff",
+                },
+                "& .MuiDataGrid-virtualScroller": {
+                  // border: `1px solid ${theme.palette.primary.main}`,
+                  border: `.25px solid grey`,
+                },
+              }}
               autoHeight
               rowHeight={62}
               rows={recruiterApplicantsList}

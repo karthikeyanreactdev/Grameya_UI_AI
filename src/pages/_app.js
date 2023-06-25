@@ -115,6 +115,12 @@ const App = (props) => {
             href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap"
             rel="stylesheet"
           />
+          <link
+            rel="stylesheet"
+            href="@sweetalert2/theme-material-ui/material-ui.css"
+          />
+
+          <script src="sweetalert2/dist/sweetalert2.min.js"></script>
           <meta
             name="keywords"
             content="AI, Job Portal, jobseeker, recruiter, skills, grameya, next innovation asia, hrtalky"

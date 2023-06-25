@@ -184,7 +184,7 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
               icon={isEdit ? "tabler:arrow-badge-left" : "tabler:pencil"}
               fontSize="1.125rem"
             />
-            {isEdit ? "Back" : "Edit"}
+            {isEdit ? "Cancel" : "Edit"}
           </Button>
         </Box>
       </CardContent>

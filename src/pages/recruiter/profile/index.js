@@ -312,6 +312,12 @@ const Profile = () => {
                   formik.errors.fullname &&
                   formik.errors.fullname
                 }
+                freeSolo={!isEdit}
+                variant={!isEdit ? "standard" : "outlined"}
+                InputProps={{
+                  readOnly: !isEdit,
+                  disableUnderline: !isEdit,
+                }}
               />
             </Grid>
             <Grid container spacing={2} py={2}>
@@ -337,6 +343,12 @@ const Profile = () => {
                     formik.errors.companyName &&
                     formik.errors.companyName
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
@@ -361,28 +373,65 @@ const Profile = () => {
                     formik.errors.designation &&
                     formik.errors.designation
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
             </Grid>
             <Grid container spacing={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <FormControl fullWidth disabled={!isEdit}>
-                  <InputLabel id="demo-simple-select-label">
-                    Company Type *
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={formik.values.companyType}
-                    label="Company Type *"
-                    onChange={(e) =>
-                      formik.setFieldValue("companyType", e.target.value)
+                {isEdit ? (
+                  <FormControl fullWidth disabled={!isEdit}>
+                    <InputLabel id="demo-simple-select-label">
+                      Company Type *
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={formik.values.companyType}
+                      label="Company Type *"
+                      onChange={(e) =>
+                        formik.setFieldValue("companyType", e.target.value)
+                      }
+                    >
+                      <MenuItem value={"consultancy"}>Consultancy</MenuItem>
+                      <MenuItem value={"individual"}>Individual</MenuItem>
+                    </Select>
+                  </FormControl>
+                ) : (
+                  <TextField
+                    sx={{ mb: 2 }}
+                    disabled={!isEdit}
+                    label={" Company Type "}
+                    required
+                    fullWidth
+                    name="companyType"
+                    error={
+                      formik.touched.companyType &&
+                      Boolean(formik.errors.companyType)
                     }
-                  >
-                    <MenuItem value={"consultancy"}>Consultancy</MenuItem>
-                    <MenuItem value={"individual"}>Individual</MenuItem>
-                  </Select>
-                </FormControl>
+                    value={formik.values.companyType
+                      .trimStart()
+                      .replace(/\s\s+/g, "")
+                      .replace(/\p{Emoji_Presentation}/gu, "")}
+                    onChange={(e) => formik.handleChange(e)}
+                    helperText={
+                      formik.touched.companyType &&
+                      formik.errors.companyType &&
+                      formik.errors.companyType
+                    }
+                    freeSolo={!isEdit}
+                    variant={!isEdit ? "standard" : "outlined"}
+                    InputProps={{
+                      readOnly: !isEdit,
+                      disableUnderline: !isEdit,
+                    }}
+                  />
+                )}
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={6} sm={12}>
                 <TextField
@@ -404,6 +453,12 @@ const Profile = () => {
                     formik.errors.email &&
                     formik.errors.email
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
             </Grid>
@@ -427,6 +482,12 @@ const Profile = () => {
                     formik.errors.mobile &&
                     formik.errors.mobile
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
@@ -450,6 +511,12 @@ const Profile = () => {
                     formik.errors.alternateMobile &&
                     formik.errors.alternateMobile
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
             </Grid>
@@ -492,6 +559,12 @@ const Profile = () => {
                       formik.errors.location &&
                       formik.errors.location
                     }
+                    freeSolo={!isEdit}
+                    variant={!isEdit ? "standard" : "outlined"}
+                    InputProps={{
+                      readOnly: !isEdit,
+                      disableUnderline: !isEdit,
+                    }}
                   />
                 )}
               />
@@ -510,7 +583,6 @@ const Profile = () => {
               id="addressLineOne"
               label="Address Line 1 (e.g. House No / Street
             Name) *"
-              variant={"outlined"}
               disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
@@ -526,24 +598,34 @@ const Profile = () => {
                 formik.errors.addressLineOne &&
                 formik.errors.addressLineOne
               }
+              freeSolo={!isEdit}
+              variant={!isEdit ? "standard" : "outlined"}
+              InputProps={{
+                readOnly: !isEdit,
+                disableUnderline: !isEdit,
+              }}
             />
             <TextField
               id="addressLineTwo"
               label="Address Line 2 (e.g. Landmark / Locality)"
-              variant={"outlined"}
               disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
               name="addressLineTwo"
               value={formik.values.addressLineTwo}
               onChange={formik.handleChange}
+              freeSolo={!isEdit}
+              variant={!isEdit ? "standard" : "outlined"}
+              InputProps={{
+                readOnly: !isEdit,
+                disableUnderline: !isEdit,
+              }}
             />
             <Grid container spacing={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
                 <TextField
                   id="country"
                   label="Country *"
-                  variant="outlined"
                   disabled={!isEdit}
                   fullWidth
                   name="country"
@@ -563,13 +645,18 @@ const Profile = () => {
                     formik.errors.country &&
                     formik.errors.country
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
                 <TextField
                   id="state"
                   label="State *"
-                  variant="outlined"
                   disabled={!isEdit}
                   fullWidth
                   name="state"
@@ -587,6 +674,12 @@ const Profile = () => {
                     formik.errors.state &&
                     formik.errors.state
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
             </Grid>
@@ -595,7 +688,6 @@ const Profile = () => {
                 <TextField
                   id="city"
                   label="City *"
-                  variant="outlined"
                   disabled={!isEdit}
                   fullWidth
                   name="city"
@@ -613,6 +705,12 @@ const Profile = () => {
                     formik.errors.city &&
                     formik.errors.city
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12} sx={{ my: 2 }}>
@@ -620,7 +718,6 @@ const Profile = () => {
                   id="postalCode"
                   name="postalCode"
                   label="Pin Code *"
-                  variant="outlined"
                   disabled={!isEdit}
                   fullWidth
                   value={formik.values.postalCode}
@@ -642,6 +739,12 @@ const Profile = () => {
                     formik.errors.postalCode &&
                     formik.errors.postalCode
                   }
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
                 />
               </Grid>
             </Grid>

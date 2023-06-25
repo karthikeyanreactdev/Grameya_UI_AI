@@ -59,6 +59,10 @@ import {
   getNoticePeriod,
   getSkills,
 } from "src/store/apps/misc/index";
+import Swal from "sweetalert2";
+import useNotification from "src/hooks/useNotification";
+import { updateJobById } from "src/api-services/recruiter/jobs";
+import { Tooltip } from "@mui/material";
 
 const userStatusObj = {
   active: "success",
@@ -70,6 +74,8 @@ const ManageJob = () => {
   const ability = useContext(AbilityContext);
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [sendNotification] = useNotification();
+
   const { direction } = theme;
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
   const [id, setId] = useState("");
@@ -146,6 +152,47 @@ const ManageJob = () => {
             skin="light"
             size="small"
             label={row.status}
+            onClick={() => {
+              Swal.fire({
+                title: `Do you want to Change the Job status to ${
+                  row.status === "active" ? "In Active" : "Active"
+                }?`,
+                icon: "warning",
+                showDenyButton: true,
+                // showCancelButton: true,
+                // confirmButtonText: "Yes",
+                // denyButtonText: "No",
+
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                customClass: {
+                  actions: "my-actions",
+
+                  confirmButton: "order-2 mr-2",
+                  denyButton: "order-3",
+                },
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  try {
+                    result = await updateJobById({
+                      job_id: row?.id,
+                      status: row.status === "active" ? "disabled" : "active",
+                    });
+                    getJobs();
+                    sendNotification({
+                      message: result?.data?.message,
+                      variant: "success",
+                    });
+                  } catch (e) {
+                    sendNotification({
+                      message: e,
+                      variant: "error",
+                    });
+                  } finally {
+                  }
+                }
+              });
+            }}
             color={userStatusObj[row.status]}
             sx={{ textTransform: "capitalize" }}
           />
@@ -160,14 +207,19 @@ const ManageJob = () => {
       headerName: "Action",
       renderCell: ({ row }) => {
         return (
-          <Button
-            onClick={() => {
-              setId(row.id);
-              toggleAddUserDrawer();
-            }}
-          >
-            Edit
-          </Button>
+          <Tooltip title="Edit job">
+            <IconButton
+              onClick={() => {
+                setId(row.id);
+                toggleAddUserDrawer();
+              }}
+              color="primary"
+              sx={{ fontSize: "18px" }}
+            >
+              {" "}
+              <Icon icon="tabler:pencil" color="primary" />
+            </IconButton>
+          </Tooltip>
         );
       },
     },
@@ -306,6 +358,27 @@ const ManageJob = () => {
           </Box>
           <Box p={4}>
             <DataGrid
+              sx={{
+                "& .MuiDataGrid-columnHeaders ": {
+                  backgroundColor: theme.palette.primary.main,
+                  color: "#fff",
+                  "& .MuiButtonBase-root.MuiIconButton-root ": {
+                    color: "#fff",
+                  },
+                  borderTopLeftRadius: "6px",
+                  borderTopRightRadius: "6px",
+                },
+                "& .MuiDataGrid-columnSeparator ": {
+                  color: "#fff",
+                },
+                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
+                  borderColor: `${theme.palette.primary.main}`,
+                },
+                "& .MuiDataGrid-virtualScroller": {
+                  // border: `1px solid ${theme.palette.primary.main}`,
+                  border: `.25px solid grey`,
+                },
+              }}
               autoHeight
               rowHeight={62}
               rows={recruiterJobList}

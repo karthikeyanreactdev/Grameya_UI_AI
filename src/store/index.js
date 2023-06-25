@@ -11,6 +11,8 @@ import permissions from "src/store/apps/permissions";
 import auth from "src/store/apps/auth/index";
 import manageJob from "src/store/apps/recruiter/manageJob/index";
 import applications from "src/store/apps/recruiter/applications/index";
+import applicants from "src/store/apps/recruiter/applicants/index";
+import candidates from "src/store/apps/recruiter/candidates/index";
 import resumeSearch from "src/store/apps/recruiter/resume-search/index";
 import appliedJobs from "src/store/apps/jobseeker/applications/index";
 import jobSearch from "src/store/apps/jobseeker/job-search/index";
@@ -28,6 +30,8 @@ export const store = configureStore({
     manageJob,
     resumeSearch,
     applications,
+    candidates,
+    applicants,
     //enum
     misc,
     //seeker

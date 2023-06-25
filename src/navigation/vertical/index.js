@@ -48,7 +48,20 @@ const navigation = () => {
       title: "Create Job",
       icon: "tabler:notes",
     },
-
+    //   {
+    //   path: "/recruiter/jobs",
+    //   action: "read",
+    //   subject: "jobs",
+    //   title: "Create Job",
+    //   icon: "tabler:notes",
+    // },
+    {
+      path: "/recruiter/candidates",
+      action: "read",
+      subject: "candidates",
+      title: "Candidates",
+      icon: "tabler:user-check",
+    },
     {
       path: "/recruiter/profile",
       action: "read",
@@ -80,6 +93,7 @@ const navigation = () => {
       title: "Job Search",
       icon: "tabler:search",
     },
+
     {
       path: "/jobseeker/job-detail",
       action: "read",

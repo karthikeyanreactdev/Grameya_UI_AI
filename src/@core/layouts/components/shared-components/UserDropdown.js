@@ -83,6 +83,23 @@ const UserDropdown = (props) => {
 
   return (
     <Fragment>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            ml: 2.5,
+            alignItems: "flex-start",
+            flexDirection: "column",
+          }}
+        >
+          <Typography sx={{ fontWeight: 500 }}>
+            {userData?.full_name?.substring(0, 20)}
+          </Typography>
+          <Typography variant="body2" sx={{ textTransform: "capitalize" }}>
+            {userData?.role}
+          </Typography>
+        </Box>
+      </Box>
       <Badge
         overlap="circular"
         onClick={handleDropdownOpen}
@@ -120,7 +137,7 @@ const UserDropdown = (props) => {
           horizontal: direction === "ltr" ? "right" : "left",
         }}
       >
-        <Box sx={{ py: 1.75, px: 6 }}>
+        {/* <Box sx={{ py: 1.75, px: 6 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Badge
               overlap="circular"
@@ -152,19 +169,23 @@ const UserDropdown = (props) => {
               }}
             >
               <Typography sx={{ fontWeight: 500 }}>
-                {userData?.full_name}
+                {userData?.full_name?.substring(0, 20)}
               </Typography>
               <Typography variant="body2">{userData?.role}</Typography>
             </Box>
           </Box>
-        </Box>
-        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        </Box> */}
+        {/* <Divider sx={{ my: (theme) => `${theme.spacing(2)} !important` }} /> */}
+        <MenuItemStyled
+          sx={{ p: 0 }}
+          onClick={() => handleDropdownClose("/recruiter/profile/")}
+        >
           <Box sx={styles}>
-            <Icon icon='tabler:user-check' />
+            <Icon icon="tabler:user-star" />
             My Profile
           </Box>
         </MenuItemStyled>
+        {/* 
         <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <Icon icon='tabler:settings' />

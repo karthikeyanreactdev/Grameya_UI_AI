@@ -72,6 +72,7 @@ const ManageAppliedJob = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { direction } = theme;
+
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
   const [id, setId] = useState("");
   const [role, setRole] = useState("");
@@ -313,6 +314,28 @@ const ManageAppliedJob = () => {
               rows={recruiterJobList}
               columns={jobListColumns}
               loading={isLoading}
+              sx={{
+                "& .MuiDataGrid-columnHeaders ": {
+                  backgroundColor: theme.palette.primary.main,
+                  color: "#fff",
+                  "& .MuiButtonBase-root.MuiIconButton-root ": {
+                    color: "#fff",
+                  },
+                  borderTopLeftRadius: "6px",
+                  borderTopRightRadius: "6px",
+                },
+                "& .MuiDataGrid-columnSeparator ": {
+                  color: "#fff",
+                },
+                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
+                  borderColor: `${theme.palette.primary.main}`,
+                },
+
+                "& .MuiDataGrid-virtualScroller": {
+                  // border: `1px solid ${theme.palette.primary.main}`,
+                  border: `.25px solid grey`,
+                },
+              }}
               // getRowId={(row) => row.job_id}
               rowCount={rowCountState}
               paginationMode="server"
