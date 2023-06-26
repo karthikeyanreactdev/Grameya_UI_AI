@@ -12,6 +12,7 @@ import {
   ListItem,
   IconButton,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import Icon from "src/@core/components/icon";
 import { useTheme } from "@mui/material/styles";
@@ -47,6 +48,8 @@ import CustomChip from "src/@core/components/mui/chip";
 import CertificationDetail from "./components/CertificationDetail";
 import AddCertification from "./components/AddCertification";
 import EditCertification from "./components/EditCertification";
+import { DeleteOutline } from "@mui/icons-material";
+import EditIcon from "@mui/icons-material/Edit";
 
 const userStatusObj = {
   active: "success",
@@ -203,7 +206,7 @@ const ACLPage = () => {
   };
 
   const handleEditChange = () => {
-    setIsEditMode(false);
+    setIsEditMode(!isEditMode);
   };
 
   const handleEditCloseChange = () => {
@@ -230,6 +233,7 @@ const ACLPage = () => {
             getProfileDetail={getProfileDetail}
             onHandleChangeLoading={handleChangeLoading}
             userDetail={userDetail}
+            isEditMode={isEditMode}
           />
         </Grid>
         {activeTab === undefined ? null : (
@@ -370,6 +374,29 @@ const ACLPage = () => {
                             <CardContent
                               sx={{
                                 display: "flex",
+                                justifyContent: "space-between",
+                                // mx: 32,
+                                mt: 4,
+                              }}
+                            >
+                              <Typography variant="h4" component="h4">
+                                Education
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  handleDrawerStateChangeOpen(
+                                    "isAddNewEducation"
+                                  )
+                                }
+                              >
+                                Add New Education
+                              </Button>
+                            </CardContent>
+
+                            <CardContent
+                              sx={{
+                                display: "flex",
                                 justifyContent: "center",
                                 // mx: 32,
                                 mt: 4,
@@ -418,6 +445,7 @@ const ACLPage = () => {
                                                       transform:
                                                         "translateY(-5px)",
                                                     },
+                                                    height: "100%",
                                                   }}
                                                 >
                                                   <CardContent sx={{ pb: 0 }}>
@@ -494,16 +522,54 @@ const ACLPage = () => {
                                                             cursor: "pointer",
                                                           }}
                                                         >
-                                                          <Icon
-                                                            onClick={() =>
-                                                              handleDeleteEducation(
-                                                                row?.id
-                                                              )
-                                                            }
-                                                            fontSize="1.25rem"
-                                                            icon="tabler:trash"
-                                                            color="#D2042D"
-                                                          />
+                                                          <Tooltip
+                                                            title="Delete"
+                                                            arrow
+                                                          >
+                                                            <IconButton
+                                                              edge="end"
+                                                              aria-label="delete"
+                                                              sx={{ mr: 1 }}
+                                                              onClick={() =>
+                                                                handleDeleteEducation(
+                                                                  row?.id
+                                                                )
+                                                              }
+                                                            >
+                                                              <DeleteOutline
+                                                                sx={{
+                                                                  color: "red",
+                                                                }}
+                                                              />
+                                                            </IconButton>
+                                                          </Tooltip>
+                                                        </Box>
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            // mt: 2,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
+                                                          <Tooltip
+                                                            title="Edit"
+                                                            arrow
+                                                          >
+                                                            <IconButton
+                                                              edge="end"
+                                                              aria-label="delete"
+                                                              onClick={() => {
+                                                                setSelectedEducation(
+                                                                  row
+                                                                );
+                                                                handleDrawerStateChangeOpen(
+                                                                  "isEditEducation"
+                                                                );
+                                                              }}
+                                                            >
+                                                              <EditIcon />
+                                                            </IconButton>
+                                                          </Tooltip>
                                                         </Box>
                                                       </Grid>
                                                     </Grid>
@@ -766,7 +832,7 @@ const ACLPage = () => {
                                                       </Grid> */}
                                                     </Grid>
                                                   </CardContent>
-                                                  <CardActions
+                                                  {/* <CardActions
                                                     sx={{ pb: 3, pl: 0 }}
                                                   >
                                                     <Grid container spacing={2}>
@@ -804,7 +870,7 @@ const ACLPage = () => {
                                                         </Button>
                                                       </Grid>
                                                     </Grid>
-                                                  </CardActions>
+                                                  </CardActions> */}
                                                 </Card>
                                               </Grid>
                                             );
@@ -813,37 +879,6 @@ const ACLPage = () => {
                                       </Grid>
                                     </Box>
                                   )}
-                                </Grid>
-                              </Grid>
-                            </CardContent>
-
-                            <CardContent
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                // mx: 32,
-                                mt: 4,
-                              }}
-                            >
-                              <Grid container spacing={2} py={2}>
-                                <Grid
-                                  item
-                                  lg={6}
-                                  xl={6}
-                                  xs={12}
-                                  md={12}
-                                  sm={12}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleDrawerStateChangeOpen(
-                                        "isAddNewEducation"
-                                      )
-                                    }
-                                  >
-                                    Add New Education
-                                  </Button>
                                 </Grid>
                               </Grid>
                             </CardContent>
@@ -868,9 +903,32 @@ const ACLPage = () => {
                           )}
                         </Grid>
                       )}
+
                       {activeTab === "work" && (
                         <Grid item md={12} xs={12}>
                           <>
+                            <CardContent
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                // mx: 32,
+                                mt: 4,
+                              }}
+                            >
+                              <Typography variant="h4" component="h4">
+                                Work Experiance
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  handleDrawerStateChangeOpen(
+                                    "isAddNewExperiance"
+                                  )
+                                }
+                              >
+                                Add New
+                              </Button>
+                            </CardContent>
                             <CardContent
                               sx={{
                                 display: "flex",
@@ -912,6 +970,7 @@ const ACLPage = () => {
                                                       transform:
                                                         "translateY(-5px)",
                                                     },
+                                                    height: "100%",
                                                   }}
                                                 >
                                                   <CardContent sx={{ pb: 0 }}>
@@ -967,17 +1026,94 @@ const ACLPage = () => {
                                                             cursor: "pointer",
                                                           }}
                                                         >
+                                                          <Tooltip
+                                                            title="Delete"
+                                                            arrow
+                                                          >
+                                                            <IconButton
+                                                              edge="end"
+                                                              aria-label="delete"
+                                                              sx={{ mr: 1 }}
+                                                              onClick={() =>
+                                                                handleDeleteExpirince(
+                                                                  row?.id
+                                                                )
+                                                              }
+                                                            >
+                                                              <DeleteOutline
+                                                                sx={{
+                                                                  color: "red",
+                                                                }}
+                                                              />
+                                                            </IconButton>
+                                                          </Tooltip>
+                                                        </Box>
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            // mt: 2,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
+                                                          <Tooltip
+                                                            title="Edit"
+                                                            arrow
+                                                          >
+                                                            <IconButton
+                                                              edge="end"
+                                                              aria-label="edit"
+                                                              onClick={() => {
+                                                                handleSelectExp(
+                                                                  row
+                                                                );
+                                                                handleDrawerStateChangeOpen(
+                                                                  "isEditExperiance"
+                                                                );
+                                                              }}
+                                                            >
+                                                              <EditIcon />
+                                                            </IconButton>
+                                                          </Tooltip>
+                                                        </Box>
+
+                                                        {/* <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            mr: 2,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
                                                           <Icon
-                                                            onClick={() => {
+                                                            onClick={() =>
                                                               handleDeleteExpirince(
-                                                                row.id
-                                                              );
-                                                            }}
+                                                                row?.id
+                                                              )
+                                                            }
                                                             fontSize="1.25rem"
                                                             icon="tabler:trash"
                                                             color="#D2042D"
                                                           />
                                                         </Box>
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            mt: 4,
+                                                            cursor: "pointer",
+                                                          }}
+                                                        >
+                                                          <Icon
+                                                            onClick={() => {
+                                                              handleSelectExp(
+                                                                item
+                                                              );
+                                                              handleDrawerStateChangeOpen(
+                                                                "isEditExperiance"
+                                                              );
+                                                            }}
+                                                            fontSize="1.25rem"
+                                                            icon="material-symbols:edit"
+                                                          />
+                                                        </Box> */}
                                                       </Grid>
                                                     </Grid>
                                                     <Grid
@@ -1048,7 +1184,7 @@ const ACLPage = () => {
                                                           </>
                                                         )}
 
-                                                        {row.skills.length >
+                                                        {row?.skills?.length >
                                                           0 && (
                                                           <>
                                                             <Box
@@ -1261,7 +1397,7 @@ const ACLPage = () => {
                                                       </Grid> */}
                                                     </Grid>
                                                   </CardContent>
-                                                  <CardActions
+                                                  {/* <CardActions
                                                     sx={{ pb: 3, pl: 0 }}
                                                   >
                                                     <Grid container spacing={2}>
@@ -1299,7 +1435,7 @@ const ACLPage = () => {
                                                         </Button>
                                                       </Grid>
                                                     </Grid>
-                                                  </CardActions>
+                                                  </CardActions> */}
                                                 </Card>
                                               </Grid>
                                             );
@@ -1308,37 +1444,6 @@ const ACLPage = () => {
                                       </Grid>
                                     </Box>
                                   )}
-                                </Grid>
-                              </Grid>
-                            </CardContent>
-
-                            <CardContent
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                // mx: 32,
-                                mt: 4,
-                              }}
-                            >
-                              <Grid container spacing={2} py={2}>
-                                <Grid
-                                  item
-                                  lg={6}
-                                  xl={6}
-                                  xs={12}
-                                  md={12}
-                                  sm={12}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                      handleDrawerStateChangeOpen(
-                                        "isAddNewExperiance"
-                                      )
-                                    }
-                                  >
-                                    Add New
-                                  </Button>
                                 </Grid>
                               </Grid>
                             </CardContent>

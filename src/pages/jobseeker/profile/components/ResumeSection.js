@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -36,7 +37,8 @@ const ResumeSection = ({
     if (file) {
       onHandleChangeLoading(true);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.set("file", file);
+      console.log("formData", formData);
       try {
         const response = await updateResume(formData);
 
@@ -111,25 +113,30 @@ const ResumeSection = ({
                   <ListItem
                     secondaryAction={
                       <>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          sx={{ mr: 2 }}
-                          onClick={() =>
-                            handleResumeDownload(
-                              userDetail?.jobseekerDetails?.resume_url
-                            )
-                          }
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={handleResumeRemove}
-                        >
-                          <ClearIcon />
-                        </IconButton>
+                        <Tooltip title="View" arrow>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            sx={{ mr: 2 }}
+                            onClick={() =>
+                              handleResumeDownload(
+                                userDetail?.jobseekerDetails?.resume_url
+                              )
+                            }
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Delete" arrow>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={handleResumeRemove}
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                        </Tooltip>
                       </>
                     }
                   >
