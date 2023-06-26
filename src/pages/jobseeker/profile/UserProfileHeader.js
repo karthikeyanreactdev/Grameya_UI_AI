@@ -34,6 +34,7 @@ const UserProfileHeader = ({
   getProfileDetail,
   onHandleChangeLoading,
   userDetail,
+  isEditMode,
 }) => {
   const [sendNotification] = useNotification();
   // ** State
@@ -136,7 +137,7 @@ const UserProfileHeader = ({
                 </>
               )}
 
-              <Box
+              {/* <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -147,17 +148,21 @@ const UserProfileHeader = ({
                 <Typography sx={{ color: "text.secondary" }}>
                   Joined {data.joiningDate}
                 </Typography>
-              </Box>
+              </Box> */}
             </Box>
           </Box>
           <Box>
             <Button
-              variant="contained"
+              variant={isEditMode ? "contained" : "outlined"}
+              color={isEditMode ? "primary" : "error"}
               sx={{ "& svg": { mr: 2 }, mr: 2 }}
               onClick={onHandleEdit}
             >
-              <Icon icon="tabler:pencil" fontSize="1.125rem" />
-              Edit
+              <Icon
+                icon={isEditMode ? "tabler:pencil" : "material-symbols:close"}
+                fontSize="1.125rem"
+              />
+              {isEditMode ? "Edit" : "Cancel"}
             </Button>
           </Box>
         </Box>
