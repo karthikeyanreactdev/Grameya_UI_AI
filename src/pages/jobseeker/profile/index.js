@@ -50,7 +50,8 @@ import AddCertification from "./components/AddCertification";
 import EditCertification from "./components/EditCertification";
 import { DeleteOutline } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData } from "src/store/apps/auth";
 const userStatusObj = {
   active: "success",
   pending: "warning",
@@ -89,6 +90,7 @@ const TabList = styled(MuiTabList)(({ theme }) => ({
 const ACLPage = () => {
   const theme = useTheme();
   const { direction } = theme;
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("info");
   const hideText = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const [selectedExp, setSelectedExp] = useState(null);
@@ -135,6 +137,7 @@ const ACLPage = () => {
 
   const getProfileDetail = async () => {
     handleChangeLoading(true);
+    dispatch(getUserData({}));
     try {
       const response = await getProfile();
       if (response?.data?.data) {
@@ -370,7 +373,7 @@ const ACLPage = () => {
                       )}
                       {activeTab === "education" && (
                         <Grid item md={12} xs={12}>
-                          <>
+                          <Card>
                             <CardContent
                               sx={{
                                 display: "flex",
@@ -882,7 +885,7 @@ const ACLPage = () => {
                                 </Grid>
                               </Grid>
                             </CardContent>
-                          </>
+                          </Card>
                           {drawerState.isEditEducation && (
                             <EditEducation
                               isOpen={drawerState.isEditEducation}
@@ -906,7 +909,7 @@ const ACLPage = () => {
 
                       {activeTab === "work" && (
                         <Grid item md={12} xs={12}>
-                          <>
+                          <Card>
                             <CardContent
                               sx={{
                                 display: "flex",
@@ -1447,7 +1450,7 @@ const ACLPage = () => {
                                 </Grid>
                               </Grid>
                             </CardContent>
-                          </>
+                          </Card>
                           {drawerState.isEditExperiance && (
                             <EditExperiance
                               isOpen={drawerState.isEditExperiance}
@@ -1477,7 +1480,7 @@ const ACLPage = () => {
                         />
                       )}
                       {activeTab === "certification" && (
-                        <>
+                        <Card>
                           <CertificationDetail
                             userDetail={userDetail}
                             getProfileDetail={getProfileDetail}
@@ -1508,7 +1511,7 @@ const ACLPage = () => {
                               onHandleChangeLoading={handleChangeLoading}
                             />
                           )}
-                        </>
+                        </Card>
                       )}
                     </TabPanel>
                   )}

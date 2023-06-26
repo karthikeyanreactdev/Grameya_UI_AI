@@ -176,12 +176,13 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
             </Box>
           </Box>
           <Button
-            variant="contained"
+            variant={!isEdit ? "contained" : "outlined"}
+            color={!isEdit ? "primary" : "error"}
             sx={{ "& svg": { mr: 2 } }}
             onClick={handleEdit}
           >
             <Icon
-              icon={isEdit ? "tabler:arrow-badge-left" : "tabler:pencil"}
+              icon={isEdit ? "material-symbols:close" : "tabler:pencil"}
               fontSize="1.125rem"
             />
             {isEdit ? "Cancel" : "Edit"}
