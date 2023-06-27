@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Card,
+  CardActions,
   CardContent,
   Grid,
   IconButton,
@@ -86,12 +87,12 @@ const CertificationDetail = ({
             <Typography variant="h4" component="h4">
               Certification
             </Typography>
-            <Button
+            {/* <Button
               variant="contained"
               onClick={() => handleDrawerStateChangeOpen("isAddCertification")}
             >
               Add New
-            </Button>
+            </Button> */}
           </CardContent>
 
           <CardContent
@@ -119,7 +120,7 @@ const CertificationDetail = ({
                                 raised={false}
                                 sx={{
                                   mb: 2,
-                                  border: "1px solid rgba(0, 0, 0, 0.5)",
+                                  border: "1px solid #ededed",
                                   "&:hover": {
                                     boxShadow:
                                       "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
@@ -128,269 +129,109 @@ const CertificationDetail = ({
                                   height: "100%",
                                 }}
                               >
-                                <CardContent sx={{ pb: 0 }}>
-                                  <Grid
-                                    container
-                                    spacing={2}
+                                <CardContent>
+                                  <Typography
                                     sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
+                                      fontSize: "20px",
+                                      fontWeight: "500",
                                     }}
                                   >
-                                    <Grid item xs={11} sm={11} md={11} lg={11}>
-                                      <Typography
-                                        sx={{ mb: 4 }}
-                                        color="text.primary"
-                                        variant="h5"
-                                        gutterBottom
-                                      >
-                                        {row?.certification_name && (
-                                          <>
-                                            <Typography
-                                              gutterBottom
-                                              variant="h5"
-                                              component="div"
-                                              sx={{ fontWeight: 700 }}
-                                            >
-                                              {row.certification_name}
-                                            </Typography>
-                                          </>
-                                        )}
-                                      </Typography>
-                                    </Grid>
-                                    <Grid item xs={1} sm={1} md={1} lg={1}>
-                                      <Box
-                                        sx={{
-                                          display: "flex",
-                                          mr: 2,
-                                          cursor: "pointer",
-                                        }}
-                                      >
-                                        <Tooltip title="Delete" arrow>
-                                          <IconButton
-                                            edge="end"
-                                            aria-label="delete"
-                                            sx={{ mr: 1 }}
-                                            onClick={() =>
-                                              handleDeleteCertification(row)
-                                            }
-                                          >
-                                            <DeleteOutline
-                                              sx={{ color: "red" }}
-                                            />
-                                          </IconButton>
-                                        </Tooltip>
-                                      </Box>
-                                      <Box
-                                        sx={{
-                                          display: "flex",
-                                          // mt: 4,
-                                          cursor: "pointer",
-                                        }}
-                                      >
-                                        <Tooltip title="Edit" arrow>
-                                          <IconButton
-                                            edge="end"
-                                            aria-label="delete"
-                                            onClick={() => {
-                                              handleSelectCertification(row);
-                                              handleDrawerStateChangeOpen(
-                                                "isEditCertification"
-                                              );
-                                            }}
-                                          >
-                                            <EditIcon />
-                                          </IconButton>
-                                        </Tooltip>
-                                      </Box>
-                                    </Grid>
-                                  </Grid>
-                                  <Grid
-                                    container
-                                    spacing={2}
+                                    {row?.certification_name}
+                                  </Typography>
+                                  <Box
                                     sx={{
                                       display: "flex",
+                                      gap: "10px",
+                                      mt: 4,
                                       alignItems: "center",
                                     }}
                                   >
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                                      {row.cartification_completion_id && (
-                                        <>
-                                          <Box
-                                            sx={{
-                                              display: "flex",
-                                              "&:not(:last-of-type)": { mb: 3 },
-                                              "& svg": {
-                                                color: "text.secondary",
-                                              },
-                                            }}
-                                          >
-                                            <Box
-                                              sx={{
-                                                display: "flex",
-                                                mr: 2,
-                                              }}
-                                            >
-                                              <Icon
-                                                fontSize="1.25rem"
-                                                icon="bx:certification"
-                                                color="brown"
-                                              />
-                                            </Box>
+                                    <Icon
+                                      fontSize="1.25rem"
+                                      icon="bx:certification"
+                                      color="brown"
+                                      style={{
+                                        fontSize: "30px",
+                                      }}
+                                    />
+                                    <Typography
+                                      sx={{
+                                        fontSize: "16px",
+                                      }}
+                                    >
+                                      {row.cartification_completion_id}
+                                    </Typography>
+                                  </Box>
 
-                                            <Box
-                                              sx={{
-                                                columnGap: 2,
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                alignItems: "center",
-                                              }}
-                                            >
-                                              <Typography
-                                                sx={{
-                                                  color: "text.primary",
-                                                }}
-                                              >
-                                                {
-                                                  row.cartification_completion_id
-                                                }
-                                              </Typography>
-                                            </Box>
-                                          </Box>
-                                        </>
-                                      )}
-
-                                      {(row?.certification_valid_from ||
-                                        row?.certification_valid_to) && (
-                                        <>
-                                          <Box
-                                            sx={{
-                                              display: "flex",
-                                              "&:not(:last-of-type)": { mb: 3 },
-                                              "& svg": {
-                                                color: "text.secondary",
-                                              },
-                                            }}
-                                          >
-                                            <Box
-                                              sx={{
-                                                display: "flex",
-                                                mr: 2,
-                                              }}
-                                            >
-                                              <Icon
-                                                fontSize="1.25rem"
-                                                icon="formkit:date"
-                                                color="red"
-                                              />
-                                            </Box>
-
-                                            <Box
-                                              sx={{
-                                                columnGap: 2,
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                alignItems: "center",
-                                              }}
-                                            >
-                                              <Typography
-                                                sx={{
-                                                  color: "text.primary",
-                                                }}
-                                              >
-                                                {formatDate(
-                                                  row?.certification_valid_from
-                                                )}{" "}
-                                                -{" "}
-                                                {formatDate(
-                                                  row?.certification_valid_to
-                                                )}
-                                              </Typography>
-                                            </Box>
-                                          </Box>
-                                        </>
-                                      )}
-
-                                      {row?.cartification_url && (
-                                        <>
-                                          <Box
-                                            sx={{
-                                              display: "flex",
-                                              "&:not(:last-of-type)": { mb: 3 },
-                                              "& svg": {
-                                                color: "text.secondary",
-                                              },
-                                            }}
-                                          >
-                                            <Box
-                                              sx={{
-                                                display: "flex",
-                                                mr: 2,
-                                              }}
-                                            >
-                                              <Icon
-                                                fontSize="1.25rem"
-                                                icon="dashicons:admin-site-alt"
-                                                color="brown"
-                                              />
-                                            </Box>
-
-                                            <Box
-                                              sx={{
-                                                columnGap: 2,
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                alignItems: "center",
-                                              }}
-                                            >
-                                              <Typography
-                                                sx={{
-                                                  color: "text.primary",
-                                                }}
-                                              >
-                                                {row.cartification_url}
-                                              </Typography>
-                                            </Box>
-                                          </Box>
-                                        </>
-                                      )}
-                                    </Grid>
-                                    {/* <Grid item xs={12} sm={4} md={3} lg={3}>
-                                      {row.end_date && (
-                                        <>
-                                          <Box
-                                            sx={{
-                                              display: "flex",
-                                              "&:not(:last-of-type)": { mb: 3 },
-                                              "& svg": {
-                                                color: "text.primary",
-                                              },
-                                            }}
-                                          >
-                                            <Box
-                                              sx={{
-                                                columnGap: 2,
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                alignItems: "center",
-                                              }}
-                                            >
-                                              <Typography
-                                                sx={{
-                                                  color: "text.primary",
-                                                }}
-                                              >
-                                                Relieving date:{" "}
-                                                {formatDate(row.end_date)}
-                                              </Typography>
-                                            </Box>
-                                          </Box>
-                                        </>
-                                      )}
-                                    </Grid> */}
-                                  </Grid>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      alignItems: "center",
+                                      mt: 2,
+                                    }}
+                                  >
+                                    <Icon
+                                      fontSize="1.25rem"
+                                      icon="formkit:date"
+                                      color="brown"
+                                      style={{
+                                        fontSize: "30px",
+                                      }}
+                                    />
+                                    <Typography>
+                                      {formatDate(
+                                        row?.certification_valid_from
+                                      )}{" "}
+                                      -{" "}
+                                      {formatDate(row?.certification_valid_to)}
+                                    </Typography>
+                                  </Box>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      alignItems: "center",
+                                      mt: 2,
+                                    }}
+                                  >
+                                    <Icon
+                                      fontSize="1.25rem"
+                                      icon="mdi:web"
+                                      style={{
+                                        fontSize: "30px",
+                                      }}
+                                    />
+                                    <Typography>
+                                      {row?.cartification_url}
+                                    </Typography>
+                                  </Box>
                                 </CardContent>
+
+                                <CardActions sx={{ justifyContent: "end" }}>
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() =>
+                                      handleDeleteCertification(row)
+                                    }
+                                  >
+                                    Delete
+                                  </Button>
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => {
+                                      handleSelectCertification(row);
+                                      handleDrawerStateChangeOpen(
+                                        "isEditCertification"
+                                      );
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                </CardActions>
                               </Card>
                             </Grid>
                           );

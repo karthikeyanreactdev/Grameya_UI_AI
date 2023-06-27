@@ -35,6 +35,9 @@ const UserProfileHeader = ({
   onHandleChangeLoading,
   userDetail,
   isEditMode,
+  activeTab,
+  onHandleDrawerStateChangeOpen,
+  handleClick,
 }) => {
   const [sendNotification] = useNotification();
   // ** State
@@ -52,6 +55,87 @@ const UserProfileHeader = ({
   //   axios.get('/pages/profile-header').then(response => {})
   // }, [])
   const designationIcon = data?.designationIcon || "tabler:briefcase";
+
+  const handleChangeDrawer = (value) => {
+    onHandleDrawerStateChangeOpen(value);
+  };
+
+  const renderRightSectionBtn = () => {
+    switch (activeTab) {
+      case "info":
+        return (
+          <>
+            <Button
+              variant={isEditMode ? "contained" : "outlined"}
+              color={isEditMode ? "primary" : "error"}
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={onHandleEdit}
+            >
+              <Icon
+                icon={isEditMode ? "tabler:pencil" : "material-symbols:close"}
+                fontSize="1.125rem"
+              />
+              {isEditMode ? "Edit" : "Cancel"}
+            </Button>
+          </>
+        );
+      case "education":
+        return (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={() => handleChangeDrawer("isAddNewEducation")}
+            >
+              Add Education
+            </Button>
+          </>
+        );
+      case "work":
+        return (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={() => handleChangeDrawer("isAddNewExperiance")}
+            >
+              Add Experiance
+            </Button>
+          </>
+        );
+      case "resume":
+        return (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={handleClick}
+            >
+              Upload Resume
+            </Button>
+          </>
+        );
+
+      case "certification":
+        return (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={() => handleChangeDrawer("isAddCertification")}
+            >
+              Add Certification
+            </Button>
+          </>
+        );
+      default:
+        return <></>;
+    }
+  };
 
   return data !== null ? (
     <Card>
@@ -152,7 +236,7 @@ const UserProfileHeader = ({
             </Box>
           </Box>
           <Box>
-            <Button
+            {/* <Button
               variant={isEditMode ? "contained" : "outlined"}
               color={isEditMode ? "primary" : "error"}
               sx={{ "& svg": { mr: 2 }, mr: 2 }}
@@ -163,7 +247,8 @@ const UserProfileHeader = ({
                 fontSize="1.125rem"
               />
               {isEditMode ? "Edit" : "Cancel"}
-            </Button>
+            </Button> */}
+            {renderRightSectionBtn()}
           </Box>
         </Box>
       </CardContent>

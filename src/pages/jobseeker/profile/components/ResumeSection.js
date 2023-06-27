@@ -13,17 +13,20 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { removeResume, updateResume } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
 
-const ResumeSection = ({
-  userDetail,
-  onHandleChangeLoading,
-  getProfileDetail,
-}) => {
+const ResumeSection = forwardRef((props, ref) => {
+  const { userDetail, onHandleChangeLoading, getProfileDetail } = props;
   const [sendNotification] = useNotification();
   const fileInputRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    handleFileUpload() {
+      fileInputRef.current.click();
+    },
+  }));
 
   const handleFileUpload = () => {
     fileInputRef.current.click();
@@ -183,6 +186,6 @@ const ResumeSection = ({
       </Grid>
     </>
   );
-};
+});
 
 export default ResumeSection;
