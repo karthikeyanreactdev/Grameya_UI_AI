@@ -134,8 +134,8 @@ const CandidateJobSearch = () => {
     setValue(val);
   }, []);
 
-  const handleNavigateJobDetail = () => {
-    router.push("/jobseeker/job-detail/");
+  const handleNavigateJobDetail = (id) => {
+    router.push(`${"/jobseeker/job-detail"}?id=${id}`);
   };
 
   // const handleLocationChange = useCallback((e) => {
@@ -624,7 +624,7 @@ const CandidateJobSearch = () => {
                               <Button
                                 size="small"
                                 variant="contained"
-                                onClick={handleNavigateJobDetail}
+                                onClick={() => handleNavigateJobDetail(row?.id)}
                               >
                                 View Job
                               </Button>
