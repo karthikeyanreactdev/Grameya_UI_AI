@@ -225,6 +225,9 @@ const Applications = () => {
           <Box p={4}>
             <DataGrid
               sx={{
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
                 "& .MuiDataGrid-columnHeaders ": {
                   backgroundColor: theme.palette.primary.main,
                   color: "#fff",
@@ -250,6 +253,12 @@ const Applications = () => {
               rowHeight={62}
               rows={recruiterApplicantsList}
               loading={isLoading}
+              onRowClick={(row) => {
+                // console.log(row);
+                if (row?.row?.total_applications > 0) {
+                  handleApplications(row?.row);
+                }
+              }}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}

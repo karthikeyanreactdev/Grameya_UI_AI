@@ -16,7 +16,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { removeResume, updateResume } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
-
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 const ResumeSection = forwardRef((props, ref) => {
   const { userDetail, onHandleChangeLoading, getProfileDetail } = props;
   const [sendNotification] = useNotification();
@@ -110,7 +110,7 @@ const ResumeSection = forwardRef((props, ref) => {
               Recruiters generally do not look at profiles without resumes.
             </Typography>
 
-            {userDetail?.jobseekerDetails?.resume_url && (
+            {userDetail?.jobseekerDetails?.resume_url ? (
               <>
                 <List>
                   <ListItem
@@ -155,32 +155,45 @@ const ResumeSection = forwardRef((props, ref) => {
                     />
                   </ListItem>
                 </List>
+                <DocViewer
+                  pluginRenderers={DocViewerRenderers}
+                  config={{
+                    header: {
+                      disableHeader: false,
+                      disableFileName: false,
+                      retainURLParams: false,
+                    },
+                  }}
+                  documents={[
+                    { uri: userDetail?.jobseekerDetails?.resume_url },
+                  ]}
+                />
               </>
+            ) : (
+              <Box
+                sx={{
+                  border: "1px dashed gray",
+                  borderRadius: "6px",
+                  textAlign: "center",
+                  padding: "30px",
+                  mt: 8,
+                }}
+              >
+                <input
+                  type="file"
+                  accept=".doc,.pdf"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+                <Button variant="contained" onClick={handleFileUpload}>
+                  Upload
+                </Button>
+                <Typography sx={{ mt: 2 }}>
+                  Supported Formats: doc, docx, rtf, pdf, upto 2 MB
+                </Typography>
+              </Box>
             )}
-
-            <Box
-              sx={{
-                border: "1px dashed gray",
-                borderRadius: "6px",
-                textAlign: "center",
-                padding: "30px",
-                mt: 8,
-              }}
-            >
-              <input
-                type="file"
-                accept=".doc,.pdf"
-                style={{ display: "none" }}
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-              <Button variant="contained" onClick={handleFileUpload}>
-                Upload
-              </Button>
-              <Typography sx={{ mt: 2 }}>
-                Supported Formats: doc, docx, rtf, pdf, upto 2 MB
-              </Typography>
-            </Box>
           </CardContent>
         </Card>
       </Grid>

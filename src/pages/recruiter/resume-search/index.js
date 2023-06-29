@@ -287,7 +287,14 @@ const Dashboard = () => {
         );
       },
     },
-
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "notice_period",
+      headerName: "Notice Period",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
     {
       flex: 0.1,
       minWidth: 150,
@@ -295,6 +302,14 @@ const Dashboard = () => {
       field: "total_years_of_experience",
       headerName: "Experience",
       renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
+      field: "current_location",
+      headerName: "Location",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
     },
     {
       flex: 0.1,

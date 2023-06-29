@@ -143,6 +143,14 @@ const Candidates = () => {
     },
     {
       flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "notice_period",
+      headerName: "Notice Period",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
       minWidth: 200,
       sortable: false,
       // field: "Action",
@@ -188,7 +196,15 @@ const Candidates = () => {
     },
     {
       flex: 0.1,
-      minWidth: 300,
+      minWidth: 100,
+      sortable: true,
+      field: "current_location",
+      headerName: "Location",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 150,
       sortable: true,
 
       field: "preferred_job_location",

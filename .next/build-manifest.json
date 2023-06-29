@@ -15,6 +15,11 @@
   ],
   "rootMainFiles": [],
   "pages": {
+    "/404": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/404.js"
+    ],
     "/_app": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -30,10 +35,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/jobseeker/profile.js"
     ],
-    "/recruiter/profile": [
+    "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/recruiter/profile.js"
+      "static/chunks/pages/login.js"
     ]
   },
   "ampFirstPages": []
