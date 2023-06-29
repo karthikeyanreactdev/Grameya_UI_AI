@@ -299,7 +299,10 @@ const ACLPage = () => {
                             ...(!hideText && { "& svg": { mr: 2 } }),
                           }}
                         >
-                          <Icon fontSize="1.125rem" icon="tabler:layout-grid" />
+                          <Icon
+                            fontSize="1.125rem"
+                            icon="ic:outline-work-history"
+                          />
                           {!hideText && "Work Experiance"}
                         </Box>
                       }
@@ -332,7 +335,10 @@ const ACLPage = () => {
                             ...(!hideText && { "& svg": { mr: 2 } }),
                           }}
                         >
-                          <Icon fontSize="1.125rem" icon="bxs:certification" />
+                          <Icon
+                            fontSize="1.125rem"
+                            icon="simple-line-icons:badge"
+                          />
                           {!hideText && "Certification"}
                         </Box>
                       }
@@ -486,11 +492,11 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
-                                                        icon="mdi:education-outline"
-                                                        color="brown"
+                                                        // fontSize="1.25rem"
+                                                        icon="emojione-v1:bar-chart"
+                                                        color="primary"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography
@@ -514,10 +520,10 @@ const ACLPage = () => {
                                                     >
                                                       <Icon
                                                         fontSize="1.25rem"
-                                                        icon="la:university"
-                                                        color="brown"
+                                                        icon="fxemoji:school"
+                                                        color="black"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography>
@@ -539,8 +545,9 @@ const ACLPage = () => {
                                                           <Icon
                                                             fontSize="1.25rem"
                                                             icon="mdi:location"
+                                                            color="red"
                                                             style={{
-                                                              fontSize: "30px",
+                                                              fontSize: "24px",
                                                             }}
                                                           />
                                                           <Typography>
@@ -562,10 +569,10 @@ const ACLPage = () => {
                                                     >
                                                       <Icon
                                                         fontSize="1.25rem"
-                                                        icon="carbon:task-complete"
-                                                        color="brown"
+                                                        icon="fxemoji:graduationcap"
+                                                        color="green"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography>
@@ -731,9 +738,9 @@ const ACLPage = () => {
                                                       <Icon
                                                         fontSize="1.25rem"
                                                         icon="eos-icons:role-binding"
-                                                        color="brown"
+                                                        color="black"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography
@@ -758,7 +765,7 @@ const ACLPage = () => {
                                                         icon="material-symbols:mindfulness-outline"
                                                         color="brown"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography>
@@ -787,9 +794,9 @@ const ACLPage = () => {
                                                     >
                                                       <Icon
                                                         fontSize="1.25rem"
-                                                        icon="uiw:date"
+                                                        icon="clarity:date-line"
                                                         style={{
-                                                          fontSize: "30px",
+                                                          fontSize: "24px",
                                                         }}
                                                       />
                                                       <Typography>

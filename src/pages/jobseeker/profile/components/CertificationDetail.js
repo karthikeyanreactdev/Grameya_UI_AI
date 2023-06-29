@@ -148,10 +148,10 @@ const CertificationDetail = ({
                                   >
                                     <Icon
                                       fontSize="1.25rem"
-                                      icon="bx:certification"
+                                      icon="ph:certificate-light"
                                       color="brown"
                                       style={{
-                                        fontSize: "30px",
+                                        fontSize: "24px",
                                       }}
                                     />
                                     <Typography
@@ -173,10 +173,10 @@ const CertificationDetail = ({
                                   >
                                     <Icon
                                       fontSize="1.25rem"
-                                      icon="formkit:date"
+                                      icon="clarity:date-line"
                                       color="brown"
                                       style={{
-                                        fontSize: "30px",
+                                        fontSize: "24px",
                                       }}
                                     />
                                     <Typography>
@@ -198,8 +198,9 @@ const CertificationDetail = ({
                                     <Icon
                                       fontSize="1.25rem"
                                       icon="mdi:web"
+                                      color="green"
                                       style={{
-                                        fontSize: "30px",
+                                        fontSize: "24px",
                                       }}
                                     />
                                     <Typography>
