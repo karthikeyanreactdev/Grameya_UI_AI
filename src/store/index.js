@@ -13,6 +13,7 @@ import manageJob from "src/store/apps/recruiter/manageJob/index";
 import applications from "src/store/apps/recruiter/applications/index";
 import applicants from "src/store/apps/recruiter/applicants/index";
 import candidates from "src/store/apps/recruiter/candidates/index";
+import appliedSeeker from "src/store/apps/recruiter/applied-seeker/index";
 import resumeSearch from "src/store/apps/recruiter/resume-search/index";
 import appliedJobs from "src/store/apps/jobseeker/applications/index";
 import jobSearch from "src/store/apps/jobseeker/job-search/index";
@@ -32,6 +33,7 @@ export const store = configureStore({
     applications,
     candidates,
     applicants,
+    appliedSeeker,
     //enum
     misc,
     //seeker

@@ -11,6 +11,7 @@ module.exports = {
   env: {
     REACT_APP_GMAP_API_KEY: "AIzaSyAQQwD07tGYt_zg9ApFDIsmuDI6CSoEliw",
   },
+
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

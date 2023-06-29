@@ -204,6 +204,7 @@ const Applications = () => {
       "/recruiter/applied-candiates"
     );
   };
+
   return (
     <Grid container spacing={6} className={classes.root}>
       {/* <Grid item md={6} xs={12}>

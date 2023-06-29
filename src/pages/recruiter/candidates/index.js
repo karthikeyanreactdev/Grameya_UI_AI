@@ -20,6 +20,7 @@ import CustomAvatar from "src/@core/components/mui/avatar";
 import { getInitials } from "src/@core/utils/get-initials";
 import OptionsMenu from "src/@core/components/option-menu";
 import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/router";
 
 import { getApplicantsList } from "src/store/apps/recruiter/applications";
 import { useDispatch, useSelector } from "react-redux";
@@ -79,6 +80,7 @@ const Candidates = () => {
   const ability = useContext(AbilityContext);
   const dispatch = useDispatch();
   const theme = useTheme();
+  const router = useRouter();
 
   const apiRef = useGridApiRef();
   const { shortListedCandidatesList, isLoading, pageCount } = useSelector(
@@ -282,7 +284,9 @@ const Candidates = () => {
             <Tooltip title="View Candidate">
               <LoadingButton
                 // isLoading={isShortListLoading}
-
+                onClick={() => {
+                  handleViewCandidate(row);
+                }}
                 sx={{ fontSize: "18px" }}
               >
                 {" "}
@@ -342,6 +346,10 @@ const Candidates = () => {
     );
   }, [pageCount?.total, setRowCountState]);
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
+
+  const handleViewCandidate = (row) => {
+    router.push(`${`/recruiter/seeker-profile/`}?id=${row?.job_seeker_id}`);
+  };
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -386,8 +394,9 @@ const Candidates = () => {
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
+              onRowClick={(row) => handleViewCandidate(row?.row)}
               paginationMode="server"
-              onRowClick={(it) => console.log(it)}
+              // onRowClick={(it) => console.log(it)}
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}

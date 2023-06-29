@@ -57,6 +57,7 @@ import {
   resumeSearchByFilter,
 } from "src/store/apps/recruiter/resume-search";
 import useNotification from "src/hooks/useNotification";
+import { useRouter } from "next/router";
 
 import {
   Button,
@@ -391,7 +392,9 @@ const Dashboard = () => {
             <Tooltip title="View Candidate">
               <LoadingButton
                 // isLoading={isViewLoading}
-                onClick={() => {}}
+                onClick={() => {
+                  handleViewCandidate(row);
+                }}
                 sx={{ fontSize: "18px" }}
               >
                 {" "}
@@ -413,6 +416,12 @@ const Dashboard = () => {
       },
     },
   ];
+  const router = useRouter();
+
+  const handleViewCandidate = (row) => {
+    console.log(row);
+    router.push(`${`/recruiter/seeker-profile/`}?id=${row?.id}`);
+  };
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -667,7 +676,7 @@ const Dashboard = () => {
               }}
               rowHeight={62}
               rows={resumeSearchList}
-              onRowClick={(it) => console.log(it)}
+              onRowClick={(row) => handleViewCandidate(row?.row)}
               loading={isLoading}
               columns={searchListColumns}
               rowCount={rowCountState}

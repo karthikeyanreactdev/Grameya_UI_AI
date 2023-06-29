@@ -310,7 +310,9 @@ const Candidates = (props) => {
               <Tooltip title="View Candidate">
                 <LoadingButton
                   // isLoading={isViewLoading}
-                  onClick={() => {}}
+                  onClick={() => {
+                    handleViewCandidate(row);
+                  }}
                   sx={{ fontSize: "18px" }}
                 >
                   {" "}
@@ -411,6 +413,10 @@ const Candidates = (props) => {
     );
   }, [pageCount?.total, setRowCountState]);
   console.log(router);
+  const handleViewCandidate = (row) => {
+    console.log(row);
+    router.push(`${`/recruiter/seeker-profile/`}?id=${row?.id}`);
+  };
   const handleAddShortList = async (id) => {
     Swal.fire({
       title: "Do you want to shortlist this candidate?",
@@ -483,7 +489,7 @@ const Candidates = (props) => {
               rowHeight={62}
               rows={appliedCandidateList}
               loading={isLoading}
-              onRowClick={(it) => console.log(it)}
+              onRowClick={(row) => handleViewCandidate(row?.row)}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}

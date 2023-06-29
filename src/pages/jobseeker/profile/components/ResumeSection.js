@@ -17,10 +17,26 @@ import { forwardRef, useImperativeHandle, useRef } from "react";
 import { removeResume, updateResume } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  root: {
+    "& #header-bar": {
+      marginTop: "-32px",
+    },
+    "& #pdf-controls": {
+      backgroundColor: "#187de4",
+    },
+    "& #pdf-pagination-info": {
+      color: "#fff",
+    },
+  },
+});
 const ResumeSection = forwardRef((props, ref) => {
   const { userDetail, onHandleChangeLoading, getProfileDetail } = props;
   const [sendNotification] = useNotification();
   const fileInputRef = useRef(null);
+  const classes = useStyles();
 
   useImperativeHandle(ref, () => ({
     handleFileUpload() {
@@ -98,7 +114,7 @@ const ResumeSection = forwardRef((props, ref) => {
 
   return (
     <>
-      <Grid item md={12} xs={12}>
+      <Grid item md={12} xs={12} className={classes.root}>
         <Card>
           <CardContent>
             <Typography variant="h4" component="h4">
