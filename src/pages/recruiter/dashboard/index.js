@@ -83,11 +83,11 @@ const Applications = () => {
     },
     {
       flex: 0.1,
-      minWidth: 300,
+      minWidth: 100,
       sortable: true,
 
       field: "total_applications",
-      headerName: "Total Applicants (Click on to view details)",
+      headerName: "Applicants",
       renderCell: ({ row }) => {
         return (
           // <Tooltip title="Click here to view applicants list">

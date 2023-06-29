@@ -59,7 +59,7 @@ const navigation = () => {
       path: "/recruiter/candidates",
       action: "read",
       subject: "candidates",
-      title: "Candidates",
+      title: "Saved Candidates",
       icon: "tabler:user-check",
     },
     {

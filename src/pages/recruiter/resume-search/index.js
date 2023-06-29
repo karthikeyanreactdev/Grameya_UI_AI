@@ -324,7 +324,7 @@ const Dashboard = () => {
     },
     {
       flex: 0.1,
-      minWidth: 500,
+      minWidth: 150,
       sortable: true,
       field: "skills",
       headerName: "Skills",
@@ -337,28 +337,30 @@ const Dashboard = () => {
             whiteSpace: "normal",
           }}
         >
-          {row?.skills?.map((e) => {
-            return (
-              <Chip
-                size="small"
-                label={e}
-                color={"info"}
-                sx={{
-                  mr: 2,
-                  height: 24,
-                  minWidth: 24,
-                  wordWrap: "break-word",
-                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
-                }}
-              />
-            );
-          })}
+          <Tooltip title={row.skills.join(",")}>
+            <Chip
+              size="small"
+              label={row?.skills[0] || "N/A"}
+              color={"primary"}
+              variant="outlined"
+              sx={{
+                mr: 2,
+                height: 24,
+                minWidth: 24,
+                wordWrap: "break-word",
+                "& .MuiChip-label": {
+                  px: 1.5,
+                  textTransform: "capitalize",
+                },
+              }}
+            />
+          </Tooltip>
         </Box>
       ),
     },
     {
       flex: 0.1,
-      minWidth: 300,
+      minWidth: 100,
       sortable: false,
       // field: "Action",
       headerName: "Action",
@@ -624,6 +626,9 @@ const Dashboard = () => {
             <DataGrid
               autoHeight
               sx={{
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
                 "& .MuiDataGrid-columnHeaders ": {
                   backgroundColor: theme.palette.primary.main,
                   color: "#fff",
@@ -647,6 +652,7 @@ const Dashboard = () => {
               }}
               rowHeight={62}
               rows={resumeSearchList}
+              onRowClick={(it) => console.log(it)}
               loading={isLoading}
               columns={searchListColumns}
               rowCount={rowCountState}

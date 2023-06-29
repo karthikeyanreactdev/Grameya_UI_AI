@@ -1,41 +1,41 @@
 // ** Next Import
-import Link from 'next/link'
+import Link from "next/link";
 
 // ** MUI Imports
-import IconButton from '@mui/material/IconButton'
-import Box from '@mui/material/Box'
-import { styled, useTheme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import { styled, useTheme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 
 // ** Custom Icon Import
-import Icon from 'src/@core/components/icon'
+import Icon from "src/@core/components/icon";
 
 // ** Configs
-import themeConfig from 'src/configs/themeConfig'
+import themeConfig from "src/configs/themeConfig";
 
 // ** Styled Components
 const MenuHeaderWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   paddingRight: theme.spacing(3.5),
-  transition: 'padding .25s ease-in-out',
-  minHeight: theme.mixins.toolbar.minHeight
-}))
+  transition: "padding .25s ease-in-out",
+  minHeight: theme.mixins.toolbar.minHeight,
+}));
 
 const HeaderTitle = styled(Typography)({
   fontWeight: 700,
-  lineHeight: '24px',
-  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out'
-})
+  lineHeight: "24px",
+  transition: "opacity .25s ease-in-out, margin .25s ease-in-out",
+});
 
 const LinkStyled = styled(Link)({
-  display: 'flex',
-  alignItems: 'center',
-  textDecoration: 'none'
-})
+  display: "flex",
+  alignItems: "center",
+  textDecoration: "none",
+});
 
-const VerticalNavHeader = props => {
+const VerticalNavHeader = (props) => {
   // ** Props
   const {
     hidden,
@@ -47,42 +47,48 @@ const VerticalNavHeader = props => {
     navigationBorderWidth,
     menuLockedIcon: userMenuLockedIcon,
     navMenuBranding: userNavMenuBranding,
-    menuUnlockedIcon: userMenuUnlockedIcon
-  } = props
+    menuUnlockedIcon: userMenuUnlockedIcon,
+  } = props;
 
   // ** Hooks & Vars
-  const theme = useTheme()
-  const { navCollapsed } = settings
-  const menuCollapsedStyles = navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 }
+  const theme = useTheme();
+  const { navCollapsed } = settings;
+  const menuCollapsedStyles =
+    navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 };
 
   const menuHeaderPaddingLeft = () => {
     if (navCollapsed && !navHover) {
       if (userNavMenuBranding) {
-        return 0
+        return 0;
       } else {
-        return (collapsedNavWidth - navigationBorderWidth - 34) / 8
+        return (collapsedNavWidth - navigationBorderWidth - 34) / 8;
       }
     } else {
-      return 6
+      return 6;
     }
-  }
-  const MenuLockedIcon = () => userMenuLockedIcon || <Icon icon='tabler:circle-dot' />
-  const MenuUnlockedIcon = () => userMenuUnlockedIcon || <Icon icon='tabler:circle' />
+  };
+  const MenuLockedIcon = () =>
+    userMenuLockedIcon || <Icon icon="tabler:circle-dot" />;
+  const MenuUnlockedIcon = () =>
+    userMenuUnlockedIcon || <Icon icon="tabler:circle" />;
 
   return (
-    <MenuHeaderWrapper className='nav-header' sx={{ pl: menuHeaderPaddingLeft() }}>
+    <MenuHeaderWrapper
+      className="nav-header"
+      sx={{ pl: menuHeaderPaddingLeft() }}
+    >
       {userNavMenuBranding ? (
         userNavMenuBranding(props)
       ) : (
-        <LinkStyled href='/'>
-          <img src='/images/g.png' width={30} height={30} alt='logo' />
+        <LinkStyled href="/">
+          <img src="/images/g.png" width={30} height={30} alt="logo" />
           <HeaderTitle
-            variant='h4'
+            variant="h4"
             sx={{
               ...menuCollapsedStyles,
-              fontFamily: 'Poiret One, cursive',
-              fontSize: '32px',
-              ...(navCollapsed && !navHover ? {} : { ml: 2.5, mt: -2 })
+              fontFamily: "Poiret One, cursive",
+              fontSize: "32px",
+              ...(navCollapsed && !navHover ? {} : { ml: 2.5, mt: -2 }),
             }}
           >
             {themeConfig.templateName}
@@ -90,36 +96,43 @@ const VerticalNavHeader = props => {
         </LinkStyled>
       )}
 
-      {hidden ? (
+      {/* {hidden ? (
         <IconButton
           disableRipple
           disableFocusRipple
           onClick={toggleNavVisibility}
-          sx={{ p: 0, color: 'text.secondary', backgroundColor: 'transparent !important' }}
+          sx={{
+            p: 0,
+            color: "text.secondary",
+            backgroundColor: "transparent !important",
+          }}
         >
-          <Icon icon='tabler:x' fontSize='1.25rem' />
+          <Icon icon="tabler:x" fontSize="1.25rem" />
         </IconButton>
-      ) : userMenuLockedIcon === null && userMenuUnlockedIcon === null ? null : (
+      ) : userMenuLockedIcon === null &&
+        userMenuUnlockedIcon === null ? null : (
         <IconButton
           disableRipple
           disableFocusRipple
-          onClick={() => saveSettings({ ...settings, navCollapsed: !navCollapsed })}
+          onClick={() =>
+            saveSettings({ ...settings, navCollapsed: !navCollapsed })
+          }
           sx={{
             p: 0,
-            color: 'text.primary',
-            backgroundColor: 'transparent !important',
-            '& svg': {
-              fontSize: '1.25rem',
+            color: "text.primary",
+            backgroundColor: "transparent !important",
+            "& svg": {
+              fontSize: "1.25rem",
               ...menuCollapsedStyles,
-              transition: 'opacity .25s ease-in-out'
-            }
+              transition: "opacity .25s ease-in-out",
+            },
           }}
         >
           {navCollapsed ? MenuUnlockedIcon() : MenuLockedIcon()}
         </IconButton>
-      )}
+      )} */}
     </MenuHeaderWrapper>
-  )
-}
+  );
+};
 
-export default VerticalNavHeader
+export default VerticalNavHeader;

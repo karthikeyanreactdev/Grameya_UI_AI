@@ -440,6 +440,9 @@ const Candidates = (props) => {
             <DataGrid
               autoHeight
               sx={{
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
                 "& .MuiDataGrid-columnHeaders ": {
                   backgroundColor: theme.palette.primary.main,
                   color: "#fff",
@@ -464,6 +467,7 @@ const Candidates = (props) => {
               rowHeight={62}
               rows={appliedCandidateList}
               loading={isLoading}
+              onRowClick={(it) => console.log(it)}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}

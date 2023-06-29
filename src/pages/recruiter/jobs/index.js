@@ -359,6 +359,9 @@ const ManageJob = () => {
           <Box p={4}>
             <DataGrid
               sx={{
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
                 "& .MuiDataGrid-columnHeaders ": {
                   backgroundColor: theme.palette.primary.main,
                   color: "#fff",
@@ -384,6 +387,7 @@ const ManageJob = () => {
               rows={recruiterJobList}
               columns={jobListColumns}
               loading={isLoading}
+              onRowClick={(it) => console.log(it)}
               // {...recruiterJobList}
               // initialState={{
               //   // ...data.initialState,

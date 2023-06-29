@@ -141,7 +141,43 @@ const Candidates = () => {
         );
       },
     },
-
+    {
+      flex: 0.1,
+      minWidth: 200,
+      sortable: false,
+      // field: "Action",
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              width: 1,
+            }}
+          >
+            <Chip
+              size="small"
+              label={statusObj[row.status]}
+              color={userStatusObj[row.status]}
+              onClick={async () => {
+                setId(row.id);
+                setRowData(row);
+                setAddUserOpen(true);
+              }}
+              sx={{
+                // mr: 2,
+                height: 24,
+                minWidth: 24,
+                wordWrap: "break-word",
+                // "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+              }}
+            />
+          </Box>
+        );
+      },
+    },
     {
       flex: 0.1,
       minWidth: 150,
@@ -178,7 +214,7 @@ const Candidates = () => {
     },
     {
       flex: 0.1,
-      minWidth: 500,
+      minWidth: 150,
       sortable: true,
       field: "skills",
       headerName: "Skills",
@@ -191,95 +227,31 @@ const Candidates = () => {
             whiteSpace: "normal",
           }}
         >
-          {row?.skills?.map((e) => {
-            return (
-              <Chip
-                size="small"
-                label={e}
-                color={"primary"}
-                variant="outlined"
-                sx={{
-                  mr: 2,
-                  height: 24,
-                  minWidth: 24,
-                  wordWrap: "break-word",
-                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
-                }}
-              />
-            );
-          })}
+          <Tooltip title={row.skills.join(",")}>
+            <Chip
+              size="small"
+              label={row?.skills[0] || "N/A"}
+              color={"primary"}
+              variant="outlined"
+              sx={{
+                mr: 2,
+                height: 24,
+                minWidth: 24,
+                wordWrap: "break-word",
+                "& .MuiChip-label": {
+                  px: 1.5,
+                  textTransform: "capitalize",
+                },
+              }}
+            />
+          </Tooltip>
         </Box>
       ),
     },
 
     {
       flex: 0.1,
-      minWidth: 400,
-      sortable: false,
-      // field: "Action",
-      field: "status",
-      headerName: "Status (Click on to Change Status)",
-      renderCell: ({ row }) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              width: 1,
-            }}
-          >
-            <Chip
-              size="small"
-              label={statusObj[row.status]}
-              color={userStatusObj[row.status]}
-              onClick={async () => {
-                setId(row.id);
-                setRowData(row);
-                setAddUserOpen(true);
-              }}
-              sx={{
-                // mr: 2,
-                height: 24,
-                minWidth: 24,
-                wordWrap: "break-word",
-                // "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
-              }}
-            />
-
-            {/* <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              fullWidth
-              size="small"
-              defaultValue={row.status}
-              // value={formik.values.noticePeriod}
-
-              onChange={(e) => {
-                // formik.setFieldValue("noticePeriod", e.target.value)
-                // const rowIds = apiRef.current.getAllRowIds();
-                // const rowId = randomArrayItem(rowIds);
-
-                apiRef.current.updateRows([
-                  { id: row.id, status: e.target.value },
-                ]);
-                // row.status = e.target.value;
-                console.log(row);
-              }}
-            >
-              <MenuItem value={"immediate"}>Immediate</MenuItem>
-              <MenuItem value={"15 Days"}>15 Days</MenuItem>
-              <MenuItem value={"30 Days"}>30 Days</MenuItem>
-              <MenuItem value={"45 Days"}>45 Days</MenuItem>
-              <MenuItem value={"60 Days"}>60 Days</MenuItem>
-              <MenuItem value={"90 Days"}>90 Days</MenuItem>
-            </Select> */}
-          </Box>
-        );
-      },
-    },
-    {
-      flex: 0.1,
-      minWidth: 300,
+      minWidth: 100,
       sortable: false,
       // field: "Action",
       headerName: "Action",
@@ -353,6 +325,7 @@ const Candidates = () => {
       pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
     );
   }, [pageCount?.total, setRowCountState]);
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -366,6 +339,9 @@ const Candidates = () => {
             <DataGrid
               autoHeight
               sx={{
+                "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+                },
                 "& .MuiDataGrid-columnHeaders ": {
                   backgroundColor: theme.palette.primary.main,
                   color: "#fff",
@@ -388,12 +364,14 @@ const Candidates = () => {
                 },
               }}
               rowHeight={62}
+              rowSelection={true}
               rows={shortListedCandidatesList}
               loading={isLoading}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
               paginationMode="server"
+              onRowClick={(it) => console.log(it)}
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}

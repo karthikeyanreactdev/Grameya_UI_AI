@@ -100,12 +100,13 @@ const validationSchema = yup.object({
     .email("Enter the valid email")
     .trim()
     .required("Email is Required"),
-  // jobCategory: yup
-  //   .string("Job Category is required")
-  //   .required("Job Category is required"),
-  //   jobSubCategory: yup
-  //   .string("Job Sub Category is required")
-  //   .required("Job Sub Category is required"),
+  jobCategory: yup
+    .string("Industry is required")
+    .required("Industry is required"),
+  jobSubCategory: yup
+    .string("Job Category is required")
+
+    .required("Job Category is required"),
   location: yup
     .string("Job Location is required")
     .required("Job Location is required"),
@@ -626,7 +627,7 @@ const SideBarJob = (props) => {
                   <TextField
                     required
                     {...params}
-                    label={"Job Category"}
+                    label={"Industry"}
                     error={
                       formik.touched.jobCategory &&
                       Boolean(formik.errors.jobCategory)
@@ -727,7 +728,7 @@ const SideBarJob = (props) => {
                   <TextField
                     required
                     {...params}
-                    label={"Job Sub Category"}
+                    label={"Job Category"}
                     error={
                       formik.touched.jobSubCategory &&
                       Boolean(formik.errors.jobSubCategory)
