@@ -60,6 +60,7 @@ const useStyles = makeStyles({
 import Icon from "src/@core/components/icon";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import moment from "moment";
+import axios from "axios";
 
 const renderList = (arr) => {
   if (arr && arr.length) {
@@ -116,7 +117,28 @@ function BasicInfo({
   const { isLoadingFlag, appliedCandidateProfile } = useSelector(
     (state) => state.appliedSeeker
   );
-
+  const getPdf = async () => {};
+  useEffect(() => {
+    axios({
+      url: "/download", // download url
+      method: "get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        mode: "no-cors",
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        a.remove();
+        setTimeout(() => window.URL.revokeObjectURL(url), 100);
+      });
+  }, [appliedCandidateProfile]);
   return (
     <>
       <Grid container spacing={6} className={classes.root}>
@@ -130,6 +152,7 @@ function BasicInfo({
                     mb: 4,
                     color: "text.primary",
                     textTransform: "uppercase",
+                    fontSize: "12px",
                   }}
                 >
                   Basic Info
@@ -156,7 +179,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -164,7 +191,9 @@ function BasicInfo({
                       }:`} */}
                       Full Name :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.full_name}
@@ -192,7 +221,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -200,7 +233,9 @@ function BasicInfo({
                       }:`} */}
                       Designation :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.designation}
@@ -228,7 +263,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -236,7 +275,9 @@ function BasicInfo({
                       }:`} */}
                       Current Location :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.current_location}
@@ -267,7 +308,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -275,7 +320,9 @@ function BasicInfo({
                       }:`} */}
                       Preferred Location:
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.preferred_job_location}
@@ -306,7 +353,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -314,7 +365,9 @@ function BasicInfo({
                       }:`} */}
                       Current Salary :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.current_salary} LPA
@@ -345,7 +398,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -353,7 +410,9 @@ function BasicInfo({
                       }:`} */}
                       Expected Salary :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.expected_salary} LPA
@@ -381,7 +440,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -389,7 +452,9 @@ function BasicInfo({
                       }:`} */}
                       Total Experiance :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.total_years_of_experience} Years
@@ -417,7 +482,11 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       {/* {`${
                         item.property.charAt(0).toUpperCase() +
@@ -425,7 +494,9 @@ function BasicInfo({
                       }:`} */}
                       Notice Period :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
                        */}
                       {appliedCandidateProfile?.notice_period}
@@ -439,6 +510,7 @@ function BasicInfo({
                   sx={{
                     mb: 4,
                     color: "text.primary",
+                    fontSize: "12px",
                     textTransform: "uppercase",
                   }}
                 >
@@ -468,11 +540,17 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       Email :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {appliedCandidateProfile?.email}
                     </Typography>
                   </Box>
@@ -498,11 +576,17 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       Mobile :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {appliedCandidateProfile?.phone}
                     </Typography>
                   </Box>
@@ -528,11 +612,17 @@ function BasicInfo({
                     }}
                   >
                     <Typography
-                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.secondary",
+                        fontSize: "14px",
+                      }}
                     >
                       Alternate Mobile :
                     </Typography>
-                    <Typography sx={{ color: "text.secondary" }}>
+                    <Typography
+                      sx={{ color: "text.secondary", fontSize: "14px" }}
+                    >
                       {appliedCandidateProfile?.alternate_phone}
                     </Typography>
                   </Box>
@@ -544,6 +634,7 @@ function BasicInfo({
                   sx={{
                     mb: 4,
                     color: "text.primary",
+                    fontSize: "12px",
                     textTransform: "uppercase",
                   }}
                 >
@@ -555,7 +646,7 @@ function BasicInfo({
                     variant="outlined"
                     // color="primary"
                     // color="black"
-                    sx={{ mx: 1, my: 1 }}
+                    sx={{ mx: 1, my: 1, fontSize: "12px" }}
                     // sx={{ color: "#" }}
                     label={
                       option?.name === null || option?.name === undefined
@@ -577,6 +668,7 @@ function BasicInfo({
                     mb: 4,
                     color: "text.primary",
                     textTransform: "uppercase",
+                    fontSize: "12px",
                   }}
                 >
                   Work Experiance
@@ -636,7 +728,7 @@ function BasicInfo({
                                     sx={{
                                       fontWeight: 500,
                                       color: "text.secondary",
-                                      fontSize: "16px",
+                                      fontSize: "14px",
                                       mb: 4,
                                     }}
                                   >
@@ -668,13 +760,17 @@ function BasicInfo({
                                       <Typography
                                         sx={{
                                           fontWeight: 500,
+                                          fontSize: "14px",
                                           color: "text.secondary",
                                         }}
                                       >
                                         Designation :
                                       </Typography>
                                       <Typography
-                                        sx={{ color: "text.secondary" }}
+                                        sx={{
+                                          color: "text.secondary",
+                                          fontSize: "14px",
+                                        }}
                                       >
                                         {row?.designation}
                                       </Typography>
@@ -706,13 +802,17 @@ function BasicInfo({
                                       <Typography
                                         sx={{
                                           fontWeight: 500,
+                                          fontSize: "14px",
                                           color: "text.secondary",
                                         }}
                                       >
                                         Duration :
                                       </Typography>
                                       <Typography
-                                        sx={{ color: "text.secondary" }}
+                                        sx={{
+                                          color: "text.secondary",
+                                          fontSize: "14px",
+                                        }}
                                       >
                                         {moment(row.start_date).format(
                                           "DD/MM/YYYY"
@@ -729,7 +829,7 @@ function BasicInfo({
                                       variant="outlined"
                                       // color="primary"
                                       // color="black"
-                                      sx={{ mx: 1, my: 1 }}
+                                      sx={{ mx: 1, my: 1, fontSize: "12px" }}
                                       // sx={{ color: "#" }}
                                       label={
                                         option?.name === null ||
@@ -760,6 +860,7 @@ function BasicInfo({
                     mb: 4,
                     color: "text.primary",
                     textTransform: "uppercase",
+                    fontSize: "12px",
                   }}
                 >
                   Education
@@ -794,7 +895,7 @@ function BasicInfo({
                                     sx={{
                                       fontWeight: 500,
                                       color: "text.secondary",
-                                      fontSize: "16px",
+                                      fontSize: "14px",
                                       mb: 4,
                                     }}
                                   >
@@ -827,6 +928,7 @@ function BasicInfo({
                                         sx={{
                                           fontWeight: 500,
                                           color: "text.secondary",
+                                          fontSize: "14px",
                                         }}
                                       >
                                         Grade/Marks(%) :
@@ -865,12 +967,16 @@ function BasicInfo({
                                         sx={{
                                           fontWeight: 500,
                                           color: "text.secondary",
+                                          fontSize: "14px",
                                         }}
                                       >
                                         Duration :
                                       </Typography>
                                       <Typography
-                                        sx={{ color: "text.secondary" }}
+                                        sx={{
+                                          color: "text.secondary",
+                                          fontSize: "14px",
+                                        }}
                                       >
                                         {moment(
                                           row?.course_duration_start
@@ -904,6 +1010,7 @@ function BasicInfo({
                     mb: 4,
                     color: "text.primary",
                     textTransform: "uppercase",
+                    fontSize: "14px",
                   }}
                 >
                   Certifications
@@ -938,7 +1045,7 @@ function BasicInfo({
                                     sx={{
                                       fontWeight: 500,
                                       color: "text.secondary",
-                                      fontSize: "16px",
+                                      fontSize: "14px",
                                       mb: 4,
                                     }}
                                   >
@@ -971,13 +1078,17 @@ function BasicInfo({
                                       <Typography
                                         sx={{
                                           fontWeight: 500,
+                                          fontSize: "14px",
                                           color: "text.secondary",
                                         }}
                                       >
                                         Validity :
                                       </Typography>
                                       <Typography
-                                        sx={{ color: "text.secondary" }}
+                                        sx={{
+                                          color: "text.secondary",
+                                          fontSize: "14px",
+                                        }}
                                       >
                                         {moment(
                                           row?.certification_valid_from
@@ -1015,13 +1126,17 @@ function BasicInfo({
                                       <Typography
                                         sx={{
                                           fontWeight: 500,
+                                          fontSize: "14px",
                                           color: "text.secondary",
                                         }}
                                       >
                                         URL :
                                       </Typography>
                                       <Typography
-                                        sx={{ color: "text.secondary" }}
+                                        sx={{
+                                          color: "text.secondary",
+                                          fontSize: "14px",
+                                        }}
                                       >
                                         {row?.certification_url}
                                       </Typography>
@@ -1068,6 +1183,7 @@ function BasicInfo({
                       },
                     }}
                     documents={[{ uri: appliedCandidateProfile?.resume_url }]}
+                    // documents={[{url: }]}
                   />
                 </>
               ) : (

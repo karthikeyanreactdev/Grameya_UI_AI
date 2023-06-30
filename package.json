@@ -1,7 +1,9 @@
 {
   "name": "vuexy-nextjs-admin-template",
   "version": "1.2.0",
-  "proxy": "http://localhost:3000",
+  "proxy": {
+    "*":{ "target" : "http://localhost:3000"}
+ } ,
   "private": true,
   "scripts": {
     "dev": "next dev",
