@@ -36,6 +36,10 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   root: {
+    "& .MuiPaper-root .MuiCardContent-root": {
+      padding: "16px",
+      // paddingBotton: "0px",
+    },
     "& #header-bar": {
       marginTop: "-32px",
     },
@@ -1010,7 +1014,7 @@ function BasicInfo({
                     mb: 4,
                     color: "text.primary",
                     textTransform: "uppercase",
-                    fontSize: "14px",
+                    fontSize: "12px",
                   }}
                 >
                   Certifications
