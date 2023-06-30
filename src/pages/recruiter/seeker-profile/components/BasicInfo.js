@@ -1,9 +1,11 @@
 import {
   Autocomplete,
+  Box,
   Button,
   Card,
   CardContent,
   Chip,
+  Divider,
   FormControl,
   FormHelperText,
   Grid,
@@ -14,8 +16,10 @@ import {
   ListItem,
   ListItemText,
   MenuItem,
+  Paper,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -28,7 +32,21 @@ import useNotification from "src/hooks/useNotification";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import { useSelector } from "react-redux";
+import { makeStyles } from "@mui/styles";
 
+const useStyles = makeStyles({
+  root: {
+    "& #header-bar": {
+      marginTop: "-32px",
+    },
+    "& #pdf-controls": {
+      backgroundColor: "#187de4",
+    },
+    "& #pdf-pagination-info": {
+      color: "#fff",
+    },
+  },
+});
 // const useStyles = makeStyles((theme) => ({
 //   disabledSelect: {
 //     "& .MuiOutlinedInput-notchedOutline": {
@@ -39,7 +57,50 @@ import { useSelector } from "react-redux";
 //     },
 //   },
 // }));
+import Icon from "src/@core/components/icon";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import moment from "moment";
 
+const renderList = (arr) => {
+  if (arr && arr.length) {
+    return arr.map((item, index) => {
+      return (
+        <Box
+          key={index}
+          sx={{
+            display: "flex",
+            "&:not(:last-of-type)": { mb: 3 },
+            "& svg": { color: "text.secondary" },
+          }}
+        >
+          <Box sx={{ display: "flex", mr: 2 }}>
+            <Icon fontSize="1.25rem" icon={item.icon} />
+          </Box>
+
+          <Box
+            sx={{
+              columnGap: 2,
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
+            <Typography sx={{ fontWeight: 500, color: "text.secondary" }}>
+              {`${
+                item.property.charAt(0).toUpperCase() + item.property.slice(1)
+              }:`}
+            </Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    });
+  } else {
+    return null;
+  }
+};
 function BasicInfo({
   userDetail,
   isEditMode,
@@ -50,416 +111,971 @@ function BasicInfo({
   const [sendNotification] = useNotification();
   // const { userData } = useSelector((state) => state.auth);
   const { skills } = useSelector((state) => state.misc);
+  const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const { isLoadingFlag, appliedCandidateProfile } = useSelector(
     (state) => state.appliedSeeker
   );
-  const validationSchema = yup.object({
-    resume_headline: yup
-      .string("Resume Headline is required")
-      .trim()
-      .min(10, "Minimum 10 character required")
-      .max(100, "Maximum 100 character is allowed")
-      .required("Resume Headline is required"),
-    full_name: yup
-      .string("Full Name is required")
-      .trim()
-      .min(10, "Minimum 10 character required")
-      .max(75, "Maximum 75 character  is allowed")
-      .required("Full Name is required"),
-    designation: yup
-      .string("Designation is required")
-      .trim()
-      .min(10, "Minimum 10 character required")
-      .max(50, "Maximum 50 character  is allowed")
-      .required("Designation is required"),
-
-    notice_period: yup
-      .string("Notice Period is required")
-      .required("Notice Period is required"),
-    skills: yup
-      .array()
-
-      .min(1, "Minimum 1 skill is required")
-      .max(10, "Maximum 10 skills is allowed"),
-
-    current_location: yup
-      .string("Current Location is required")
-      .required("Current Location is required"),
-    current_salary: yup
-      .string("Current Salary is required")
-      .trim()
-      .required("Current Salary is required"),
-    expected_salary: yup
-      .string("Expected Salary is required")
-      .trim()
-      .required("Expected Salary is required"),
-    preferred_job_location: yup
-      .array()
-      // .trim()
-      .required("Preferred Location is required"),
-
-    total_years_of_experience: yup
-      .string("Total Experience is required")
-      .required("Total Experience is required"),
-  });
-  const formik = useFormik({
-    initialValues: {
-      full_name: "",
-      alternate_phone: "",
-      email: "",
-      mobile: "",
-      resume_headline: "",
-      designation: "",
-      notice_period: "",
-      degree: "",
-      total_years_of_experience: "",
-      current_salary: "",
-      expected_salary: "",
-      current_location: "",
-      preferred_job_location: [],
-      skills: [],
-      actively_looking_for_job: true,
-    },
-  });
-  useEffect(() => {
-    console.log("user", appliedCandidateProfile);
-    const user = appliedCandidateProfile;
-    if (appliedCandidateProfile) {
-      formik.setFieldValue("full_name", appliedCandidateProfile?.full_name);
-      formik.setFieldValue("designation", appliedCandidateProfile?.designation);
-      formik.setFieldValue("mobile", appliedCandidateProfile?.phone);
-      formik.setFieldValue(
-        "alternate_phone",
-        appliedCandidateProfile?.alternate_phone
-      );
-      formik.setFieldValue("email", appliedCandidateProfile?.email);
-      formik.setFieldValue("skills", appliedCandidateProfile?.skills);
-
-      formik.setFieldValue(
-        "current_location",
-        appliedCandidateProfile?.current_location
-      );
-      formik.setFieldValue(
-        "preferred_job_location",
-        appliedCandidateProfile?.preferred_job_location
-      );
-
-      formik.setFieldValue(
-        "resume_headline",
-        appliedCandidateProfile?.resume_headline
-      );
-      formik.setFieldValue(
-        "current_salary",
-        appliedCandidateProfile?.current_salary
-      );
-      formik.setFieldValue(
-        "expected_salary",
-        appliedCandidateProfile?.expected_salary
-      );
-
-      formik.setFieldValue(
-        "notice_period",
-        appliedCandidateProfile?.notice_period
-      );
-      formik.setFieldValue(
-        "total_years_of_experience",
-        appliedCandidateProfile?.total_years_of_experience
-      );
-    }
-  }, [appliedCandidateProfile]);
 
   return (
     <>
-      <Grid item md={12} xs={12}>
-        <Card>
-          <CardContent>
-            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-              <TextField
-                sx={{ my: 2 }}
-                label={"Resume Headline"}
-                required
-                fullWidth
-                multiline
-                minRows={3}
-                maxRows={3}
-                name="resume_headline"
-                value={formik?.values?.resume_headline}
-                // freeSolo={true}
-                variant={"standard"}
-                InputProps={{
-                  readOnly: true,
-                  disableUnderline: true,
-                }}
-              />
-            </Grid>
-            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-              <TextField
-                sx={{ my: 2 }}
-                label={"Full Name"}
-                required
-                fullWidth
-                name="full_name"
-                freeSolo={true}
-                variant={"standard"}
-                value={formik?.values?.full_name}
-                InputProps={{
-                  readOnly: true,
-                  disableUnderline: true,
-                }}
-              />
-            </Grid>
-            <Grid container spacing={2} py={2}>
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ mb: 2 }}
-                  label={"Designation"}
-                  required
-                  fullWidth
-                  name="designation"
-                  value={formik?.values?.designation}
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
+      <Grid container spacing={6} className={classes.root}>
+        <Grid item xs={12} sm={12} md={4} lg={4}>
+          <Card>
+            <CardContent>
+              <Box sx={{ mb: 6 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
                   }}
-                />
-              </Grid>
+                >
+                  Basic Info
+                </Typography>
 
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ mb: 2 }}
-                  label={"Email"}
-                  required
-                  fullWidth
-                  name="email"
-                  freeSolo={true}
-                  variant={"standard"}
-                  value={formik?.values?.email}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
                   }}
-                />
-              </Grid>
-            </Grid>
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"tabler:user"} />
+                  </Box>
 
-            <Grid container spacing={2} py={2}>
-              <>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={" Mobile Number"}
-                    required
-                    fullWidth
-                    name="mobile"
-                    freeSolo={true}
-                    value={formik?.values?.mobile}
-                    variant={"standard"}
-                    InputProps={{
-                      readOnly: true,
-                      disableUnderline: true,
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
                     }}
-                  />
-                </Grid>
-              </>
-              <>
-                <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                  <TextField
-                    sx={{ mb: 2 }}
-                    label={"Alternate Mobile Number"}
-                    // required
-                    fullWidth
-                    name="alternate_phone"
-                    freeSolo={true}
-                    value={formik?.values?.alternate_phone}
-                    variant={"standard"}
-                    InputProps={{
-                      readOnly: true,
-                      disableUnderline: true,
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Full Name :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.full_name}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"ic:outline-work-history"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
                     }}
-                  />
-                </Grid>
-              </>
-            </Grid>
-            <Grid item lg={12} xl={12} xs={12} md={12} sm={12} pb={4}>
-              {/* <Autocomplete
-                required
-                sx={{ my: 2 }}
-                label={"Skills"}
-                name={"skills"}
-                fullWidth
-                value={formik.values.skills}
-                multiple
-                onChange={(event, item) => {
-                  if (!true) {
-                    formik.setFieldValue("skills", item);
-                  }
-                }}
-                options={skills}
-                getOptionLabel={(option) =>
-                  option?.name === null || option?.name === undefined
-                    ? option
-                    : option?.name
-                }
-                // limitTags={isEditMode ? 12 : 2}
-                freeSolo
-                filterSelectedOptions
-                // filterOptions={filterOptions}
-                disableClearable
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip
-                      variant="outlined"
-                      // color="black"
-                      // sx={{ color: "#" }}
-                      label={
-                        option?.name === null || option?.name === undefined
-                          ? option
-                          : option?.name
-                      }
-                      {...getTagProps({ index })}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Designation :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.designation}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"carbon:location"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Current Location :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.current_location}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon
+                      fontSize="1.25rem"
+                      icon={"mdi:location-check-outline"}
                     />
-                  ))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    required
-                    {...params}
-                    label={"Skills"}
-                    placeholder={!isEditMode && "Select Skill(s)"}
-                    error={
-                      formik.touched.skills && Boolean(formik.errors.skills)
-                    }
-                    helperText={
-                      formik.touched.skills &&
-                      formik.errors.skills &&
-                      formik.errors.skills
-                    }
-                    variant={"standard"}
-                    InputProps={{
-                      ...params.InputProps,
-                      readOnly: true,
-                      disableUnderline: true,
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
                     }}
-                    value={formik?.values?.skills}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Preferred Location:
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.preferred_job_location}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon
+                      fontSize="1.25rem"
+                      icon={"game-icons:take-my-money"}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Current Salary :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.current_salary} LPA
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon
+                      fontSize="1.25rem"
+                      icon={"solar:hand-money-outline"}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Expected Salary :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.expected_salary} LPA
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"cil:chart-line"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Total Experiance :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.total_years_of_experience} Years
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"quill:paper"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      {/* {`${
+                        item.property.charAt(0).toUpperCase() +
+                        item.property.slice(1)
+                      }:`} */}
+                      Notice Period :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {/* {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
+                       */}
+                      {appliedCandidateProfile?.notice_period}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              <Box sx={{ mb: 6 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Contacts
+                </Typography>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon
+                      fontSize="1.25rem"
+                      icon={"fluent-emoji-high-contrast:e-mail"}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      Email :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {appliedCandidateProfile?.email}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"circum:mobile-3"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      Mobile :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {appliedCandidateProfile?.phone}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  // key={index}
+                  sx={{
+                    display: "flex",
+                    "&:not(:last-of-type)": { mb: 3 },
+                    "& svg": { color: "text.secondary" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", mr: 2 }}>
+                    <Icon fontSize="1.25rem" icon={"circum:mobile-2"} />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      columnGap: 2,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontWeight: 500, color: "text.secondary" }}
+                    >
+                      Alternate Mobile :
+                    </Typography>
+                    <Typography sx={{ color: "text.secondary" }}>
+                      {appliedCandidateProfile?.alternate_phone}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+              <div>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Key Skills
+                </Typography>
+                {/* {renderTeams(teams)} */}
+                {appliedCandidateProfile?.skills?.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    // color="primary"
+                    // color="black"
+                    sx={{ mx: 1, my: 1 }}
+                    // sx={{ color: "#" }}
+                    label={
+                      option?.name === null || option?.name === undefined
+                        ? option
+                        : option?.name
+                    }
                   />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          <Divider sx={{ color: "black" }} />
+          <Card sx={{ my: 4 }}>
+            <CardContent>
+              <div>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Work Experiance
+                </Typography>
+                {appliedCandidateProfile?.experiences && (
+                  <Box>
+                    <Grid
+                      container
+                      spacing={2}
+                      columns={{ xs: 4, sm: 12, md: 12 }}
+                    >
+                      {appliedCandidateProfile?.experiences?.map(
+                        (row, index) => {
+                          return (
+                            <Grid item xs={12} sm={12} md={12}>
+                              <Paper
+                                raised={false}
+                                sx={{
+                                  mb: 2,
+                                  border: "1px solid #ededed",
+                                  boxShadow: "none",
+                                  // "&:hover": {
+                                  //   boxShadow:
+                                  //     "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                  //   transform: "translateY(-5px)",
+                                  // },
+                                  height: "100%",
+                                }}
+                              >
+                                <CardContent>
+                                  {row?.is_current_company && (
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        justifyContent: "end",
+                                      }}
+                                    >
+                                      <Tooltip
+                                        title="Current Company"
+                                        // placement="left-start"
+                                      >
+                                        <IconButton size="small">
+                                          <Icon
+                                            sx={{
+                                              cursor: "pointer",
+                                            }}
+                                            fontSize="1.25rem"
+                                            icon={
+                                              "fluent:person-info-16-regular"
+                                            }
+                                          />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </Box>
+                                  )}
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 500,
+                                      color: "text.secondary",
+                                      fontSize: "16px",
+                                      mb: 4,
+                                    }}
+                                  >
+                                    {row?.company_name}
+                                  </Typography>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"ic:outline-work-history"}
+                                      />
+                                    </Box>
+
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        Designation :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {row?.designation}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"game-icons:duration"}
+                                      />
+                                    </Box>
+
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        Duration :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {moment(row.start_date).format(
+                                          "DD/MM/YYYY"
+                                        )}
+                                        {" - "}
+                                        {moment(row.end_date).format(
+                                          "DD/MM/YYYY"
+                                        )}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                  {row?.skills?.map((option, index) => (
+                                    <Chip
+                                      variant="outlined"
+                                      // color="primary"
+                                      // color="black"
+                                      sx={{ mx: 1, my: 1 }}
+                                      // sx={{ color: "#" }}
+                                      label={
+                                        option?.name === null ||
+                                        option?.name === undefined
+                                          ? option
+                                          : option?.name
+                                      }
+                                    />
+                                  ))}
+                                </CardContent>
+                              </Paper>
+                            </Grid>
+                          );
+                        }
+                      )}
+                    </Grid>
+                  </Box>
                 )}
-              /> */}
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ mb: 2 }}
-                  label={" Current Location"}
-                  required
-                  fullWidth
-                  name="current_location"
-                  value={formik?.values?.current_location}
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
+              </div>
+            </CardContent>
+          </Card>
+          <Card sx={{ my: 4 }}>
+            <CardContent>
+              <div>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
                   }}
-                />
-              </Grid>
+                >
+                  Education
+                </Typography>
+                {appliedCandidateProfile?.educations && (
+                  <Box>
+                    <Grid
+                      container
+                      spacing={2}
+                      columns={{ xs: 4, sm: 12, md: 12 }}
+                    >
+                      {appliedCandidateProfile?.educations?.map(
+                        (row, index) => {
+                          return (
+                            <Grid item xs={12} sm={12} md={12}>
+                              <Paper
+                                raised={false}
+                                sx={{
+                                  mb: 2,
+                                  border: "1px solid #ededed",
+                                  boxShadow: "none",
+                                  // "&:hover": {
+                                  //   boxShadow:
+                                  //     "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                  //   transform: "translateY(-5px)",
+                                  // },
+                                  height: "100%",
+                                }}
+                              >
+                                <CardContent>
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 500,
+                                      color: "text.secondary",
+                                      fontSize: "16px",
+                                      mb: 4,
+                                    }}
+                                  >
+                                    {row?.course}
+                                  </Typography>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"grommet-icons:scorecard"}
+                                      />
+                                    </Box>
 
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ mb: 2 }}
-                  label={" Preferred Location"}
-                  required
-                  value={formik?.values?.preferred_job_location}
-                  fullWidth
-                  name="preferred_job_location"
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        Grade/Marks(%) :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {row?.grade_or_marks}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"game-icons:duration"}
+                                      />
+                                    </Box>
 
-            <Grid container spacing={2} py={2}>
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ my: 2 }}
-                  label={"Current CTC (in LPA)"}
-                  value={formik?.values?.current_salary}
-                  type="text"
-                  required
-                  fullWidth
-                  name="current_salary"
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        Duration :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {moment(
+                                          row?.course_duration_start
+                                        ).format("DD/MM/YYYY")}
+                                        {" - "}
+                                        {moment(
+                                          row?.course_duration_end
+                                        ).format("DD/MM/YYYY")}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                </CardContent>
+                              </Paper>
+                            </Grid>
+                          );
+                        }
+                      )}
+                    </Grid>
+                  </Box>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ my: 2 }}
-                  value={formik?.values?.expected_salary}
-                  label={" Expected CTC (in LPA)"}
-                  type="text"
-                  required
-                  fullWidth
-                  name="expected_salary"
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
+          <Card sx={{ my: 4 }}>
+            <CardContent>
+              <div>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
                   }}
-                />
-              </Grid>
-            </Grid>
+                >
+                  Certifications
+                </Typography>
+                {appliedCandidateProfile?.certifications && (
+                  <Box>
+                    <Grid
+                      container
+                      spacing={2}
+                      columns={{ xs: 4, sm: 12, md: 12 }}
+                    >
+                      {appliedCandidateProfile?.certifications?.map(
+                        (row, index) => {
+                          return (
+                            <Grid item xs={12} sm={12} md={12}>
+                              <Paper
+                                raised={false}
+                                sx={{
+                                  mb: 2,
+                                  border: "1px solid #ededed",
+                                  boxShadow: "none",
+                                  // "&:hover": {
+                                  //   boxShadow:
+                                  //     "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                  //   transform: "translateY(-5px)",
+                                  // },
+                                  height: "100%",
+                                }}
+                              >
+                                <CardContent>
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 500,
+                                      color: "text.secondary",
+                                      fontSize: "16px",
+                                      mb: 4,
+                                    }}
+                                  >
+                                    {row?.certification_name}
+                                  </Typography>
 
-            <Grid container spacing={2} py={2}>
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  sx={{ mb: 2 }}
-                  label={"Notice Period"}
-                  value={formik?.values?.notice_period}
-                  required
-                  fullWidth
-                  name="notice_period"
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"game-icons:duration"}
+                                      />
+                                    </Box>
 
-              <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
-                <TextField
-                  // sx={{ my: 2 }}
-                  label={"Total Experience (in Years) "}
-                  type="text"
-                  required
-                  fullWidth
-                  name="total_years_of_experience"
-                  value={formik?.values?.total_years_of_experience}
-                  freeSolo={true}
-                  variant={"standard"}
-                  InputProps={{
-                    readOnly: true,
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        Validity :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {moment(
+                                          row?.certification_valid_from
+                                        ).format("DD/MM/YYYY")}
+                                        {" - "}
+                                        {moment(
+                                          row?.certification_valid_to
+                                        ).format("DD/MM/YYYY")}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                  <Box
+                                    // key={index}
+                                    sx={{
+                                      display: "flex",
+                                      "&:not(:last-of-type)": { mb: 3 },
+                                      "& svg": { color: "text.secondary" },
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", mr: 2 }}>
+                                      <Icon
+                                        fontSize="1.25rem"
+                                        icon={"mdi:web"}
+                                      />
+                                    </Box>
+
+                                    <Box
+                                      sx={{
+                                        columnGap: 2,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          color: "text.secondary",
+                                        }}
+                                      >
+                                        URL :
+                                      </Typography>
+                                      <Typography
+                                        sx={{ color: "text.secondary" }}
+                                      >
+                                        {row?.certification_url}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                </CardContent>
+                              </Paper>
+                            </Grid>
+                          );
+                        }
+                      )}
+                    </Grid>
+                  </Box>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={12} md={8} lg={8}>
+          <Card>
+            <CardContent>
+              <Typography
+                variant="body2"
+                sx={{
+                  mb: 4,
+                  color: "text.primary",
+                  textTransform: "uppercase",
+                }}
+              >
+                Resume
+              </Typography>
+              <Typography>
+                {appliedCandidateProfile?.resume_headline}
+              </Typography>
+              {appliedCandidateProfile?.resume_url ? (
+                <>
+                  <DocViewer
+                    pluginRenderers={DocViewerRenderers}
+                    config={{
+                      header: {
+                        disableHeader: false,
+                        disableFileName: true,
+                        retainURLParams: false,
+                      },
+                    }}
+                    documents={[{ uri: appliedCandidateProfile?.resume_url }]}
+                  />
+                </>
+              ) : (
+                <Typography sx={{ mt: 2 }}>Resume not found</Typography>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </>
   );

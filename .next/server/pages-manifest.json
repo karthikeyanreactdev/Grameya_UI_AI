@@ -2,9 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.js",
   "/recruiter/seeker-profile": "pages/recruiter/seeker-profile.js",
-  "/login": "pages/login.js",
-  "/recruiter/applied-candiates": "pages/recruiter/applied-candiates.js",
-  "/recruiter/candidates": "pages/recruiter/candidates.js"
+  "/recruiter/dashboard": "pages/recruiter/dashboard.js"
 }
