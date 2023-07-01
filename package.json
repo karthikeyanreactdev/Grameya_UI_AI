@@ -2,8 +2,10 @@
   "name": "vuexy-nextjs-admin-template",
   "version": "1.2.0",
   "proxy": {
-    "*":{ "target" : "http://localhost:3000"}
- } ,
+    "*": {
+      "target": "http://localhost:3000"
+    }
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -87,6 +89,7 @@
     "react-phone-input-2": "^2.15.1",
     "react-popper": "2.3.0",
     "react-redux": "8.0.5",
+    "react-share": "^4.4.1",
     "recharts": "2.5.0",
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "2.1.1",

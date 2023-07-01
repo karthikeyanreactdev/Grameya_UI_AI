@@ -28,26 +28,16 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import UserProfileHeader from "./UserProfileHeader";
-import AddNewEducation from "./components/AddNewEducation";
-import EditEducation from "./components/EditEducation";
-import AddNewExperiance from "./components/AddNewExperiance";
-import EditExperiance from "./components/EditExperiance";
+
 import {
   getProfile,
   removeJobseekerEducation,
   removeJobseekerExperience,
 } from "src/api-services/seeker/profile";
-import EditBasicInfo from "./components/EditBasicInfo";
+
 import useNotification from "src/hooks/useNotification";
 import BasicInfo from "./components/BasicInfo";
-import CommonLoader from "src/shared/CommonLoader";
-import ClearIcon from "@mui/icons-material/Clear";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ResumeSection from "./components/ResumeSection";
-import CustomChip from "src/@core/components/mui/chip";
-import CertificationDetail from "./components/CertificationDetail";
-import AddCertification from "./components/AddCertification";
-import EditCertification from "./components/EditCertification";
+
 import { DeleteOutline } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useRouter } from "next/router";

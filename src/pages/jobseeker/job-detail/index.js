@@ -35,15 +35,29 @@ import {
   Avatar,
   Button,
   Chip,
+  Link,
   List,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { Stack } from "@mui/system";
-
+import { getJobById } from "src/api-services/recruiter/jobs";
+import useNotification from "src/hooks/useNotification";
+import { getSeekerJobDetailsById } from "src/api-services/seeker/jobsdetails";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  LinkedinIcon,
+  LinkedinShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
 const useStyles = makeStyles({
   root: {
     "& .MuiDataGrid-root.MuiDataGrid-cell": {
@@ -57,248 +71,542 @@ const CandidateJobDetail = () => {
   const { query } = router;
   console.log("query", query);
   const classes = useStyles();
+  // const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [jobDetails, setJobDetails] = useState([]);
+  const [shareUrl, setShareUrl] = useState("");
+  const [OS, setOS] = useState("");
+  const [sendNotification] = useNotification();
+  const viewJob = async () => {
+    try {
+      setIsLoading(true);
 
+      const result = await getSeekerJobDetailsById(query?.id);
+      // toggle();
+      console.log(result?.data?.data);
+      setJobDetails(result?.data?.data);
+      sendNotification({
+        message: result?.data?.message,
+        variant: "success",
+      });
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // useEffect(() => {
+  //   viewJob();
+  // }, []);
+
+  useEffect(() => {
+    if (router.isReady) {
+      // Code using query
+      console.log(router.query);
+      if (query?.id) {
+        viewJob();
+        const url = `${"https://devgrameyaapi.sarosk.net/share_job/"}${
+          query?.id
+        }`;
+        setShareUrl(url);
+      } else {
+        router.back();
+      }
+    }
+  }, [router.isReady]);
+  const openFacebookShare = () => {
+    window.open(
+      `fb://faceweb/f?href=https://m.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+      "_blank"
+    );
+  };
+
+  const openWhatsAppShare = () => {
+    window.open(`whatsapp://send?text=${shareUrl}`, "_blank");
+  };
+
+  const openTwitterShare = () => {
+    window.open(`twitter://intent/tweet?url=${shareUrl}`, "_blank");
+  };
+
+  const openLinkedInShare = () => {
+    window.open(`linkedin://sharing/share-offsite/?url=${shareUrl}`, "_blank");
+  };
+
+  const getOS = () => {
+    var userAgent = window.navigator.userAgent,
+      platform =
+        window.navigator?.userAgentData?.platform || window.navigator.platform,
+      macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
+      windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
+      iosPlatforms = ["iPhone", "iPad", "iPod"],
+      os = null;
+
+    if (macosPlatforms.indexOf(platform) !== -1) {
+      os = "Mac-OS";
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+      os = "iOS";
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+      os = "Windows";
+    } else if (/Android/.test(userAgent)) {
+      os = "Android";
+    } else if (/Linux/.test(platform)) {
+      os = "Linux";
+    }
+
+    setOS(os);
+  };
+
+  useEffect(() => {
+    getOS();
+    // getShareUrl();
+  }, []);
   return (
     <Grid container spacing={6} className={classes.root}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Job Detail " />
+          <Grid container spacing={2}>
+            <Grid item xs={10}>
+              <CardHeader title="Job Detail " />
+            </Grid>
+            <Grid item xs={2}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  my: 3,
+                  mr: 2,
+                }}
+              >
+                <Button
+                  color={jobDetails?.is_saved ? "success" : "primary"}
+                  title="Save Job"
+                >
+                  {jobDetails?.is_saved ? (
+                    <Icon fontSize="1.5rem" icon="mdi:favorite-check" />
+                  ) : (
+                    <Icon
+                      fontSize="1.5rem"
+                      icon="mdi:favorite-add-outline"
+                      sx={{ bacground: "red" }}
+                      // color="error"
+                    />
+                  )}
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
+
           <Divider sx={{ m: "0 !important" }} />
 
           <CardContent>
-            <Grid container spacing={2}>
-              <Grid item sm={12} xs={12} lg={9} mt={0}>
-                <Typography sx={{ fontSize: "1.8rem", fontWeight: 500 }}>
-                  Product Designer / UI Designer
+            <Grid container spacing={4}>
+              <Grid item sm={12} xs={12} md={8} lg={8} mt={0}>
+                <Typography sx={{ fontSize: "1.3rem", fontWeight: 500 }}>
+                  {jobDetails?.job_title}
                 </Typography>
-                <Typography>8 Vacancy </Typography>
+                {/* <Typography>8 Vacancy </Typography> */}
                 <Typography sx={{ mt: 4 }}>
-                  <Typography sx={{ fontSize: "1.2rem" }}>
+                  <Typography
+                    //  sx={{ fontSize: "1.125rem" }}
+
+                    variant="body2"
+                    sx={{
+                      my: 3,
+                      color: "text.primary",
+                      fontSize: "0.825rem",
+                      textTransform: "uppercase",
+                      fontWeight: 500,
+                    }}
+                  >
                     Job Description
                   </Typography>
-                  <Typography sx={{ mt: 2, fontSize: "1rem" }}>
-                    As a Product Designer, you will work within a Product
-                    Delivery Team fused with UX, engineering, product and data
-                    talent. You will help the team design beautiful interfaces
-                    that solve business challenges for our clients. We work with
-                    a number of Tier 1 banks on building web-based applications
-                    for AML, KYC and Sanctions List management workflows. This
-                    role is ideal if you are looking to segue your career into
-                    the FinTech or Big Data arenas.
+                  <Typography sx={{ mt: 2, fontSize: "0.825rem" }}>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: jobDetails?.short_description,
+                      }}
+                    />
                   </Typography>
-                </Typography>
+                  <div>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        my: 3,
+                        color: "text.primary",
+                        fontSize: "12px",
+                        textTransform: "uppercase",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Key Skills
+                    </Typography>
+                    {/* {renderTeams(teams)} */}
+                    {jobDetails?.skills?.map((option, index) => (
+                      <Chip
+                        variant="outlined"
+                        color="primary"
+                        // color="black"
+                        sx={{ mx: 1, my: 1, fontSize: "12px" }}
+                        // sx={{ color: "#" }}
+                        label={
+                          option?.name === null || option?.name === undefined
+                            ? option
+                            : option?.name
+                        }
+                      />
+                    ))}
+                  </div>
+                  <Typography
+                    //  sx={{ fontSize: "1.125rem" }}
 
-                <Typography sx={{ fontSize: "1.2rem", mt: 4 }}>
-                  Responsibilities
-                </Typography>
-                <Typography sx={{ mt: 2, fontSize: "1rem" }}>
-                  As a Product Designer, you will work within a Product Delivery
-                  Team fused with UX, engineering, product and data talent.
-                  <List>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Have sound knowledge of commercial activities." />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Build next-generation web applications with a focus on the client side" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Work on multiple projects at once, and consistently meet draft deadlines" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="have already graduated or are currently in any year of study" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Revise the work of previous designers to create a unified aesthetic for our brand materials" />
-                    </ListItem>
-                  </List>
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem", mt: 4 }}>
-                  Qualification
-                </Typography>
-                <Typography sx={{ fontSize: "1rem", mt: 2 }}>
-                  <List>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="B.C.A / M.C.A under National University course complete." />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="3 or more years of professional design experience" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="have already graduated or are currently in any year of study" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Advanced degree or equivalent experience in graphic and web design" />
-                    </ListItem>
-                  </List>
-                </Typography>
-                <Typography sx={{ fontSize: "1.2rem", mt: 4 }}>
-                  Skill & Experience
-                </Typography>
-                <Typography sx={{ fontSize: "1rem", mt: 2 }}>
-                  <List>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Understanding of key Design Principal" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Proficiency With HTML, CSS, Bootstrap" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Wordpress: 1 year (Required)" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Experience designing and developing responsive design websites" />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <FiberManualRecordIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="web designing: 1 year (Preferred)" />
-                    </ListItem>
-                  </List>
+                    variant="body2"
+                    sx={{
+                      my: 3,
+                      color: "text.primary",
+                      fontSize: "0.825rem",
+                      textTransform: "uppercase",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Share
+                  </Typography>
+                  {shareUrl !== "" && (
+                    <Grid
+                      container
+                      sx={{
+                        // marginTop: "1px",
+                        display: {
+                          sm: "none",
+                          xs: "none",
+                          md: "none",
+                          lg: "flex",
+                        },
+                        // justifyContent: "space-around",
+                      }}
+                      gap={2}
+                    >
+                      <LinkedinShareButton url={shareUrl}>
+                        <LinkedinIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </LinkedinShareButton>
+                      <TwitterShareButton url={shareUrl}>
+                        <TwitterIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </TwitterShareButton>
+                      <WhatsappShareButton url={shareUrl}>
+                        <WhatsappIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </WhatsappShareButton>
 
-                  <Stack direction="row" spacing={3}>
-                    <Chip label="React JS" color="primary" variant="outlined" />
-                    <Chip label="Node JS" color="primary" variant="outlined" />
-                  </Stack>
-                </Typography>
+                      <FacebookShareButton url={shareUrl}>
+                        <FacebookIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </FacebookShareButton>
+                    </Grid>
+                  )}
+                  {shareUrl !== "" && (
+                    <Grid
+                      container
+                      sx={{
+                        // marginTop: "20px",
+                        display: { lg: "none", xl: "none" },
+                      }}
+                      gap={2}
+                      // lg={0}
+                      // xl={0}
+                      // sm={0}
+                      // xs={0}
+                      // md={0}
+                    >
+                      <LinkedinShareButton url={shareUrl}>
+                        <LinkedinIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </LinkedinShareButton>
+                      <TwitterShareButton url={shareUrl}>
+                        <TwitterIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </TwitterShareButton>
 
-                <Box
-                  className="form-map form-item"
-                  sx={{ height: "221px", position: "relative", mt: 5 }}
-                >
-                  <GoogleApiWrapper />
-                </Box>
+                      <div
+                        onClick={() => openWhatsAppShare()}
+                        style={{
+                          cursor: "pointer",
+                          margin: "10px 0px 10px 0px",
+                        }}
+                      >
+                        <WhatsappIcon
+                          size={"2rem"} // You can use rem value instead of numbers
+                          round
+                        />
+                      </div>
+                      {OS == "Android" && (
+                        <div
+                          onClick={() => openFacebookShare()}
+                          style={{
+                            cursor: "pointer",
+                            margin: "10px 0px 10px 0px",
+                          }}
+                        >
+                          <FacebookIcon
+                            size={"2rem"} // You can use rem value instead of numbers
+                            round
+                          />
+                        </div>
+                      )}
+                      {OS != "Android" && (
+                        <FacebookShareButton url={shareUrl}>
+                          <FacebookIcon
+                            size={"2rem"} // You can use rem value instead of numbers
+                            round
+                          />
+                        </FacebookShareButton>
+                      )}
+                    </Grid>
+                  )}
+                </Typography>
               </Grid>
-              <Grid item sm={12} xs={12} lg={3} mt={0}>
-                <Typography sx={{ fontSize: "1.2rem", fontWeight: 600 }}>
+              <Grid item sm={12} xs={12} md={4} lg={4} mt={0}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "0.825rem",
+                    mb: 2,
+                    mt: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
+                  }}
+                >
                   Job Overview
                 </Typography>
-                <List>
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        {/* <FolderIcon /> */}
-                        <Icon fontSize="1.25rem" icon="mdi:user" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Job Title"
-                      secondary="Product Designer"
-                    />
-                  </ListItem>
+                <Box
+                  sx={{
+                    border: "1px solid #52404040",
+                    borderRadius: "8px",
+                    // p: 4,
+                  }}
+                >
+                  <List sx={{ px: 4 }}>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="carbon:location" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Location"
+                        secondary={jobDetails?.city}
+                      />
+                    </ListItem>
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon fontSize="1.25rem" icon="mdi:star-outline" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Experience" secondary="0-3 Years" />
-                  </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="bx:rupee" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Offered Salary"
+                        secondary={`₹${jobDetails?.salary_from} - ₹${jobDetails?.salary_to} LPA`}
+                      />
+                    </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="cil:chart-line" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Experiance"
+                        secondary={`${jobDetails?.experience_from} - ${jobDetails?.experience_to} Years`}
+                      />
+                    </ListItem>
+                    {/* <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="icon-park-outline:degree-hat"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Qualification"
+                        secondary="Bachelor Degree"
+                      />
+                    </ListItem> */}
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon fontSize="1.25rem" icon="mdi:location" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Location" secondary="New york" />
-                  </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="mdi:company" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Industry"
+                        secondary={jobDetails?.job_category}
+                      />
+                    </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="carbon:category-new-each"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Category"
+                        secondary={jobDetails?.job_sub_category}
+                      />
+                    </ListItem>
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon fontSize="1.25rem" icon="nimbus:money" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Offered Salary"
-                      secondary="$35k - $45k"
-                    />
-                  </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="ri:time-line" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Date Posted"
+                        secondary="Posted 2 hrs ago"
+                      />
+                    </ListItem>
+                  </List>
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon
-                          fontSize="1.25rem"
-                          icon="icon-park-outline:degree-hat"
-                        />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Qualification"
-                      secondary="Bachelor Degree"
-                    />
-                  </ListItem>
+                  {/* <Button variant="outlined" fullWidth sx={{ my: 5 }}>
+                    Save Job
+                  </Button> */}
+                  <Box
+                    sx={{
+                      my: 3,
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon fontSize="1.25rem" icon="mdi:company" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Industry" secondary="Private" />
-                  </ListItem>
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      disabled={jobDetails?.is_applied}
+                      sx={{
+                        width: 0.8,
+                      }}
+                    >
+                      {jobDetails?.is_applied ? "Applied" : "Apply Job"}
+                    </Button>
+                  </Box>
+                </Box>
 
-                  <ListItem sx={{ p: 0, mt: 6 }}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Icon fontSize="1.25rem" icon="ri:time-line" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Date Posted"
-                      secondary="Posted 2 hrs ago"
-                    />
-                  </ListItem>
-                </List>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "0.825rem",
+                    mb: 2,
+                    mt: 4,
+                    color: "text.primary",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Company info
+                </Typography>
+                <Box
+                  sx={{
+                    border: "1px solid #52404040",
+                    borderRadius: "8px",
+                    // p: 4,
+                  }}
+                >
+                  <List sx={{ px: 4 }}>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="heroicons:building-office-2"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Company Name"
+                        secondary={jobDetails?.company_name}
+                      />
+                    </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="carbon:location-company"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Location"
+                        secondary={jobDetails?.city}
+                      />
+                    </ListItem>
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="fa-regular:address-card"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Address"
+                        secondary={`${jobDetails?.address_line_one}, ${jobDetails?.address_line_two}`}
+                      />
+                    </ListItem>
+                    <ListItem
+                      sx={{ p: 0, mt: 3, cursor: "pointer" }}
+                      onClick={() => {
+                        if (jobDetails?.recruiterDetails?.website) {
+                          window.open("", "_self");
+                          window.open(
+                            jobDetails?.recruiterDetails?.website,
+                            "_blank"
+                          );
+                        }
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon fontSize="1.25rem" icon="mdi:web" />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Website"
+                        secondary={`${jobDetails?.recruiterDetails?.website}`}
+                      />
+                    </ListItem>
 
-                <Button variant="outlined" fullWidth sx={{ my: 5 }}>
-                  Save Job
-                </Button>
-                <Button variant="contained" fullWidth>
-                  Applay Job
-                </Button>
+                    <Box
+                      className="form-map form-item"
+                      sx={{ height: "221px", position: "relative", mt: 5 }}
+                    >
+                      <GoogleApiWrapper />
+                    </Box>
+                  </List>
+                </Box>
               </Grid>
             </Grid>
           </CardContent>

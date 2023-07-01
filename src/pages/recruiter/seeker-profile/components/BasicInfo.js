@@ -149,7 +149,7 @@ function BasicInfo({
         <Grid item xs={12} sm={12} md={4} lg={4}>
           <Card>
             <CardContent>
-              <Box sx={{ mb: 6 }}>
+              <Box sx={{ mb: 3 }}>
                 <Typography
                   variant="body2"
                   sx={{
@@ -508,7 +508,9 @@ function BasicInfo({
                   </Box>
                 </Box>
               </Box>
-              <Box sx={{ mb: 6 }}>
+              <Divider sx={{ color: "black" }} variant="fullWidth" />
+
+              <Box sx={{ my: 3 }}>
                 <Typography
                   variant="body2"
                   sx={{
@@ -632,11 +634,13 @@ function BasicInfo({
                   </Box>
                 </Box>
               </Box>
+              <Divider sx={{ color: "black" }} variant="fullWidth" />
+
               <div>
                 <Typography
                   variant="body2"
                   sx={{
-                    mb: 4,
+                    my: 3,
                     color: "text.primary",
                     fontSize: "12px",
                     textTransform: "uppercase",
@@ -662,7 +666,6 @@ function BasicInfo({
               </div>
             </CardContent>
           </Card>
-          <Divider sx={{ color: "black" }} />
           <Card sx={{ my: 4 }}>
             <CardContent>
               <div>
@@ -692,7 +695,7 @@ function BasicInfo({
                                 raised={false}
                                 sx={{
                                   mb: 2,
-                                  border: "1px solid #ededed",
+                                  border: "1px solid #52404040",
                                   boxShadow: "none",
                                   // "&:hover": {
                                   //   boxShadow:
@@ -884,7 +887,7 @@ function BasicInfo({
                                 raised={false}
                                 sx={{
                                   mb: 2,
-                                  border: "1px solid #ededed",
+                                  border: "1px solid #52404040",
                                   boxShadow: "none",
                                   // "&:hover": {
                                   //   boxShadow:
@@ -1034,7 +1037,7 @@ function BasicInfo({
                                 raised={false}
                                 sx={{
                                   mb: 2,
-                                  border: "1px solid #ededed",
+                                  border: "1px solid #52404040",
                                   boxShadow: "none",
                                   // "&:hover": {
                                   //   boxShadow:
