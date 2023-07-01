@@ -25,15 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/jobseeker/profile": [
+    "/recruiter/resume-search": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/profile.js"
-    ],
-    "/jobseeker/saved-job": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/saved-job.js"
+      "static/chunks/pages/recruiter/resume-search.js"
     ]
   },
   "ampFirstPages": []

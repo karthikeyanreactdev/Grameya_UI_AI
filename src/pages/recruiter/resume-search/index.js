@@ -35,7 +35,8 @@ import CustomTextField from "src/@core/components/mui/text-field";
 import CardStatsHorizontalWithDetails from "src/@core/components/card-statistics/card-stats-horizontal-with-details";
 // ** Utils Import
 import { getInitials } from "src/@core/utils/get-initials";
-
+import XLSX from "sheetjs-style";
+import * as FileSaver from "file-saver";
 // ** Actions Imports
 import { fetchData, deleteUser } from "src/store/apps/user";
 
@@ -76,6 +77,32 @@ const userStatusObj = {
   active: "success",
   pending: "warning",
   inactive: "secondary",
+};
+const ExcelDownload = ({ excelData, fileName }) => {
+  const fileType =
+    "application/und.openxmI.formats -officedocument .spreadsheetal.sheet; charset-UTF-8 ";
+  const fileExtension = ".xlsx";
+  const exportToExcel = async () => {
+    const ws = XLSX.utils.json_to_sheet(excelData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
+  return (
+    <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }}>
+      <Tooltip>
+        {/* <Button onClick={() => exportToExcel()}>Download Excel</Button> */}
+        <Button
+          // sx={{ p: 1, mr: 2 }}
+          onClick={() => exportToExcel()}
+          title="Download as Excel"
+        >
+          <Icon icon="vscode-icons:file-type-excel2" fontSize={20} />
+        </Button>
+      </Tooltip>
+    </Box>
+  );
 };
 const renderClient = (row) => {
   // if (row.avatar.length) {
@@ -646,6 +673,12 @@ const Dashboard = () => {
             </Grid> */}
           </CardContent>
           {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
+          {resumeSearchList?.length > 0 && (
+            <ExcelDownload
+              excelData={resumeSearchList}
+              fileName={"Resume_Data_" + Date.now().toString()}
+            />
+          )}
           <Box p={4}>
             <DataGrid
               autoHeight
