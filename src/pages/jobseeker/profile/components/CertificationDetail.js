@@ -159,7 +159,7 @@ const CertificationDetail = ({
                                         fontSize: "16px",
                                       }}
                                     >
-                                      {row.cartification_completion_id}
+                                      {row.certification_completion_id}
                                     </Typography>
                                   </Box>
 
@@ -204,7 +204,7 @@ const CertificationDetail = ({
                                       }}
                                     />
                                     <Typography>
-                                      {row?.cartification_url}
+                                      {row?.certification_url}
                                     </Typography>
                                   </Box>
                                 </CardContent>

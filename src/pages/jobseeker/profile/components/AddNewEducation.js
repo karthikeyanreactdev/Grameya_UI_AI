@@ -219,6 +219,38 @@ const AddNewEducation = ({
                   <Grid container spacing={2} py={2}>
                     <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                       <FormControl fullWidth sx={{ my: 2 }}>
+                        <TextField
+                          sx={{ mb: 2 }}
+                          label={"Address"}
+                          // required
+                          fullWidth
+                          onChange={handleInputChange}
+                          name="university_or_institute_address"
+                          helperText={
+                            submitted &&
+                            !formValue?.university_or_institute_address && (
+                              <>Address is required</>
+                            )
+                          }
+                          error={
+                            submitted &&
+                            !formValue?.university_or_institute_address
+                          }
+                          // error={false}
+                          //   value={formik.values.aboutMe
+                          //     .trimStart()
+                          //     .replace(/\s\s+/g, "")
+                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                          //   onChange={(e) => formik.handleChange(e)}
+                          //   helperText={}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container spacing={2} py={2}>
+                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                      <FormControl fullWidth sx={{ my: 2 }}>
                         <InputLabel
                           id="demo-simple-select-label"
                           error={submitted && !formValue?.school_medium}

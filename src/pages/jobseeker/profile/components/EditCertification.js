@@ -34,8 +34,8 @@ const EditCertification = ({
   const [sendNotification] = useNotification();
   const [formValue, setFormValue] = useState({
     certification_name: "",
-    cartification_completion_id: "",
-    cartification_url: "",
+    certification_completion_id: "",
+    certification_url: "",
     certification_valid_from: "",
     certification_valid_to: "",
     no_expiry_time: false,
@@ -44,9 +44,9 @@ const EditCertification = ({
   useEffect(() => {
     const newFormValue = { ...formValue };
     newFormValue.certification_name = selectedCertificate.certification_name;
-    newFormValue.cartification_completion_id =
-      selectedCertificate.cartification_completion_id;
-    newFormValue.cartification_url = selectedCertificate.cartification_url;
+    newFormValue.certification_completion_id =
+      selectedCertificate.certification_completion_id;
+    newFormValue.certification_url = selectedCertificate.certification_url;
     newFormValue.certification_valid_from = new Date(
       selectedCertificate.certification_valid_from
     );
@@ -73,8 +73,8 @@ const EditCertification = ({
     setSubmitted(true);
     if (
       !formValue?.certification_name ||
-      !formValue?.cartification_completion_id ||
-      !formValue?.cartification_url ||
+      !formValue?.certification_completion_id ||
+      !formValue?.certification_url ||
       !formValue?.certification_valid_from ||
       !formValue?.certification_valid_to
     ) {
@@ -158,16 +158,16 @@ const EditCertification = ({
               <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  label={"Cartification Completion ID"}
+                  label={"Certification Completion ID"}
                   fullWidth
-                  name="cartification_completion_id"
+                  name="certification_completion_id"
                   onChange={handleFormInputChange}
-                  value={formValue.cartification_completion_id}
-                  error={submitted && !formValue.cartification_completion_id}
+                  value={formValue.certification_completion_id}
+                  error={submitted && !formValue.certification_completion_id}
                   helperText={
                     submitted &&
-                    !formValue.cartification_completion_id &&
-                    "Cartification Completion ID is required"
+                    !formValue.certification_completion_id &&
+                    "Certification Completion ID is required"
                   }
                 />
               </Grid>
@@ -175,16 +175,16 @@ const EditCertification = ({
               <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  label={"Cartification Completion URL"}
+                  label={"Certification Completion URL"}
                   fullWidth
-                  name="cartification_url"
+                  name="certification_url"
                   onChange={handleFormInputChange}
-                  value={formValue.cartification_url}
-                  error={submitted && !formValue.cartification_url}
+                  value={formValue.certification_url}
+                  error={submitted && !formValue.certification_url}
                   helperText={
                     submitted &&
-                    !formValue.cartification_url &&
-                    "Cartification Completion URL is required"
+                    !formValue.certification_url &&
+                    "Certification Completion URL is required"
                   }
                 />
               </Grid>

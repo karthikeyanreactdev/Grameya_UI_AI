@@ -47,7 +47,10 @@ import { useRouter } from "next/router";
 import { Stack } from "@mui/system";
 import { getJobById } from "src/api-services/recruiter/jobs";
 import useNotification from "src/hooks/useNotification";
-import { getSeekerJobDetailsById } from "src/api-services/seeker/jobsdetails";
+import {
+  addSaveJob,
+  getSeekerJobDetailsById,
+} from "src/api-services/seeker/jobsdetails";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -58,6 +61,7 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from "react-share";
+import { LoadingButton } from "@mui/lab";
 const useStyles = makeStyles({
   root: {
     "& .MuiDataGrid-root.MuiDataGrid-cell": {
@@ -77,6 +81,7 @@ const CandidateJobDetail = () => {
   const [shareUrl, setShareUrl] = useState("");
   const [OS, setOS] = useState("");
   const [sendNotification] = useNotification();
+
   const viewJob = async () => {
     try {
       setIsLoading(true);
@@ -85,10 +90,10 @@ const CandidateJobDetail = () => {
       // toggle();
       console.log(result?.data?.data);
       setJobDetails(result?.data?.data);
-      sendNotification({
-        message: result?.data?.message,
-        variant: "success",
-      });
+      // sendNotification({
+      //   message: result?.data?.message,
+      //   variant: "success",
+      // });
     } catch (e) {
       sendNotification({
         message: e,
@@ -98,6 +103,7 @@ const CandidateJobDetail = () => {
       setIsLoading(false);
     }
   };
+
   // useEffect(() => {
   //   viewJob();
   // }, []);
@@ -117,6 +123,33 @@ const CandidateJobDetail = () => {
       }
     }
   }, [router.isReady]);
+
+  const handleAddSavedJob = async () => {
+    try {
+      setIsLoading(true);
+      const param = {
+        job_id: query?.id,
+      };
+
+      const result = await addSaveJob(param);
+      // toggle();
+      console.log(result?.data?.data);
+      // setJobDetails(result?.data?.data);
+      viewJob();
+      sendNotification({
+        message: result?.data?.message,
+        variant: "success",
+      });
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const openFacebookShare = () => {
     window.open(
       `fb://faceweb/f?href=https://m.facebook.com/sharer/sharer.php?u=${shareUrl}`,
@@ -181,9 +214,11 @@ const CandidateJobDetail = () => {
                   mr: 2,
                 }}
               >
-                <Button
+                <LoadingButton
+                  loading={isLoading}
                   color={jobDetails?.is_saved ? "success" : "primary"}
                   title="Save Job"
+                  onClick={handleAddSavedJob}
                 >
                   {jobDetails?.is_saved ? (
                     <Icon fontSize="1.5rem" icon="mdi:favorite-check" />
@@ -195,7 +230,7 @@ const CandidateJobDetail = () => {
                       // color="error"
                     />
                   )}
-                </Button>
+                </LoadingButton>
               </Box>
             </Grid>
           </Grid>
