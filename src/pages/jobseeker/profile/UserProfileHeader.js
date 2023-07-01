@@ -17,7 +17,10 @@ import axios from "axios";
 import Icon from "src/@core/components/icon";
 import { updateResume } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
-
+import ImageUpload from "src/pages/recruiter/profile/ImageUpload";
+import { deleteFile, uploadFile } from "src/api-services/recruiter/profile";
+import { getUserData } from "src/store/apps/auth";
+import { useDispatch } from "react-redux";
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
   height: 108,
@@ -39,7 +42,7 @@ const UserProfileHeader = ({
   onHandleDrawerStateChangeOpen,
   handleClick,
 }) => {
-  const [sendNotification] = useNotification();
+  // const [sendNotification] = useNotification();
   // ** State
   const [data, setData] = useState({
     location: "Chennai",
@@ -55,11 +58,219 @@ const UserProfileHeader = ({
   //   axios.get('/pages/profile-header').then(response => {})
   // }, [])
   const designationIcon = data?.designationIcon || "tabler:briefcase";
+  const dispatch = useDispatch();
+  const [sendNotification] = useNotification();
+  const filer = useRef();
+  const [bannerImage, setBannerImage] = useState("");
+  const [logo, setLogo] = useState("");
+  const [openImageEdit, setImageEdit] = useState(false);
 
+  const [coverLoading, setCoverLoading] = useState(false);
+  const [logoLoading, setLogoLoading] = useState(false);
+  const [isPreview, setPreviewMode] = useState(true);
+  const [isLogoTemp, setLogoTemp] = useState(false);
+  const [isCoverTemp, setCoverTemp] = useState(false);
+
+  const [cropImage, setCropImage] = useState();
+  const [cropType, setCropType] = useState("logo");
+  const [cropAspectRatio, setCropAspectRatio] = useState(1 / 1);
   const handleChangeDrawer = (value) => {
     onHandleDrawerStateChangeOpen(value);
   };
+  const uploadImage = async (type, file, isDelete = false) => {
+    setImageEdit(false);
+    if (!isDelete) {
+      const formData = new FormData();
+      let randomName = (Math.random() + 1).toString(36).substring(7);
+      formData.append("file", file, randomName + ".png");
+      console.log(formData);
+      var options = { content: formData };
 
+      console.log(options);
+
+      if (type == "logo") {
+        setLogoLoading(true);
+        formData.append("service_type", "profile_image");
+        let res = await uploadFile(formData);
+        res = res?.data;
+        if (res.status == "success") {
+          // setLogo(res?.data?.profile_image_url);
+          setLogoTemp(false);
+          sendNotification({
+            message: res?.message,
+            variant: "success",
+          });
+        } else {
+          sendNotification({
+            message: "Something went wrong",
+            variant: "error",
+          });
+          // dispatch(
+          //   snackbarsData({
+          //     snackbarIsOpen: true,
+          //     snackbarType: "warning",
+
+          //     snackbarMessage: `${"Something went wrong"}`,
+          //   })
+          // );
+        }
+        dispatch(getUserData({}));
+        setLogoLoading(false);
+      } else if (type == "cover") {
+        setCoverLoading(true);
+        formData.append("service_type", "cover_image");
+        console.log(formData);
+
+        let res = await uploadFile(formData);
+        res = res?.data;
+        if (res.status == "success") {
+          setCoverTemp(false);
+          // setBannerImage(res?.data?.cover_image_url);
+          // dispatch(
+          //   snackbarsData({
+          //     snackbarIsOpen: true,
+          //     snackbarType: "success",
+          //     snackbarMessage: res?.message,
+          //   })
+          // );
+          sendNotification({
+            message: res?.message,
+            variant: "success",
+          });
+        } else {
+          sendNotification({
+            message: "Something went wrong",
+            variant: "error",
+          });
+        }
+        dispatch(getUserData({}));
+        setCoverLoading(false);
+      }
+    } else {
+      if (type == "logo") {
+        setLogoLoading(true);
+        let res = await deleteFile({
+          service_type: "profile_image",
+        });
+        res = res?.data;
+        if (res.status == "success") {
+          setLogo(LogoPlaceHolder);
+          setLogoTemp(true);
+
+          sendNotification({
+            message: res?.message,
+            variant: "success",
+          });
+        } else {
+          sendNotification({
+            message: "Something went wrong",
+            variant: "error",
+          });
+        }
+        dispatch(getUserData({}));
+        setLogoLoading(false);
+      } else {
+        setCoverLoading(true);
+        let res = await deleteFile({
+          service_type: "cover_image",
+        });
+        res = res?.data;
+        if (res.status == "success") {
+          setCoverTemp(true);
+          // setBannerImage(BannerPlaceHolder);
+
+          sendNotification({
+            message: res?.message,
+            variant: "success",
+          });
+        } else {
+          sendNotification({
+            message: "Something went wrong",
+            variant: "error",
+          });
+        }
+        dispatch(getUserData({}));
+        setCoverLoading(false);
+      }
+    }
+  };
+
+  const editImage = (type) => {
+    setPreviewMode(true);
+    if (type == "cover") {
+      setCropAspectRatio(3.29 / 1);
+
+      let banner =
+        bannerImage !== ""
+          ? bannerImage
+          : userDetail?.cover_image_url
+          ? userDetail?.cover_image_url
+          : "placeholder";
+      if (isCoverTemp) {
+        filer.current.click();
+        setCropType(type);
+      } else {
+        if (banner == "placeholder") {
+          filer.current.click();
+          setCropType(type);
+        } else {
+          setCropImage(banner);
+          setCropType(type);
+          setImageEdit(true);
+        }
+      }
+    } else {
+      setCropAspectRatio(1 / 1);
+      let logoImage =
+        logo !== ""
+          ? logo
+          : userDetail?.profile_image_url
+          ? userDetail?.profile_image_url
+          : "placeholder";
+
+      if (isLogoTemp) {
+        filer.current.click();
+        setCropType(type);
+      } else {
+        if (logoImage == "placeholder") {
+          filer.current.click();
+          setCropType(type);
+        } else {
+          setCropImage(logoImage);
+          setCropType(type);
+          setImageEdit(true);
+        }
+      }
+    }
+  };
+
+  const onChange = (e) => {
+    e.preventDefault();
+    let files;
+    if (e.dataTransfer) {
+      files = e.dataTransfer.files;
+    } else if (e.target) {
+      files = e.target.files;
+    }
+    if (files[0].size < 5000000) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCropImage(reader.result);
+        setPreviewMode(false);
+        setImageEdit(true);
+        e.target.value = null;
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      dispatch(
+        snackbarsData({
+          snackbarIsOpen: true,
+          snackbarType: "warning",
+          snackbarMessage: `${"File size should be below 5MB."}`,
+        })
+      );
+    }
+  };
   const renderRightSectionBtn = () => {
     switch (activeTab) {
       case "info":
@@ -139,13 +350,37 @@ const UserProfileHeader = ({
 
   return data !== null ? (
     <Card>
+      <input
+        style={{ display: "none" }}
+        id="raised-button-file"
+        onChange={onChange}
+        ref={filer}
+        type="file"
+        accept=".jpg,.png,.jpeg,.webpp"
+      />
+      <ImageUpload
+        isOpen={openImageEdit}
+        handleUpload={uploadImage}
+        type={cropType}
+        isPreview={isPreview}
+        title={cropType == "logo" ? "Change Logo" : "Change Cover Photo"}
+        aspectRatio={cropAspectRatio}
+        selectedImage={cropImage}
+        handleClose={(e, reason) => {
+          if (reason && reason == "backdropClick") {
+            return;
+          }
+          setImageEdit(false);
+        }}
+      />
       <CardMedia
         component="img"
         alt="profile-header"
-        image={data.coverImg}
+        image={userDetail?.cover_image_url || data.coverImg}
         sx={{
           height: { xs: 150, md: 250 },
         }}
+        onClick={() => editImage("cover")}
       />
       <CardContent
         sx={{
@@ -157,7 +392,11 @@ const UserProfileHeader = ({
           justifyContent: { xs: "center", md: "flex-start" },
         }}
       >
-        <ProfilePicture src={data.profileImg} alt="profile-picture" />
+        <ProfilePicture
+          src={userDetail?.profile_image_url || data.profileImg}
+          alt="profile-picture"
+          onClick={() => editImage("logo")}
+        />
         <Box
           sx={{
             width: "100%",

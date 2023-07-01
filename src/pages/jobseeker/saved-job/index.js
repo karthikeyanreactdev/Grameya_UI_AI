@@ -66,10 +66,14 @@ import {
   TablePagination,
   TextField,
 } from "@mui/material";
-import { jobSearchSeeker } from "src/store/apps/jobseeker/job-search";
+import {
+  handleMachedJobList,
+  jobSearchSeeker,
+} from "src/store/apps/jobseeker/job-search";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
-import { saveJobList } from "src/api-services/seeker/jobsdetails";
+import { addSaveJob, saveJobList } from "src/api-services/seeker/jobsdetails";
+import useNotification from "src/hooks/useNotification";
 
 const userStatusObj = {
   active: "success",
@@ -114,6 +118,7 @@ const CandidateSavedJob = () => {
   const ability = useContext(AbilityContext);
   const theme = useTheme();
   const classes = useStyles();
+  const [sendNotification] = useNotification();
 
   const dispatch = useDispatch();
   const { direction } = theme;
@@ -182,7 +187,8 @@ const CandidateSavedJob = () => {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [savedId, setSavedId] = useState("");
   const { machedJobList } = useSelector((state) => state.jobSearch);
   const [jobList, setJobList] = useState([]);
   const [pageCount, setPageCount] = useState(null);
@@ -248,7 +254,44 @@ const CandidateSavedJob = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const handleAddSavedJob = async (id) => {
+    try {
+      setSavedId(id);
+      setIsLoading(true);
+      const param = {
+        job_id: id,
+      };
 
+      const result = await addSaveJob(param);
+      // toggle();
+      console.log(result?.data?.data);
+      // setJobDetails(result?.data?.data);
+      // viewJob();
+      var copy = JSON.parse(JSON.stringify(machedJobList));
+      copy.map((elem) => {
+        elem.is_saved = elem.id == id ? !elem.is_saved : elem.is_saved;
+        return elem;
+      });
+      console.log(copy);
+      viewJob();
+      // dispatch(handleMachedJobList(copy));
+      // let data = _.find(machedJobList, { id: id });
+      // data.is_saved = true;
+      // console.log(data);
+      sendNotification({
+        message: result?.data?.message,
+        variant: "success",
+      });
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+      setSavedId("");
+    }
+  };
   return (
     <Grid container spacing={6} className={classes.root}>
       <Grid item xs={12}>
@@ -311,19 +354,26 @@ const CandidateSavedJob = () => {
                               </Typography>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1}>
-                              <Box
-                                sx={{ display: "flex", mr: 2, mb: 4 }}
-                                // onClick={() => (row.is_saved = !row.is_saved)}
+                              <LoadingButton
+                                loading={isBookmarkLoading && row.id == savedId}
+                                color={row?.is_saved ? "success" : "primary"}
+                                title="Save Job"
+                                onClick={() => handleAddSavedJob(row?.id)}
                               >
                                 {row?.is_saved ? (
                                   <Icon
-                                    fontSize="1.25rem"
-                                    icon="tabler:star-filled"
+                                    fontSize="1.5rem"
+                                    icon="mdi:favorite-check"
                                   />
                                 ) : (
-                                  <Icon fontSize="1.25rem" icon="tabler:star" />
+                                  <Icon
+                                    fontSize="1.5rem"
+                                    icon="mdi:favorite-add-outline"
+                                    sx={{ bacground: "red" }}
+                                    // color="error"
+                                  />
                                 )}
-                              </Box>
+                              </LoadingButton>
                             </Grid>
                           </Grid>
                           <Grid

@@ -68,9 +68,15 @@ import {
   TablePagination,
   TextField,
 } from "@mui/material";
-import { jobSearchSeeker } from "src/store/apps/jobseeker/job-search";
+import _ from "lodash";
+import {
+  handleMachedJobList,
+  jobSearchSeeker,
+} from "src/store/apps/jobseeker/job-search";
 import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
+import useNotification from "src/hooks/useNotification";
+import { addSaveJob } from "src/api-services/seeker/jobsdetails";
 
 const userStatusObj = {
   active: "success",
@@ -182,6 +188,9 @@ const CandidateJobSearch = () => {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [sendNotification] = useNotification();
+  const [isBookmarkLoading, setIsLoading] = useState(false);
+  const [savedId, setSavedId] = useState("");
 
   const { machedJobList, isLoading, pageCount } = useSelector(
     (state) => state.jobSearch
@@ -219,6 +228,44 @@ const CandidateJobSearch = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleAddSavedJob = async (id) => {
+    try {
+      setSavedId(id);
+      setIsLoading(true);
+      const param = {
+        job_id: id,
+      };
+
+      const result = await addSaveJob(param);
+      // toggle();
+      console.log(result?.data?.data);
+      // setJobDetails(result?.data?.data);
+      // viewJob();
+      var copy = JSON.parse(JSON.stringify(machedJobList));
+      copy.map((elem) => {
+        elem.is_saved = elem.id == id ? !elem.is_saved : elem.is_saved;
+        return elem;
+      });
+      console.log(copy);
+      dispatch(handleMachedJobList(copy));
+      // let data = _.find(machedJobList, { id: id });
+      // data.is_saved = true;
+      // console.log(data);
+      sendNotification({
+        message: result?.data?.message,
+        variant: "success",
+      });
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+      setSavedId("");
+    }
   };
   return (
     <Grid container spacing={6} className={classes.root}>
@@ -421,7 +468,10 @@ const CandidateJobSearch = () => {
                           },
                         }}
                       >
-                        <CardContent sx={{ pb: 0 }}>
+                        <CardContent
+                          sx={{ pb: 0 }}
+                          //onClick={() => handleNavigateJobDetail(row?.id)}
+                        >
                           <Grid
                             container
                             spacing={2}
@@ -443,17 +493,35 @@ const CandidateJobSearch = () => {
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1}>
                               <Box
-                                sx={{ display: "flex", mr: 2, mb: 4 }}
-                                // onClick={() => (row.is_saved = !row.is_saved)}
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  my: 3,
+                                  mr: 2,
+                                }}
                               >
-                                {row?.is_saved ? (
-                                  <Icon
-                                    fontSize="1.25rem"
-                                    icon="tabler:star-filled"
-                                  />
-                                ) : (
-                                  <Icon fontSize="1.25rem" icon="tabler:star" />
-                                )}
+                                <LoadingButton
+                                  loading={
+                                    isBookmarkLoading && row.id == savedId
+                                  }
+                                  color={row?.is_saved ? "success" : "primary"}
+                                  title="Save Job"
+                                  onClick={() => handleAddSavedJob(row?.id)}
+                                >
+                                  {row?.is_saved ? (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-check"
+                                    />
+                                  ) : (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-add-outline"
+                                      sx={{ bacground: "red" }}
+                                      // color="error"
+                                    />
+                                  )}
+                                </LoadingButton>
                               </Box>
                             </Grid>
                           </Grid>

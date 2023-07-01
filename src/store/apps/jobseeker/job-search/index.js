@@ -24,7 +24,11 @@ export const jobSearchSlice = createSlice({
     machedJobList: [],
     pageCount: "",
   },
-  reducers: {},
+  reducers: {
+    handleMachedJobList: (state, action) => {
+      state.machedJobList = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(jobSearchSeeker.pending, (state, action) => {
       state.isLoading = true;
@@ -41,6 +45,6 @@ export const jobSearchSlice = createSlice({
     });
   },
 });
-//export const { handleUserData } = appAuthSlice.actions;
+export const { handleMachedJobList } = jobSearchSlice.actions;
 
 export default jobSearchSlice.reducer;
