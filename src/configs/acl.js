@@ -24,7 +24,7 @@ const defineRulesFor = (role, subject) => {
   } else if (role === "jobseeker") {
     can("manage", "jsdashboard");
     can("read", "jsprofile");
-    // can("manage", "jsajobs");
+    can("read", "jsSavedJob");
     can("read", "jssearch");
     can("read", "jsJobDetail");
   } else {

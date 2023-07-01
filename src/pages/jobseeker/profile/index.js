@@ -93,6 +93,8 @@ const ACLPage = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("info");
   const hideText = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const { userData } = useSelector((state) => state.auth);
+
   const [selectedExp, setSelectedExp] = useState(null);
   const [selectedEducation, setSelectedEducation] = useState(null);
   const [sendNotification] = useNotification();
@@ -241,7 +243,7 @@ const ACLPage = () => {
             onHandleEdit={handleEditChange}
             getProfileDetail={getProfileDetail}
             onHandleChangeLoading={handleChangeLoading}
-            userDetail={userDetail}
+            userDetail={userData}
             isEditMode={isEditMode}
             activeTab={activeTab}
             onHandleDrawerStateChangeOpen={handleDrawerStateChangeOpen}

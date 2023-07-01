@@ -94,6 +94,13 @@ const navigation = () => {
       icon: "tabler:search",
     },
     {
+      path: "/jobseeker/saved-job",
+      action: "read",
+      subject: "jsSavedJob",
+      title: "Saved Job",
+      icon: "ph:star",
+    },
+    {
       path: "/jobseeker/profile",
       action: "read",
       subject: "jsprofile",
