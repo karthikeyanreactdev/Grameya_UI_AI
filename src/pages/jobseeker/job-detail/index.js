@@ -49,6 +49,7 @@ import { getJobById } from "src/api-services/recruiter/jobs";
 import useNotification from "src/hooks/useNotification";
 import {
   addSaveJob,
+  applyJobById,
   getSeekerJobDetailsById,
 } from "src/api-services/seeker/jobsdetails";
 import {
@@ -77,6 +78,7 @@ const CandidateJobDetail = () => {
   const classes = useStyles();
   // const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isApplyLoading, setIsApplyLoading] = useState(false);
   const [jobDetails, setJobDetails] = useState([]);
   const [shareUrl, setShareUrl] = useState("");
   const [OS, setOS] = useState("");
@@ -104,6 +106,28 @@ const CandidateJobDetail = () => {
     }
   };
 
+  const applyJob = async () => {
+    try {
+      setIsApplyLoading(true);
+
+      const result = await applyJobById({ job_id: query?.id });
+      // // toggle();
+      // console.log(result?.data?.data);
+      // setJobDetails(result?.data?.data);
+      viewJob();
+      sendNotification({
+        message: result?.message,
+        variant: "success",
+      });
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsApplyLoading(false);
+    }
+  };
   // useEffect(() => {
   //   viewJob();
   // }, []);
@@ -536,16 +560,23 @@ const CandidateJobDetail = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <Button
+                    <LoadingButton
                       variant="contained"
                       fullWidth
+                      loading={isApplyLoading}
+                      // disabled={isApplyLoading}
                       disabled={jobDetails?.is_applied}
                       sx={{
                         width: 0.8,
                       }}
+                      onClick={() => {
+                        if (!jobDetails?.is_applied) {
+                          applyJob();
+                        }
+                      }}
                     >
                       {jobDetails?.is_applied ? "Applied" : "Apply Job"}
-                    </Button>
+                    </LoadingButton>
                   </Box>
                 </Box>
 

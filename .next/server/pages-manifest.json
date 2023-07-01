@@ -2,5 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/recruiter/resume-search": "pages/recruiter/resume-search.js"
+  "/jobseeker/job-detail": "pages/jobseeker/job-detail.js"
 }
