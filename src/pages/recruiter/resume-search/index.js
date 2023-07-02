@@ -72,6 +72,7 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { addShortList } from "src/api-services/recruiter/candidate";
 import Swal from "sweetalert2";
+import SideBarEmail from "./Components/EmailDrawer";
 
 const userStatusObj = {
   active: "success",
@@ -95,10 +96,15 @@ const ExcelDownload = ({ excelData, fileName }) => {
         {/* <Button onClick={() => exportToExcel()}>Download Excel</Button> */}
         <Button
           // sx={{ p: 1, mr: 2 }}
+          variant={"outlined"}
+          color={"primary"}
+          size="small"
+          sx={{ "& svg": { mr: 2 } }}
           onClick={() => exportToExcel()}
           title="Download as Excel"
         >
-          <Icon icon="vscode-icons:file-type-excel2" fontSize={20} />
+          <Icon icon="vscode-icons:file-type-excel2" fontSize="1.125rem" />
+          {"Download Excel"}
         </Button>
       </Tooltip>
     </Box>
@@ -149,6 +155,10 @@ const Dashboard = () => {
     page: 0,
     pageSize: 10,
   });
+  // const [selectedIds, setIds] = useState([])
+  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [selectedIds, setIds] = useState([]);
+
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(addDays(new Date(), 15));
   const [startDateRange, setStartDateRange] = useState(new Date());
@@ -674,10 +684,25 @@ const Dashboard = () => {
           </CardContent>
           {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
           {resumeSearchList?.length > 0 && (
-            <ExcelDownload
-              excelData={resumeSearchList}
-              fileName={"Resume_Data_" + Date.now().toString()}
-            />
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }}>
+              <ExcelDownload
+                excelData={resumeSearchList}
+                fileName={"Resume_Data_" + Date.now().toString()}
+              />
+
+              {selectedIds.length > 0 && (
+                <Button
+                  variant={"outlined"}
+                  color={"primary"}
+                  size="small"
+                  sx={{ "& svg": { mr: 2 } }}
+                  onClick={() => setAddUserOpen(true)}
+                >
+                  <Icon icon="fxemoji:email" fontSize="1.125rem" />
+                  {"Send Email"}
+                </Button>
+              )}
+            </Box>
           )}
           <Box p={4}>
             <DataGrid
@@ -714,7 +739,23 @@ const Dashboard = () => {
               columns={searchListColumns}
               rowCount={rowCountState}
               paginationMode="server"
-              disableRowSelectionOnClick
+              checkboxSelection
+              // maxSelected={1}
+              onRowSelectionModelChange={(ids) => {
+                // const selectedIDs = new Set(ids);
+                // console.log("Ids", selectedIDs);
+                setIds(ids);
+                //                 const selectedRowData = resumeSearchList.filter((row) =>
+                //                   selectedIDs.has(row.id.toString())
+                //                 );
+                //                 console.log(selectedRowData);
+                //                 const tempEmail=[];
+                //                 selectedRowData.map((e)=> {
+                // tempEmail.push()
+                //                 })
+                //                 setSelectedEmails(selectedRowData);
+              }}
+              // disableRowSelectionOnClick
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
               onPaginationModelChange={setPaginationModel}
@@ -723,7 +764,11 @@ const Dashboard = () => {
         </Card>
       </Grid>
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+      <SideBarEmail
+        open={addUserOpen}
+        toggle={toggleAddUserDrawer}
+        selectedId={selectedIds}
+      />
     </Grid>
   );
 };

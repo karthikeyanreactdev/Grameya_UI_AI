@@ -209,16 +209,10 @@ const Candidates = (props) => {
 
       field: "applied_on",
       headerName: "Applied On",
-      // renderHeader: (params) => (
-      //   <strong>
-      //     {"Company Name "}
-      //     <span role="img" aria-label="enjoy">
-      //       🏢
-      //     </span>
-      //   </strong>
-      // ),
+
       renderCell: ({ row }) =>
-        `${moment(row.applied_on).format("DD/MM/YYYY  hh:mm A")}`,
+        // `${moment(row.applied_on).format("DD/MM/YYYY  hh:mm A")}`,
+        `${moment(row.applied_on).format("DD/MM/YYYY")}`,
     },
 
     {

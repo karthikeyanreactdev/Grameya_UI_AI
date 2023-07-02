@@ -31,7 +31,7 @@ export const manageJobSlice = createSlice({
     });
     builder.addCase(getJobList.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.recruiterJobList = action.payload?.data;
+      state.recruiterJobList = action.payload;
       state.pageCount = action.payload;
     });
     builder.addCase(getJobList.rejected, (state, action) => {
