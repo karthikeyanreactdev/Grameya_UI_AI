@@ -56,6 +56,7 @@ import {
   resumeCandidates,
   resumeSearchByFilter,
 } from "src/store/apps/recruiter/resume-search";
+import _ from "lodash";
 import {
   Button,
   CardActions,
@@ -214,6 +215,8 @@ const CandidateSavedJob = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const viewJob = async () => {
+    // setJobList([]);
+    // setPageCount([]);
     try {
       setIsLoading(true);
       const params = {
@@ -255,6 +258,11 @@ const CandidateSavedJob = () => {
     setPage(0);
   };
   const handleAddSavedJob = async (id) => {
+    // const index = _.findIndex(jobList, ["job_id", id]);
+    // // var result1 = _.slice(jobList, result, 1);
+    // const newdata = jobList.splice(index, 1);
+
+    // return;
     try {
       setSavedId(id);
       setIsLoading(true);
@@ -274,10 +282,18 @@ const CandidateSavedJob = () => {
       });
       console.log(copy);
       viewJob();
-      // dispatch(handleMachedJobList(copy));
-      // let data = _.find(machedJobList, { id: id });
-      // data.is_saved = true;
-      // console.log(data);
+      // const index2 = jobList.findIndex((obj) => obj.job_id === id);
+      // const newData = [
+      //   ...jobList.slice(0, index2),
+      //   ...jobList.slice(index2 + 1),
+      // ];
+      // console.log(newData);
+      // // setJobList(newData);
+      // // setPageCount(pageCount - 1);
+      // // dispatch(handleMachedJobList(copy));
+      // // let data = _.find(machedJobList, { id: id });
+      // // data.is_saved = true;
+      // // console.log(data);
       sendNotification({
         message: result?.data?.message,
         variant: "success",
@@ -306,6 +322,7 @@ const CandidateSavedJob = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 mb: 16,
+                mt: 10,
               }}
             >
               <CircularProgress />
@@ -358,7 +375,7 @@ const CandidateSavedJob = () => {
                                 loading={isBookmarkLoading && row.id == savedId}
                                 color={row?.is_saved ? "success" : "primary"}
                                 title="Save Job"
-                                onClick={() => handleAddSavedJob(row?.id)}
+                                onClick={() => handleAddSavedJob(row?.job_id)}
                               >
                                 {row?.is_saved ? (
                                   <Icon

@@ -198,8 +198,9 @@ const SideBarEmail = (props) => {
             convertToRaw(jd.getCurrentContent())
           )}`.replace(/\"/g, '"'),
         };
-        console.log("params", params);
+        // console.log("params", params);
         const response = await sendEmailNotification(params);
+        handleClose();
         sendNotification({
           message: response?.data?.message,
           variant: "success",
@@ -354,7 +355,7 @@ const SideBarEmail = (props) => {
                   color: "orangeRed",
                 }}
               >
-                Email content is empty. Do you want to proceed with predefined
+                Email content is empty. Do you want to proceed with pre-defined
                 content?
               </Typography>
             </Box>

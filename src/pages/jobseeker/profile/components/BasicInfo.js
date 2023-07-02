@@ -93,7 +93,7 @@ function BasicInfo({
       .trim()
       .required("Expected Salary is required"),
     preferred_job_location: yup
-      .array()
+      .string()
       // .trim()
       .required("Preferred Location is required"),
 
@@ -183,7 +183,7 @@ function BasicInfo({
       );
       formik.setFieldValue(
         "preferred_job_location",
-        userData?.jobseekerDetails?.preferred_job_location
+        userData?.jobseekerDetails?.preferred_job_location[0] || ""
       );
 
       formik.setFieldValue(
