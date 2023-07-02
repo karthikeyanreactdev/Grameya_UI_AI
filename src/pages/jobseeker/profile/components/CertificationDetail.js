@@ -226,7 +226,7 @@ const CertificationDetail = ({
                                     onClick={() => {
                                       handleSelectCertification(row);
                                       handleDrawerStateChangeOpen(
-                                        "isEditCertification"
+                                        "isAddCertification"
                                       );
                                     }}
                                   >

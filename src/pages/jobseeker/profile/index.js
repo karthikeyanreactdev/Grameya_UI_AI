@@ -29,9 +29,7 @@ import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import UserProfileHeader from "./UserProfileHeader";
 import AddNewEducation from "./components/AddNewEducation";
-import EditEducation from "./components/EditEducation";
 import AddNewExperiance from "./components/AddNewExperiance";
-import EditExperiance from "./components/EditExperiance";
 import {
   getProfile,
   removeJobseekerEducation,
@@ -47,7 +45,6 @@ import ResumeSection from "./components/ResumeSection";
 import CustomChip from "src/@core/components/mui/chip";
 import CertificationDetail from "./components/CertificationDetail";
 import AddCertification from "./components/AddCertification";
-import EditCertification from "./components/EditCertification";
 import { DeleteOutline } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
@@ -130,6 +127,9 @@ const ACLPage = () => {
   const handleDrawerStateChangeClose = (parentName) => {
     const newDrawerState = { ...drawerState };
     newDrawerState[parentName] = false;
+    setSelectedCertificate(null);
+    setSelectedExp(null);
+    setSelectedEducation(null);
     setDrawerState(newDrawerState);
   };
 
@@ -611,7 +611,7 @@ const ACLPage = () => {
                                                           row
                                                         );
                                                         handleDrawerStateChangeOpen(
-                                                          "isEditEducation"
+                                                          "isAddNewEducation"
                                                         );
                                                       }}
                                                     >
@@ -646,6 +646,7 @@ const ACLPage = () => {
                               onClose={handleDrawerStateChangeClose}
                               getProfileDetail={getProfileDetail}
                               onHandleChangeLoading={handleChangeLoading}
+                              selectedEducation={selectedEducation}
                             />
                           )}
                         </Grid>
@@ -833,7 +834,7 @@ const ACLPage = () => {
                                                       onClick={() => {
                                                         handleSelectExp(row);
                                                         handleDrawerStateChangeOpen(
-                                                          "isEditExperiance"
+                                                          "isAddNewExperiance"
                                                         );
                                                       }}
                                                     >
@@ -868,6 +869,7 @@ const ACLPage = () => {
                               onClose={handleDrawerStateChangeClose}
                               getProfileDetail={getProfileDetail}
                               onHandleChangeLoading={handleChangeLoading}
+                              selectedExp={selectedExp}
                             />
                           )}
                         </Grid>
@@ -895,22 +897,13 @@ const ACLPage = () => {
                             }
                           />
 
-                          {drawerState.isEditCertification && (
-                            <EditCertification
-                              isOpen={drawerState.isEditCertification}
-                              onClose={handleDrawerStateChangeClose}
-                              getProfileDetail={getProfileDetail}
-                              selectedCertificate={selectedCertificate}
-                              onHandleChangeLoading={handleChangeLoading}
-                            />
-                          )}
-
                           {drawerState.isAddCertification && (
                             <AddCertification
                               isOpen={drawerState.isAddCertification}
                               onClose={handleDrawerStateChangeClose}
                               getProfileDetail={getProfileDetail}
                               onHandleChangeLoading={handleChangeLoading}
+                              selectedCertificate={selectedCertificate}
                             />
                           )}
                         </Card>

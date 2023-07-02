@@ -22,6 +22,7 @@ import { LoadingButton } from "@mui/lab";
 import {
   addJobseekerEducation,
   getEnumByType,
+  updateJobseekerEducation,
 } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
 
@@ -38,12 +39,56 @@ const AddNewEducation = ({
   onClose,
   getProfileDetail,
   onHandleChangeLoading,
+  selectedEducation,
 }) => {
   const [mainCourse, setMainCourse] = useState(null);
   const [subCourse, setSubCourse] = useState(null);
-  const [formValue, setFormValue] = useState(null);
+  const [formValue, setFormValue] = useState({
+    education_type: "",
+    board: "",
+    course: "",
+    course_duration_start: "",
+    course_type: "",
+    education_type: "",
+    grade_or_marks: "",
+    school_medium: "",
+    specialization: "",
+    university_or_institute_address: "",
+    university_or_institute_name: "",
+    year_of_passout: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [sendNotification] = useNotification();
+
+  useEffect(() => {
+    console.log("selectedEducation", selectedEducation);
+    if (!selectedEducation) {
+      return;
+    }
+    const newStateValue = { ...formValue };
+    newStateValue.board = selectedEducation.board || "";
+    newStateValue.course = selectedEducation.course_id || "";
+    newStateValue.course_duration_end =
+      selectedEducation.course_duration_end || "";
+    newStateValue.course_duration_start =
+      selectedEducation.course_duration_start || "";
+    newStateValue.course_type = selectedEducation.course_type || "";
+    newStateValue.education_type = selectedEducation.education_type || "";
+    newStateValue.grade_or_marks = selectedEducation.grade_or_marks || "";
+    newStateValue.school_medium = selectedEducation.school_medium || "";
+    newStateValue.specialization = selectedEducation.specialization_id || "";
+    newStateValue.university_or_institute_address =
+      selectedEducation.university_or_institute_address || "";
+    newStateValue.university_or_institute_name =
+      selectedEducation.university_or_institute_name || "";
+    newStateValue.year_of_passout = selectedEducation.year_of_passout || "";
+    console.log("newStateValue", newStateValue);
+    setFormValue(newStateValue);
+    if (selectedEducation.course_id) {
+      fetchSubCourse(selectedEducation.course_id);
+    }
+    fetchMainCourse();
+  }, []);
 
   const fetchMainCourse = async () => {
     try {
@@ -92,11 +137,9 @@ const AddNewEducation = ({
     setFormValue(newStateValue);
   };
 
-  const handleFormSubmit = async () => {
-    setSubmitted(true);
-    onHandleChangeLoading(true);
+  const callSubmitApi = async (apiData) => {
     try {
-      const response = await addJobseekerEducation(formValue);
+      const response = await addJobseekerEducation(apiData);
       console.log("response", response);
       if (response.status === 200) {
         sendNotification({
@@ -117,6 +160,96 @@ const AddNewEducation = ({
     }
   };
 
+  const callEditSubmitApi = async (apiData) => {
+    try {
+      const response = await updateJobseekerEducation(apiData);
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      onHandleChangeLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async () => {
+    setSubmitted(true);
+    let apiData = null;
+    if (!formValue.education_type) {
+      return;
+    }
+    if (
+      formValue.education_type === "10th" ||
+      formValue.education_type === "12th"
+    ) {
+      if (
+        !formValue.board ||
+        !formValue.year_of_passout ||
+        !formValue.school_medium ||
+        !formValue.grade_or_marks ||
+        !formValue.university_or_institute_address
+      ) {
+        return;
+      }
+      apiData = {
+        education_type: formValue.education_type,
+        board: formValue.board,
+        year_of_passout: formValue.year_of_passout,
+        school_medium: formValue.school_medium,
+        grade_or_marks: formValue.grade_or_marks,
+        university_or_institute_address:
+          formValue.university_or_institute_address,
+      };
+    } else {
+      if (
+        !formValue.university_or_institute_name ||
+        !formValue.course ||
+        !formValue.grade_or_marks ||
+        !formValue.university_or_institute_address ||
+        !formValue.course_duration_start ||
+        !formValue.specialization ||
+        !formValue.course_duration_end ||
+        !formValue.course_type
+      ) {
+        return;
+      }
+      apiData = {
+        education_type: formValue.education_type,
+        university_or_institute_name: formValue.university_or_institute_name,
+        university_or_institute_address:
+          formValue.university_or_institute_address,
+        course: formValue.course,
+        specialization: formValue.specialization,
+        course_type: formValue.course_type,
+        course_duration_start: formValue.course_duration_start,
+        course_duration_end: formValue.course_duration_end,
+        grade_or_marks: formValue.grade_or_marks,
+      };
+    }
+
+    if (selectedEducation) {
+      apiData.education_id = selectedEducation?.id;
+      onHandleChangeLoading(true);
+
+      callEditSubmitApi(apiData);
+    } else {
+      onHandleChangeLoading(true);
+
+      callSubmitApi(apiData);
+    }
+  };
+
   return (
     <>
       <Drawer anchor="right" open={isOpen} onClose={handleClose}>
@@ -130,7 +263,7 @@ const AddNewEducation = ({
             }}
           >
             <Typography variant="h3" component="div">
-              Add Education
+              {selectedEducation ? "Edit Education" : "Add Education"}
             </Typography>
 
             <IconButton aria-label="close" onClick={handleClose}>
@@ -155,6 +288,7 @@ const AddNewEducation = ({
                       label="Education *"
                       name="education_type"
                       onChange={handleInputChange}
+                      value={formValue?.education_type}
                       error={submitted && !formValue?.education_type}
                     >
                       <MenuItem value={"10th"}>10th</MenuItem>
@@ -164,7 +298,7 @@ const AddNewEducation = ({
                         Under Graduate
                       </MenuItem>
                       <MenuItem value={"post_graduate"}>Post Graduate</MenuItem>
-                      <MenuItem value={"doctrate"}>Doctrate</MenuItem>
+                      <MenuItem value={"doctorate"}>Doctorate</MenuItem>
                     </Select>
                     {submitted && !formValue?.education_type && (
                       <FormHelperText error={true}>
@@ -195,9 +329,10 @@ const AddNewEducation = ({
                           MenuProps={menuProps}
                           onChange={handleMainCourseChange}
                           name="board"
+                          value={formValue?.board}
                           error={submitted && !formValue?.board}
                         >
-                          <MenuItem value="State Board" sx={{ width: 200 }}>
+                          <MenuItem value="State Board" sx={{ width: "10rem" }}>
                             State Board
                           </MenuItem>
                           <MenuItem
@@ -264,6 +399,7 @@ const AddNewEducation = ({
                           MenuProps={menuProps}
                           onChange={handleMainCourseChange}
                           name="school_medium"
+                          value={formValue?.school_medium || ""}
                           error={submitted && !formValue?.school_medium}
                         >
                           <MenuItem value="English" sx={{ width: "10rem" }}>
@@ -275,7 +411,7 @@ const AddNewEducation = ({
                         </Select>
                         {submitted && !formValue?.school_medium && (
                           <FormHelperText error={true}>
-                            Board is required
+                            Medium is required
                           </FormHelperText>
                         )}
                       </FormControl>
@@ -298,6 +434,7 @@ const AddNewEducation = ({
                             )
                           }
                           error={submitted && !formValue?.grade_or_marks}
+                          value={formValue?.grade_or_marks}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
                           //     .replace(/\s\s+/g, "")
@@ -321,9 +458,12 @@ const AddNewEducation = ({
                           name="year_of_passout"
                           helperText={
                             submitted &&
-                            !formValue?.year_of_passout && <>Year of passout</>
+                            !formValue?.year_of_passout && (
+                              <>Year of passout is required</>
+                            )
                           }
                           error={submitted && !formValue?.year_of_passout}
+                          value={formValue?.year_of_passout}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
                           //     .replace(/\s\s+/g, "")
@@ -378,6 +518,7 @@ const AddNewEducation = ({
                           onChange={handleMainCourseChange}
                           name="course"
                           error={submitted && !formValue?.course}
+                          value={formValue?.course}
                         >
                           {mainCourse?.map((option, index) => {
                             return (
@@ -417,6 +558,7 @@ const AddNewEducation = ({
                           onChange={handleInputChange}
                           name="specialization"
                           error={submitted && !formValue?.specialization}
+                          value={formValue?.specialization}
                         >
                           {subCourse?.map((option, index) => {
                             return (
@@ -459,6 +601,7 @@ const AddNewEducation = ({
                             submitted &&
                             !formValue?.university_or_institute_name
                           }
+                          value={formValue?.university_or_institute_name}
                           // error={false}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
@@ -491,6 +634,7 @@ const AddNewEducation = ({
                             submitted &&
                             !formValue?.university_or_institute_address
                           }
+                          value={formValue?.university_or_institute_address}
                           // error={false}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
@@ -521,6 +665,7 @@ const AddNewEducation = ({
                                 <>Course type is required</>
                               )
                             }
+                            value={formValue?.course_type}
                             error={submitted && !formValue?.course_type}
                           >
                             <FormControlLabel
@@ -560,6 +705,7 @@ const AddNewEducation = ({
                               <>Percentage is required</>
                             )
                           }
+                          value={formValue?.grade_or_marks}
                           error={submitted && !formValue?.grade_or_marks}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
@@ -588,6 +734,7 @@ const AddNewEducation = ({
                               <>Start Year is required</>
                             )
                           }
+                          value={formValue?.course_duration_start}
                           error={submitted && !formValue?.course_duration_start}
                           //   value={formik.values.aboutMe
                           //     .trimStart()
@@ -614,6 +761,7 @@ const AddNewEducation = ({
                           <>End Year is required</>
                         )
                       }
+                      value={formValue?.course_duration_end}
                       error={submitted && !formValue?.course_duration_end}
                       //   value={formik.values.aboutMe
                       //     .trimStart()

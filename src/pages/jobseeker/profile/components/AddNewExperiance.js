@@ -11,20 +11,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { LoadingButton } from "@mui/lab";
 import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
 import DatePicker from "react-datepicker";
 import { useTheme } from "@mui/material/styles";
 import useNotification from "src/hooks/useNotification";
-import { addJobseekerExperience } from "src/api-services/seeker/profile";
+import {
+  addJobseekerExperience,
+  updateJobseekerExperience,
+} from "src/api-services/seeker/profile";
 
 const AddNewExperiance = ({
   isOpen,
   onClose,
   getProfileDetail,
-  onHandleChangeLoading,
+  selectedExp,
 }) => {
   const theme = useTheme();
   const { direction } = theme;
@@ -44,6 +47,21 @@ const AddNewExperiance = ({
     end_date: "",
     is_current_company: false,
   });
+  const [isLoading, setIsLoading] = useState();
+
+  useEffect(() => {
+    if (!selectedExp) {
+      return;
+    }
+    const newState = { ...formValue };
+    newState.company_name = selectedExp?.company_name;
+    newState.designation = selectedExp?.designation;
+    newState.skills = selectedExp?.skills;
+    newState.start_date = new Date(selectedExp?.start_date);
+    newState.end_date = new Date(selectedExp?.end_date);
+    newState.is_current_company = selectedExp?.is_current_company;
+    setFormValue(newState);
+  }, []);
 
   const handleClose = () => {
     onClose("isAddNewExperiance");
@@ -62,18 +80,7 @@ const AddNewExperiance = ({
     setFormValue(newFormValue);
   };
 
-  const handleFormSubmit = async () => {
-    setSubmitted(true);
-    if (
-      !formValue?.company_name ||
-      !formValue?.designation ||
-      !formValue?.end_date ||
-      formValue?.skills.length === 0 ||
-      !formValue.start_date
-    ) {
-      return;
-    }
-    onHandleChangeLoading(true);
+  const callSubmitApi = async () => {
     try {
       const response = await addJobseekerExperience(formValue);
 
@@ -89,7 +96,47 @@ const AddNewExperiance = ({
     } catch (e) {
       console.log("e", e);
     } finally {
-      onHandleChangeLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const callEditSubmitApi = async () => {
+    try {
+      const response = await updateJobseekerExperience(formValue);
+
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async () => {
+    setSubmitted(true);
+    if (
+      !formValue?.company_name ||
+      !formValue?.designation ||
+      !formValue?.end_date ||
+      formValue?.skills.length === 0 ||
+      !formValue.start_date
+    ) {
+      return;
+    }
+    setIsLoading(true);
+    if (selectedExp) {
+      formValue.experience_id = selectedExp?.id;
+      callEditSubmitApi();
+    } else {
+      callSubmitApi(formValue);
     }
   };
 
@@ -119,7 +166,7 @@ const AddNewExperiance = ({
             }}
           >
             <Typography variant="h3" component="div">
-              Add Experiance
+              {selectedExp ? "Edit Experiance" : "Add Experiance"}
             </Typography>
 
             <IconButton aria-label="close" onClick={handleClose}>
@@ -293,6 +340,7 @@ const AddNewExperiance = ({
                   fullWidth
                   variant="contained"
                   onClick={handleFormSubmit}
+                  loading={isLoading}
                 >
                   Save
                 </LoadingButton>

@@ -15,6 +15,11 @@
   ],
   "rootMainFiles": [],
   "pages": {
+    "/404": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/404.js"
+    ],
     "/_app": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -25,25 +30,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/jobseeker/dashboard": [
+    "/jobseeker/profile": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/dashboard.js"
+      "static/chunks/pages/jobseeker/profile.js"
     ],
-    "/jobseeker/job-search": [
+    "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/job-search.js"
-    ],
-    "/jobseeker/saved-job": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/saved-job.js"
-    ],
-    "/recruiter/jobs": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/recruiter/jobs.js"
+      "static/chunks/pages/login.js"
     ]
   },
   "ampFirstPages": []

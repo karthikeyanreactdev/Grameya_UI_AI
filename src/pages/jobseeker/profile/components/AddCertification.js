@@ -11,20 +11,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { LoadingButton } from "@mui/lab";
 import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
 import DatePicker from "react-datepicker";
 import { useTheme } from "@mui/material/styles";
 import useNotification from "src/hooks/useNotification";
-import { addCertificationSeeker } from "src/api-services/seeker/profile";
+import {
+  addCertificationSeeker,
+  editCertificationSeeker,
+} from "src/api-services/seeker/profile";
 
 const AddCertification = ({
   isOpen,
   onClose,
   getProfileDetail,
-  onHandleChangeLoading,
+  selectedCertificate,
 }) => {
   const theme = useTheme();
   const { direction } = theme;
@@ -39,6 +42,45 @@ const AddCertification = ({
     certification_valid_to: "",
     no_expiry_time: false,
   });
+  const [isLoading, setIsLoading] = useState();
+
+  useEffect(() => {
+    if (!selectedCertificate) {
+      return;
+    }
+    const newFormValue = { ...formValue };
+    newFormValue.certification_name = selectedCertificate.certification_name;
+    newFormValue.certification_completion_id =
+      selectedCertificate.certification_completion_id;
+    newFormValue.certification_url = selectedCertificate.certification_url;
+    newFormValue.certification_valid_from = new Date(
+      selectedCertificate.certification_valid_from
+    );
+    newFormValue.certification_valid_to = new Date(
+      selectedCertificate.certification_valid_to
+    );
+    newFormValue.no_expiry_time = selectedCertificate.no_expiry_time;
+    console.log("selectedCertificate", selectedCertificate);
+    setFormValue(newFormValue);
+  }, []);
+
+  function validateURL(url) {
+    // Regular expression pattern for URL validation
+    // var urlPattern = /^(https?:\/\/)?(www\.)?[a-z0-9\-]+(\.[a-z]{2,})(\/.*)?$/i;
+    var pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(url);
+
+    // // Test the URL against the pattern
+    // return urlPattern.test(url);
+  }
 
   const handleClose = () => {
     onClose("isAddCertification");
@@ -51,18 +93,7 @@ const AddCertification = ({
     setFormValue(newFormValue);
   };
 
-  const handleFormSubmit = async () => {
-    setSubmitted(true);
-    if (
-      !formValue?.certification_name ||
-      !formValue?.certification_completion_id ||
-      !formValue?.certification_url ||
-      !formValue?.certification_valid_from ||
-      !formValue?.certification_valid_to
-    ) {
-      return;
-    }
-    onHandleChangeLoading(true);
+  const callSubmitApi = async (formValue) => {
     try {
       const response = await addCertificationSeeker(formValue);
 
@@ -78,7 +109,51 @@ const AddCertification = ({
     } catch (e) {
       console.log("e", e);
     } finally {
-      onHandleChangeLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const callEditSubmitApi = async (apiDate) => {
+    try {
+      const response = await editCertificationSeeker(apiDate);
+
+      console.log("response", response);
+      if (response.status === 200) {
+        sendNotification({
+          message: response?.data?.message,
+          variant: "success",
+        });
+        getProfileDetail();
+        handleClose();
+      }
+    } catch (e) {
+      console.log("e", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async () => {
+    setSubmitted(true);
+    if (
+      !formValue?.certification_name ||
+      !formValue?.certification_completion_id ||
+      !formValue?.certification_url ||
+      !formValue?.certification_valid_from ||
+      !formValue?.certification_valid_to
+    ) {
+      return;
+    }
+    if (!validateURL(formValue?.certification_url)) {
+      return;
+    }
+    if (selectedCertificate) {
+      setIsLoading(true);
+      formValue.id = selectedCertificate.id;
+      callEditSubmitApi(formValue);
+    } else {
+      setIsLoading(true);
+      callSubmitApi(formValue);
     }
   };
 
@@ -108,7 +183,7 @@ const AddCertification = ({
             }}
           >
             <Typography variant="h3" component="div">
-              Add Certification
+              {selectedCertificate ? "Edit Certification" : "Add Certification"}
             </Typography>
 
             <IconButton aria-label="close" onClick={handleClose}>
@@ -160,11 +235,19 @@ const AddCertification = ({
                   name="certification_url"
                   onChange={handleFormInputChange}
                   value={formValue.certification_url}
-                  error={submitted && !formValue.certification_url}
+                  error={
+                    (submitted && !formValue.certification_url) ||
+                    (submitted && !validateURL(formValue?.certification_url))
+                  }
                   helperText={
-                    submitted &&
-                    !formValue.certification_url &&
-                    "certification Completion URL is required"
+                    <>
+                      {submitted &&
+                        !formValue.certification_url &&
+                        "Certification Completion URL is required"}
+                      {submitted &&
+                        !validateURL(formValue?.certification_url) &&
+                        "Certification Completion URL is invalid"}
+                    </>
                   }
                 />
               </Grid>
@@ -265,6 +348,7 @@ const AddCertification = ({
                   fullWidth
                   variant="contained"
                   onClick={handleFormSubmit}
+                  loading={isLoading}
                 >
                   Save
                 </LoadingButton>
