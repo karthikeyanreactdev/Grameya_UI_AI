@@ -65,7 +65,7 @@ const UserProfileHeader = ({
       <CardMedia
         component="img"
         alt="profile-header"
-        image={data.coverImg}
+        image={userDetail?.cover_image_url || data.coverImg}
         sx={{
           height: { xs: 150, md: 250 },
         }}
@@ -80,7 +80,10 @@ const UserProfileHeader = ({
           justifyContent: { xs: "center", md: "flex-start" },
         }}
       >
-        <ProfilePicture src={data.profileImg} alt="profile-picture" />
+        <ProfilePicture
+          src={userDetail?.profile_image_url || data.profileImg}
+          alt="profile-picture"
+        />
         <Box
           sx={{
             width: "100%",

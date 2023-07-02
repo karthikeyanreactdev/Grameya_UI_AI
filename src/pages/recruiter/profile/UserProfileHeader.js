@@ -297,14 +297,35 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
           setImageEdit(false);
         }}
       />
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          position: "relative",
+          top: 10,
+          right: 10,
+        }}
+      >
+        <LoadingButton
+          onClick={() => editImage("cover")}
+          loading={coverLoading}
+          disabled={coverLoading}
+          title="Change Cover"
+          sx={{ color: "black", opacity: 0.8 }}
+        >
+          {" "}
+          <Icon Icon icon="twemoji:camera" fontSize={22} />
+        </LoadingButton>
+      </Box>
       <CardMedia
         component="img"
         alt="profile-header"
         image={userData?.cover_image_url || data.coverImg}
         sx={{
           height: { xs: 150, md: 250 },
+          mt: -10,
         }}
-        onClick={() => editImage("cover")}
       />
 
       <CardContent
@@ -320,38 +341,21 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
         <ProfilePicture
           src={userData?.profile_image_url || data.profileImg}
           alt="profile-picture"
-          onClick={() => editImage("logo")}
         />
-        {/* <IconButton
+        <LoadingButton
           color="primary"
+          loading={logoLoading}
+          disabled={logoLoading}
           aria-label="add an alarm"
+          onClick={() => editImage("logo")}
           sx={{
             position: "relative",
             right: "24px",
-            top: "20px",
-            // color: "black",
-            opacity: 0.8,
+            top: { md: "20px", sm: "6px", lg: "20px" },
           }}
         >
-          <PhotoCameraFront />
-        </IconButton> */}
-        {/* <Fab
-          color="primary"
-          sx={{
-            position: "relative",
-            right: "24px",
-            top: "20px",
-            height: "24px",
-            width: "40px",
-            // borderRadius: "24px",
-            // color: "black",
-            // background: "primary",
-            // opacity: 0.8,
-          }}
-        >
-          {" "}
-          <Icon icon={"tabler:camera-heart"} fontSize="1.325rem" />
-        </Fab> */}
+          <Icon icon="twemoji:camera" fontSize={22} />
+        </LoadingButton>
 
         <Box
           sx={{
@@ -407,18 +411,6 @@ const UserProfileHeader = ({ userData, handleEdit, isEdit }) => {
                   {data.companyName}
                 </Typography>
               </Box>
-              {/* <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  "& svg": { mr: 1.5, color: "text.secondary" },
-                }}
-              >
-                <Icon fontSize="1.25rem" icon="tabler:calendar" />
-                <Typography sx={{ color: "text.secondary" }}>
-                  Joined {data.joiningDate}
-                </Typography>
-              </Box> */}
             </Box>
           </Box>
           <Button

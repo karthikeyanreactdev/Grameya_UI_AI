@@ -60,9 +60,10 @@ import {
   getSkills,
 } from "src/store/apps/misc/index";
 import { getAppliedJobs } from "src/store/apps/jobseeker/applications";
+import moment from "moment";
 
 const userStatusObj = {
-  active: "success",
+  Submitted: "success",
   hired: "info",
   disabled: "error",
 };
@@ -120,7 +121,7 @@ const ManageAppliedJob = () => {
       minWidth: 100,
       sortable: true,
 
-      field: "location",
+      field: "city",
       headerName: "Location",
       // renderCell: ({ row }) => <RowOptions id={row.id} />,
     },
@@ -133,6 +134,17 @@ const ManageAppliedJob = () => {
       headerName: "Experience",
       renderCell: ({ row }) =>
         `${row.experience_from}-${row.experience_to} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
+
+      field: "applied_on",
+      headerName: "Applied On",
+
+      renderCell: ({ row }) =>
+        `${moment(row.applied_on).format("DD/MM/YYYY  hh:mm A")}`,
     },
     {
       flex: 0.1,
@@ -175,12 +187,12 @@ const ManageAppliedJob = () => {
     // },
   ];
 
-  const { recruiterJobList, isLoading, pageCount } = useSelector(
-    (state) => state?.manageJob
+  const { appliedJobs, isLoading, pageCount } = useSelector(
+    (state) => state?.appliedJobs
   );
   const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
 
-  console.log("ddd", recruiterJobList);
+  console.log("ddd", appliedJobs);
   const handleFilter = useCallback((val) => {
     setValue(val);
   }, []);
@@ -311,7 +323,7 @@ const ManageAppliedJob = () => {
             <DataGrid
               autoHeight
               rowHeight={62}
-              rows={recruiterJobList}
+              rows={appliedJobs}
               columns={jobListColumns}
               loading={isLoading}
               sx={{

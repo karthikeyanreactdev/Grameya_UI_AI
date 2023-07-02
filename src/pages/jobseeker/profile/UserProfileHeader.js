@@ -21,6 +21,8 @@ import ImageUpload from "src/pages/recruiter/profile/ImageUpload";
 import { deleteFile, uploadFile } from "src/api-services/recruiter/profile";
 import { getUserData } from "src/store/apps/auth";
 import { useDispatch } from "react-redux";
+import { LoadingButton } from "@mui/lab";
+import { IconButton } from "@mui/material";
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
   height: 108,
@@ -373,14 +375,35 @@ const UserProfileHeader = ({
           setImageEdit(false);
         }}
       />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          position: "relative",
+          top: 10,
+          right: 10,
+        }}
+      >
+        <LoadingButton
+          onClick={() => editImage("cover")}
+          loading={coverLoading}
+          disabled={coverLoading}
+          // title="Change Cover"
+          sx={{ color: "black", opacity: 0.8 }}
+        >
+          {" "}
+          <Icon Icon icon="twemoji:camera" fontSize={22} />
+        </LoadingButton>
+      </Box>
       <CardMedia
         component="img"
         alt="profile-header"
         image={userDetail?.cover_image_url || data.coverImg}
         sx={{
           height: { xs: 150, md: 250 },
+          mt: -10,
         }}
-        onClick={() => editImage("cover")}
+        // onClick={() => editImage("cover")}
       />
       <CardContent
         sx={{
@@ -395,8 +418,22 @@ const UserProfileHeader = ({
         <ProfilePicture
           src={userDetail?.profile_image_url || data.profileImg}
           alt="profile-picture"
-          onClick={() => editImage("logo")}
+          // onClick={() => editImage("logo")}
         />
+        <LoadingButton
+          color="primary"
+          loading={logoLoading}
+          disabled={logoLoading}
+          aria-label="add an alarm"
+          onClick={() => editImage("logo")}
+          sx={{
+            position: "relative",
+            right: "24px",
+            top: { md: "20px", sm: "6px", lg: "20px" },
+          }}
+        >
+          <Icon icon="twemoji:camera" fontSize={22} />
+        </LoadingButton>
         <Box
           sx={{
             width: "100%",
