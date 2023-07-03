@@ -109,7 +109,12 @@ const Candidates = () => {
         const { full_name, designation } = row;
 
         return (
-          <Box sx={{ display: "flex", alignItems: "center", width: "200px" }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", width: "200px" }}
+            onClick={() => {
+              handleViewCandidate(row);
+            }}
+          >
             {renderClient(row)}
             <Box
               sx={{
@@ -394,7 +399,7 @@ const Candidates = () => {
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
-              onRowClick={(row) => handleViewCandidate(row?.row)}
+              // onRowClick={(row) => handleViewCandidate(row?.row)}
               paginationMode="server"
               // onRowClick={(it) => console.log(it)}
               pageSizeOptions={[10, 25, 50]}

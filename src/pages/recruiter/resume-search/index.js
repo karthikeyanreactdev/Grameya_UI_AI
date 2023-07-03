@@ -351,11 +351,11 @@ const Dashboard = () => {
     },
     {
       flex: 0.1,
-      minWidth: 300,
+      minWidth: 150,
       sortable: true,
 
       field: "preferred_job_location",
-      headerName: "Prefered Location",
+      headerName: "Pref Location",
       renderCell: ({ row }) => `${row.preferred_job_location}`,
 
       // renderCell: ({ row }) =>
@@ -413,7 +413,7 @@ const Dashboard = () => {
     },
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 150,
       sortable: false,
       // field: "Action",
       headerName: "Action",

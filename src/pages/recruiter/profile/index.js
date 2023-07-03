@@ -524,9 +524,8 @@ const Profile = () => {
               <Autocomplete
                 id="location"
                 name="location"
-                label="Location*"
+                label="Job Location*"
                 variant="outlined"
-                disabled={!isEdit}
                 fullWidth
                 sx={{ my: 2, mt: 4 }}
                 value={formik.values.location}
@@ -559,12 +558,6 @@ const Profile = () => {
                       formik.errors.location &&
                       formik.errors.location
                     }
-                    freeSolo={!isEdit}
-                    variant={!isEdit ? "standard" : "outlined"}
-                    InputProps={{
-                      readOnly: !isEdit,
-                      disableUnderline: !isEdit,
-                    }}
                   />
                 )}
               />

@@ -30,15 +30,30 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/jobseeker/profile": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/jobseeker/profile.js"
-    ],
     "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/login.js"
+    ],
+    "/recruiter/dashboard": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recruiter/dashboard.js"
+    ],
+    "/recruiter/jobs": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recruiter/jobs.js"
+    ],
+    "/recruiter/profile": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recruiter/profile.js"
+    ],
+    "/recruiter/resume-search": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recruiter/resume-search.js"
     ]
   },
   "ampFirstPages": []
