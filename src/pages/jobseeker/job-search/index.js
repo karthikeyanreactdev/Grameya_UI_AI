@@ -285,6 +285,16 @@ const CandidateJobSearch = () => {
                   size="small"
                   name="Search"
                   placeholder="Search skills, resume headline..etc"
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                   value={keyword
                     ?.trimStart()
                     .replace(/\s\s+/g, "")
@@ -296,11 +306,21 @@ const CandidateJobSearch = () => {
                 <TextField
                   sx={{ my: 2 }}
                   label={"Job Location"}
-                  required
+                  // required
                   fullWidth
                   size="small"
                   name="Job Location"
                   placeholder="Chennai, Delhi, Mumbai..."
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter" && keyword !== "") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                   value={location
                     ?.trimStart()
                     .replace(/\s\s+/g, "")
@@ -312,7 +332,7 @@ const CandidateJobSearch = () => {
                 <TextField
                   sx={{ my: 2 }}
                   label={"Experience (in years)"}
-                  required
+                  // required
                   fullWidth
                   size="small"
                   name="Experience"
@@ -322,6 +342,16 @@ const CandidateJobSearch = () => {
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
                   onChange={(e) => setExperience(e.target.value || "")}
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter" && keyword !== "") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
@@ -332,11 +362,21 @@ const CandidateJobSearch = () => {
                     <TextField
                       sx={{ my: 2 }}
                       label={"Salary from"}
-                      required
+                      // required
                       fullWidth
                       size="small"
                       name="salaryFrom"
                       placeholder="Salary from (in LPA)"
+                      onKeyDown={(ev) => {
+                        console.log(`Pressed keyCode ${ev.key}`);
+                        if (ev.key === "Enter" && keyword !== "") {
+                          // Do code here
+                          ev.preventDefault();
+                          // if (searchKeyword.length >= 3) {
+                          handleSearch();
+                          // }
+                        }
+                      }}
                       value={salaryFrom
                         ?.trimStart()
                         .replace(/\s\s+/g, "")
@@ -348,11 +388,21 @@ const CandidateJobSearch = () => {
                     <TextField
                       sx={{ my: 2 }}
                       label={"Salary To"}
-                      required
+                      // required
                       fullWidth
                       size="small"
                       name="salaryTo"
                       placeholder="Salary To (in LPA)"
+                      onKeyDown={(ev) => {
+                        console.log(`Pressed keyCode ${ev.key}`);
+                        if (ev.key === "Enter" && keyword !== "") {
+                          // Do code here
+                          ev.preventDefault();
+                          // if (searchKeyword.length >= 3) {
+                          handleSearch();
+                          // }
+                        }
+                      }}
                       value={salaryTo
                         ?.trimStart()
                         .replace(/\s\s+/g, "")
@@ -694,7 +744,7 @@ const CandidateJobSearch = () => {
                                 variant="contained"
                                 onClick={() => handleNavigateJobDetail(row?.id)}
                               >
-                                View Job
+                                {row?.is_applied ? "Applied" : "View & Apply"}
                               </Button>
                             </Grid>
                           </Grid>

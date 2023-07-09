@@ -63,6 +63,7 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import { LoadingButton } from "@mui/lab";
+import moment from "moment";
 const useStyles = makeStyles({
   root: {
     "& .MuiDataGrid-root.MuiDataGrid-cell": {
@@ -277,6 +278,7 @@ const CandidateJobDetail = () => {
               >
                 <LoadingButton
                   loading={isLoading}
+                  sx={{ mr: 2 }}
                   color={jobDetails?.is_saved ? "success" : "primary"}
                   title="Save Job"
                   onClick={handleAddSavedJob}
@@ -292,6 +294,15 @@ const CandidateJobDetail = () => {
                     />
                   )}
                 </LoadingButton>
+                <Button
+                  color={"primary"}
+                  title="Back"
+                  variant="outlined"
+                  size="small"
+                  onClick={() => router.back()}
+                >
+                  Back
+                </Button>
               </Box>
             </Grid>
           </Grid>
@@ -546,7 +557,20 @@ const CandidateJobDetail = () => {
                         secondary="Bachelor Degree"
                       />
                     </ListItem> */}
-
+                    <ListItem sx={{ p: 0, mt: 3 }}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <Icon
+                            fontSize="1.25rem"
+                            icon="medical-icon:i-waiting-area"
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Notice Period"
+                        secondary={jobDetails?.notice_period}
+                      />
+                    </ListItem>
                     <ListItem sx={{ p: 0, mt: 3 }}>
                       <ListItemAvatar>
                         <Avatar>
@@ -581,7 +605,12 @@ const CandidateJobDetail = () => {
                       </ListItemAvatar>
                       <ListItemText
                         primary="Date Posted"
-                        secondary={formatDateTime(jobDetails?.updated)}
+                        secondary={moment
+                          .utc(jobDetails?.updated)
+                          .local()
+                          .startOf("seconds")
+                          .fromNow()}
+                        // secondary={formatDateTime(jobDetails?.updated)}
                       />
                     </ListItem>
                   </List>
