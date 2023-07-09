@@ -45,7 +45,7 @@ const navigation = () => {
       path: "/recruiter/jobs",
       action: "read",
       subject: "jobs",
-      title: "Create Job",
+      title: "Manage Jobs",
       icon: "tabler:notes",
     },
     //   {

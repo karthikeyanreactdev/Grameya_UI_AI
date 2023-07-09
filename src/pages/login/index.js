@@ -60,6 +60,7 @@ import {
   getNoticePeriod,
   getSkills,
 } from "src/store/apps/misc";
+import { LoadingButton } from "@mui/lab";
 
 // ** Styled Components
 const LoginIllustration = styled("img")(({ theme }) => ({
@@ -128,7 +129,7 @@ const LoginPage = () => {
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { userData } = useSelector((state) => state.auth);
+  const { userData, isLoading } = useSelector((state) => state.auth);
   console.log("UserData", userData);
   // ** Vars
   const { skin } = settings;
@@ -182,10 +183,10 @@ const LoginPage = () => {
       dispatch(getJobType({}));
       dispatch(getSkills({}));
       dispatch(getNoticePeriod({}));
-      sendNotification({
-        message: response.payload?.data?.message,
-        variant: "success",
-      });
+      // sendNotification({
+      //   message: response.payload?.data?.message,
+      //   variant: "success",
+      // });
     } else {
       sendNotification({
         message: response.payload?.message,
@@ -422,14 +423,15 @@ const LoginPage = () => {
                   Forgot Password?
                 </Typography>
               </Box>
-              <Button
+              <LoadingButton
                 fullWidth
+                loading={isLoading}
                 variant="contained"
                 sx={{ mb: 4 }}
                 onClick={handleSubmit}
               >
                 Login
-              </Button>
+              </LoadingButton>
               <Box
                 sx={{
                   display: "flex",
@@ -439,10 +441,10 @@ const LoginPage = () => {
                 }}
               >
                 <Typography sx={{ color: "text.secondary", mr: 2 }}>
-                  New on our platform?
+                  New to our platform?
                 </Typography>
                 <Typography href="/register" component={LinkStyled}>
-                  Create an account
+                  Register
                 </Typography>
               </Box>
               <Divider

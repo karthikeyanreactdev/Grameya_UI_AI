@@ -38,6 +38,7 @@ import { getAppliedCandidateList } from "src/store/apps/recruiter/applicants";
 import useNotification from "src/hooks/useNotification";
 import { addShortList } from "src/api-services/recruiter/candidate";
 import { LoadingButton } from "@mui/lab";
+import SideBarEmail from "../resume-search/Components/EmailDrawer";
 
 // import "sweetalert2/src/sweetalert2.scss";
 const userStatusObj = {
@@ -94,19 +95,326 @@ const Candidates = (props) => {
   );
   console.log("appliedCandidateList", appliedCandidateList);
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [openMail, setOpenMail] = useState(false);
   const [isShortListLoading, setIsShortListLoading] = useState(false);
+  const [isShortListLoadingId, setIsShortListLoadingId] = useState("");
   const [isViewLoading, setIsViewLoading] = useState(false);
   const [id, setId] = useState("");
   const [RowData, setRowData] = useState([]);
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen);
+  const toggleMailDrawer = () => setOpenMail(!openMail);
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
-
   const applicationsListcolumns = [
+    {
+      flex: 0.1,
+      minWidth: 300,
+      // sortable: true,
+      field: "full_name",
+      headerName: "Candidate Name",
+      renderCell: ({ row }) => {
+        const { full_name, designation } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", width: "200px" }}>
+            {renderClient(row)}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                flexDirection: "column",
+              }}
+            >
+              <Typography
+                noWrap
+                // component={Link}
+                // href="/apps/user/view/account"
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  color: "text.secondary",
+                  "&:hover": { color: "primary.main" },
+                }}
+              >
+                {full_name}
+              </Typography>
+              <Typography
+                noWrap
+                variant="body2"
+                sx={{ color: "text.disabled" }}
+              >
+                {designation}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+
+    {
+      flex: 0.1,
+      minWidth: 200,
+      sortable: false,
+      // field: "Action",
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              width: 1,
+            }}
+          >
+            <Chip
+              size="small"
+              label={statusObj[row.status]}
+              color={userStatusObj[row.status]}
+              onClick={async () => {
+                setId(row.id);
+                setRowData(row);
+                setAddUserOpen(true);
+              }}
+              sx={{
+                // mr: 2,
+                height: 24,
+                minWidth: 24,
+                wordWrap: "break-word",
+                // "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+              }}
+            />
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.1,
+      minWidth: 150,
+      sortable: true,
+      field: "total_years_of_experience",
+      headerName: "Experience",
+      renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
+      field: "current_location",
+      headerName: "Location",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 150,
+      sortable: true,
+
+      field: "preferred_job_location",
+      headerName: "Pref Location",
+      renderCell: ({ row }) => `${row.preferred_job_location}`,
+
+      // renderCell: ({ row }) =>
+      //   row?.preferred_job_location?.map((e) => {
+      //     return (
+      //       <Chip
+      //         size="small"
+      //         label={e}
+      //         color={"info"}
+      //         sx={{
+      //           mr: 2,
+      //           height: 24,
+      //           minWidth: 24,
+      //           "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+      //         }}
+      //       />
+      //     );
+      //   }),
+    },
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "expected_salary",
+      headerName: "Salary",
+      renderCell: ({ row }) =>
+        `${row.current_salary} CTC - ${row.expected_salary} ECTC `,
+    },
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "notice_period",
+      headerName: "Notice Period",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 800,
+      // maxWidth: 1500,
+      sortable: true,
+      field: "skills",
+      headerName: "Skills",
+      renderCell: ({ row }) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            wordWrap: "break-word",
+            whiteSpace: "normal",
+          }}
+        >
+          {row?.skills?.map((e) => {
+            return (
+              <Chip
+                size="small"
+                label={e}
+                color={"primary"}
+                variant="outlined"
+                sx={{
+                  mr: 2,
+                  height: 24,
+                  minWidth: 24,
+                  wordWrap: "break-word",
+                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+                }}
+              />
+            );
+          })}
+        </Box>
+        // <Box
+        //   sx={{
+        //     display: "flex",
+        //     alignItems: "center",
+        //     wordWrap: "break-word",
+        //     whiteSpace: "normal",
+        //   }}
+        // >
+        //   <Tooltip title={row.skills.join(",")}>
+        //     <Chip
+        //       size="small"
+        //       label={row?.skills[0] || "N/A"}
+        //       color={"primary"}
+        //       variant="outlined"
+        //       sx={{
+        //         mr: 2,
+        //         height: 24,
+        //         minWidth: 24,
+        //         wordWrap: "break-word",
+        //         "& .MuiChip-label": {
+        //           px: 1.5,
+        //           textTransform: "capitalize",
+        //         },
+        //       }}
+        //     />
+        //   </Tooltip>
+        // </Box>
+      ),
+    },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 300,
+    //   sortable: false,
+    //   // field: "Action",
+    //   headerName: "Action",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           flexDirection: "row",
+    //         }}
+    //       >
+    //         <Box
+    //           sx={{
+    //             display: "flex",
+    //             flexDirection: "row",
+    //           }}
+    //         >
+    //           {/* <Button onClick={() => {}}>View</Button> */}
+    //           <Tooltip title="View Candidate">
+    //             <LoadingButton
+    //               // isLoading={isViewLoading}
+    //               onClick={() => {
+    //                 handleViewCandidate(row);
+    //               }}
+    //               sx={{ fontSize: "18px" }}
+    //             >
+    //               {" "}
+    //               <Icon icon="tabler:eye" color="primary" />
+    //             </LoadingButton>
+    //           </Tooltip>
+    //           <Tooltip title="Shortlist Candidate">
+    //             <LoadingButton
+    //               // isLoading={isShortListLoading}
+    //               onClick={() => handleAddShortList(row.id)}
+    //               sx={{ fontSize: "18px" }}
+    //             >
+    //               {" "}
+    //               <Icon icon="tabler:user-check" color="primary" />
+    //             </LoadingButton>
+    //           </Tooltip>
+    //         </Box>
+    //       </Box>
+    //     );
+    //   },
+    // },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 100,
+    //   sortable: false,
+    //   // field: "Action",
+    //   headerName: "Action",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           flexDirection: "row",
+    //         }}
+    //       >
+    //         <Tooltip title="View Candidate">
+    //           <LoadingButton
+    //             // isLoading={isShortListLoading}
+    //             onClick={() => {
+    //               handleViewCandidate(row);
+    //             }}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:eye" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //         {/* <Tooltip title="Manage Candidate">
+    //           <OptionsMenu
+    //             iconButtonProps={{ size: "small" }}
+    //             menuProps={{ sx: { "& .MuiMenuItem-root svg": { mr: 2 } } }}
+    //             options={[
+    //               {
+    //                 text: "Download",
+    //                 icon: <Icon icon="tabler:download" fontSize="1.25rem" />,
+    //               },
+    //               {
+    //                 text: "Edit",
+    //                 href: `/apps/invoice/edit/${row.id}`,
+    //                 icon: <Icon icon="tabler:pencil" fontSize="1.25rem" />,
+    //               },
+    //               {
+    //                 text: "Duplicate",
+    //                 icon: <Icon icon="tabler:copy" fontSize="1.25rem" />,
+    //               },
+    //             ]}
+    //           />
+    //         </Tooltip> */}
+    //       </Box>
+    //     );
+    //   },
+    // },
+  ];
+  const applicationsListcolumns2 = [
     {
       flex: 0.1,
       minWidth: 300,
@@ -376,6 +684,7 @@ const Candidates = (props) => {
     // },
   ];
   const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
+  const [selectedIds, setIds] = useState([]);
   const getCandidates = () => {
     if (router?.query?.cid) {
       const params = {
@@ -443,6 +752,39 @@ const Candidates = (props) => {
       }
     });
   };
+  const handleBulkAddShortList = async () => {
+    // console.log(id);
+    Swal.fire({
+      title: "Do you want to save?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const params = {
+            seeker_ids: selectedIds,
+          };
+          setIsShortListLoading(true);
+          setIsShortListLoadingId(id);
+
+          const response = await addShortList(params);
+          sendNotification({
+            message: response?.data?.message,
+            variant: "success",
+          });
+        } catch (e) {
+          sendNotification({
+            message: e,
+            variant: "error",
+          });
+        } finally {
+          setIsShortListLoading(false);
+        }
+      }
+    });
+  };
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -452,6 +794,33 @@ const Candidates = (props) => {
 
           <CardContent></CardContent>
           {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }}>
+            {selectedIds.length > 0 && (
+              <Button
+                variant={"outlined"}
+                color={"primary"}
+                size="small"
+                sx={{ "& svg": { mr: 2 } }}
+                onClick={() => setOpenMail(true)}
+              >
+                <Icon icon="fxemoji:email" fontSize="1.125rem" />
+                {"Send Email"}
+              </Button>
+            )}
+            {selectedIds.length > 0 && (
+              <LoadingButton
+                loading={isShortListLoading}
+                variant={"outlined"}
+                color={"primary"}
+                size="small"
+                sx={{ "& svg": { mr: 2 }, ml: 2 }}
+                onClick={() => handleBulkAddShortList()}
+              >
+                <Icon icon="mdi:user-check-outline" fontSize="1.125rem" />
+                {"Shortlist"}
+              </LoadingButton>
+            )}
+          </Box>
           <Box p={4}>
             <DataGrid
               autoHeight
@@ -487,6 +856,22 @@ const Candidates = (props) => {
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
+              checkboxSelection
+              // maxSelected={1}
+              onRowSelectionModelChange={(ids) => {
+                // const selectedIDs = new Set(ids);
+                // console.log("Ids", selectedIDs);
+                setIds(ids);
+                //                 const selectedRowData = resumeSearchList.filter((row) =>
+                //                   selectedIDs.has(row.id.toString())
+                //                 );
+                //                 console.log(selectedRowData);
+                //                 const tempEmail=[];
+                //                 selectedRowData.map((e)=> {
+                // tempEmail.push()
+                //                 })
+                //
+              }}
               paginationMode="server"
               pageSizeOptions={[10, 25, 50]}
               paginationModel={paginationModel}
@@ -499,6 +884,11 @@ const Candidates = (props) => {
           toggle={toggleAddUserDrawer}
           id={id}
           RowData={RowData}
+        />
+        <SideBarEmail
+          open={openMail}
+          toggle={toggleMailDrawer}
+          selectedId={selectedIds}
         />
       </Grid>
     </Grid>

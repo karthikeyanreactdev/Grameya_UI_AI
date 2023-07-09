@@ -21,6 +21,7 @@ const defineRulesFor = (role, subject) => {
     can("read", "candidates");
     can("read", "appliedCandidates");
     can("read", "rcprofile");
+    can("read", "jobPreview");
   } else if (role === "jobseeker") {
     can("manage", "jsdashboard");
     can("read", "jsprofile");

@@ -369,18 +369,20 @@ const SideBarJob = (props) => {
   }, [id, userData]);
 
   const handleJobCategory = async (id) => {
-    try {
-      formik.setFieldValue("jobSubCategory", "");
-      const result = await getJobSubCategoryById(id);
-      console.log(result?.data?.data?.records);
-      setSubCategoryList(result?.data?.data?.records);
-    } catch (e) {
-      sendNotification({
-        message: e,
-        variant: "error",
-      });
-    } finally {
-      // setIsLoading(false);
+    if (id) {
+      try {
+        formik.setFieldValue("jobSubCategory", "");
+        const result = await getJobSubCategoryById(id);
+        console.log(result?.data?.data?.records);
+        setSubCategoryList(result?.data?.data?.records);
+      } catch (e) {
+        sendNotification({
+          message: e,
+          variant: "error",
+        });
+      } finally {
+        // setIsLoading(false);
+      }
     }
   };
   function getLatLngByAddress(address) {
@@ -566,7 +568,7 @@ const SideBarJob = (props) => {
                   } else {
                     formik.setFieldValue("jobCategory", newValue?.name);
                     handleJobCategory(newValue?.id);
-                    setCategory(newValue?.id);
+                    setCategory(newValue?.name);
                   }
                 }}
                 filterOptions={(options, params) => {
@@ -692,7 +694,7 @@ const SideBarJob = (props) => {
                     setSubCategory(newValue.inputValue);
                   } else {
                     formik.setFieldValue("jobSubCategory", newValue?.name);
-                    setSubCategory(newValue?.id);
+                    setSubCategory(newValue?.name);
                   }
                 }}
                 options={subCategoryList}
@@ -1067,6 +1069,8 @@ const SideBarJob = (props) => {
               onInputChange={(event) => {
                 if (event?.target?.value) {
                   getPlacePredictions({ input: event?.target?.value });
+                } else {
+                  getPlacePredictions({ input: "" });
                 }
               }}
               options={placePredictions.map((item) => ({

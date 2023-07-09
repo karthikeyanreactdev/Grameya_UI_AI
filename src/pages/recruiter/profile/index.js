@@ -35,17 +35,31 @@ Geocode.setApiKey(process.env.REACT_APP_GMAP_API_KEY);
 Geocode.setLanguage("en");
 const useStyles = makeStyles({
   root: {
+    "& .MuiFormLabel-root.MuiInputBase-multiline .MuiInputLabel-root.Mui-disabled":
+      {
+        color: "black",
+        opacity: 0.8,
+      },
     "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
       color: "black",
+      opacity: 0.8,
+    },
+    "& .MuiInputBase-input.MuiInputBase-inputMultiline.Mui-disabled": {
+      // color: "black",
+      "-webkit-text-fill-color": "black",
+      opacity: 0.8,
     },
     // "& .MuiFormLabel-root.MuiInputLabel-root.Mui-disabled": {
     "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
-      color: "black",
+      // color: "black",
       "-webkit-text-fill-color": "black",
-      opacity: 0.6,
+      opacity: 0.8,
     },
   },
 });
+const linkRegMatch =
+  /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+//;
 const Profile = () => {
   // ** Hooks
   const ability = useContext(AbilityContext);
@@ -106,6 +120,21 @@ const Profile = () => {
     companyType: yup
       .string("Company Type is required")
       .required("Company Type is required"),
+    about_us: yup
+      .string("")
+      .trim()
+      .min(10, "Minimum 10 character required")
+      .max(500, "Maximum 500 character is allowed"),
+
+    website: yup
+      .string()
+      .trim()
+      .matches(linkRegMatch, "Website URL should be a valid URL")
+      .matches(
+        /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+        "Enter correct Website URL"
+      )
+      .required("Website URL is required"),
   });
   const formik = useFormik({
     initialValues: {
@@ -135,6 +164,8 @@ const Profile = () => {
       postalCode: "",
       latitude: "",
       longitude: "",
+      website: "",
+      about_us: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -156,6 +187,8 @@ const Profile = () => {
         postal_code: values.postalCode,
         latitude: values.latitude,
         longitude: values.longitude,
+        website: values.website,
+        about_us: values.about_us,
       };
       console.log(params);
 
@@ -270,6 +303,9 @@ const Profile = () => {
       );
       formik.setFieldValue("longitude", userData?.recruiterDetails?.longitude);
       formik.setFieldValue("latitude", userData?.recruiterDetails?.latitude);
+
+      formik.setFieldValue("website", userData?.recruiterDetails?.website);
+      formik.setFieldValue("about_us", userData?.recruiterDetails?.about_us);
       setLat(userData?.recruiterDetails?.latitude);
       setLng(userData?.recruiterDetails?.longitude);
     }
@@ -295,7 +331,7 @@ const Profile = () => {
               <TextField
                 sx={{ mb: 2 }}
                 label={"Full Name"}
-                disabled={!isEdit}
+                //disabled={!isEdit}
                 required
                 fullWidth
                 name="fullname"
@@ -325,7 +361,7 @@ const Profile = () => {
                 <TextField
                   sx={{ mb: 2 }}
                   label={"Company Name"}
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   required
                   fullWidth
                   name="companyName"
@@ -354,7 +390,7 @@ const Profile = () => {
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                 <TextField
                   sx={{ mb: 2 }}
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   label={"Designation"}
                   required
                   fullWidth
@@ -385,7 +421,9 @@ const Profile = () => {
             <Grid container spacing={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                 {isEdit ? (
-                  <FormControl fullWidth disabled={!isEdit}>
+                  <FormControl
+                    fullWidth //disabled={!isEdit}
+                  >
                     <InputLabel id="demo-simple-select-label">
                       Company Type *
                     </InputLabel>
@@ -405,7 +443,7 @@ const Profile = () => {
                 ) : (
                   <TextField
                     sx={{ mb: 2 }}
-                    disabled={!isEdit}
+                    //disabled={!isEdit}
                     label={" Company Type "}
                     required
                     fullWidth
@@ -494,7 +532,7 @@ const Profile = () => {
                 <TextField
                   sx={{ mb: 2 }}
                   label={"Alternate Mobile Number"}
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   name="alternateMobile"
                   error={
@@ -519,6 +557,79 @@ const Profile = () => {
                   }}
                 />
               </Grid>
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+                <TextField
+                  // sx={{ mb: 2 }}
+                  id="website"
+                  name="website"
+                  label="Website "
+                  // variant={"outlined"}
+                  //disabled={!isEdit}
+                  fullWidth
+                  // size="small"
+                  required
+                  value={formik.values.website}
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
+                  onChange={(e) => {
+                    setLng(e.target.value);
+                    formik.setFieldValue(
+                      "website",
+                      e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                    );
+                  }}
+                  error={
+                    formik.touched.website && Boolean(formik.errors.website)
+                  }
+                  helperText={
+                    formik.touched.website &&
+                    formik.errors.website &&
+                    formik.errors.website
+                  }
+                />
+              </Grid>
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+                <TextField
+                  // sx={{ mb: 2 }}
+                  id="aboutus"
+                  name="about_us"
+                  label="About Us"
+                  // variant={"outlined"}
+                  //disabled={!isEdit}
+                  fullWidth
+                  multiline
+                  minRows={!isEdit ? 2 : 3}
+                  maxRows={3}
+                  // size="small"
+                  // required
+                  value={formik.values.about_us}
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
+                  onChange={(e) => {
+                    setLng(e.target.value);
+                    formik.setFieldValue(
+                      "about_us",
+                      e.target?.value?.trimStart().replace(/\s\s+/g, "")
+                    );
+                  }}
+                  error={
+                    formik.touched.about_us && Boolean(formik.errors.about_us)
+                  }
+                  helperText={
+                    formik.touched.about_us &&
+                    formik.errors.about_us &&
+                    formik.errors.about_us
+                  }
+                />
+              </Grid>
             </Grid>
             <Grid>
               <Autocomplete
@@ -526,6 +637,7 @@ const Profile = () => {
                 name="location"
                 label="Job Location*"
                 variant="outlined"
+                //disabled={!isEdit}
                 fullWidth
                 sx={{ my: 2, mt: 4 }}
                 value={formik.values.location}
@@ -539,6 +651,8 @@ const Profile = () => {
                 onInputChange={(event) => {
                   if (event?.target?.value) {
                     getPlacePredictions({ input: event?.target?.value });
+                  } else {
+                    getPlacePredictions({ input: "" });
                   }
                 }}
                 options={placePredictions.map((item) => ({
@@ -576,7 +690,7 @@ const Profile = () => {
               id="addressLineOne"
               label="Address Line 1 (e.g. House No / Street
             Name) *"
-              disabled={!isEdit}
+              //disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
               name="addressLineOne"
@@ -601,7 +715,7 @@ const Profile = () => {
             <TextField
               id="addressLineTwo"
               label="Address Line 2 (e.g. Landmark / Locality)"
-              disabled={!isEdit}
+              //disabled={!isEdit}
               fullWidth
               sx={{ my: 2 }}
               name="addressLineTwo"
@@ -619,7 +733,7 @@ const Profile = () => {
                 <TextField
                   id="country"
                   label="Country *"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   name="country"
                   value={formik.values.country}
@@ -650,7 +764,7 @@ const Profile = () => {
                 <TextField
                   id="state"
                   label="State *"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   name="state"
                   value={formik.values.state}
@@ -681,7 +795,7 @@ const Profile = () => {
                 <TextField
                   id="city"
                   label="City *"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   name="city"
                   value={formik.values.city}
@@ -711,7 +825,7 @@ const Profile = () => {
                   id="postalCode"
                   name="postalCode"
                   label="Pin Code *"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   value={formik.values.postalCode}
                   onChange={(e) => {
@@ -749,7 +863,7 @@ const Profile = () => {
                   label="Longitude "
                   variant={"outlined"}
                   type="number"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   value={formik.values.longitude}
                   onChange={(e) => {
@@ -776,7 +890,7 @@ const Profile = () => {
                   label="Latitude "
                   variant={"outlined"}
                   type="number"
-                  disabled={!isEdit}
+                  //disabled={!isEdit}
                   fullWidth
                   value={formik.values.latitude}
                   onChange={(e) => {
@@ -803,7 +917,7 @@ const Profile = () => {
                 loading={isLoading}
                 variant="contained"
                 sx={{ my: 4 }}
-                disabled={!isEdit}
+                //disabled={!isEdit}
                 onClick={() => formik.handleSubmit()}
               >
                 Save

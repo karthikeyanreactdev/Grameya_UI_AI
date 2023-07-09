@@ -63,6 +63,8 @@ import Swal from "sweetalert2";
 import useNotification from "src/hooks/useNotification";
 import { updateJobById } from "src/api-services/recruiter/jobs";
 import { Tooltip } from "@mui/material";
+import { useRouter } from "next/router";
+import SideBarShareJob from "./components/ShareJob";
 
 const userStatusObj = {
   active: "success",
@@ -83,11 +85,27 @@ const ManageJob = () => {
   const [plan, setPlan] = useState("");
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("");
+
   const [addUserOpen, setAddUserOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+  const router = useRouter();
+
+  const handleApplications = async (row) => {
+    router.push(
+      {
+        pathname: "/recruiter/applied-candiates",
+        query: { cid: row?.id },
+      },
+      "/recruiter/applied-candiates"
+    );
+  };
+  const handleNavigateJobPreview = (id) => {
+    router.push(`${"/recruiter/job-preview"}?id=${id}`);
+  };
   console.log(paginationModel);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(addDays(new Date(), 15));
@@ -96,15 +114,64 @@ const ManageJob = () => {
   const jobListColumns = [
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 250,
       sortable: true,
       field: "job_title",
       headerName: "Job Title",
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
+      renderCell: ({ row }) => (
+        <Typography
+          // variant="caption"
+          sx={{ cursor: "pointer", fontSize: "0.8125rem" }}
+          onClick={() => {
+            // if (row.total_applications > 0) {
+            //   handleApplications(row);
+            // }
+            handleNavigateJobPreview(row?.id);
+          }}
+        >
+          {row.job_title}
+        </Typography>
+      ),
     },
     {
       flex: 0.1,
       minWidth: 100,
+      sortable: true,
+
+      field: "total_applications",
+      headerName: "Applicants",
+      renderCell: ({ row }) => {
+        return (
+          // <Tooltip title="Click here to view applicants list">
+          //   {" "}
+          <CustomChip
+            rounded
+            skin="light"
+            size="small"
+            title={
+              row.total_applications > 0
+                ? "Click here to view applicants list"
+                : "No Applicants"
+            }
+            onClick={() => {
+              if (row.total_applications > 0) {
+                handleApplications(row);
+              }
+            }}
+            label={row.total_applications}
+            color={row.total_applications > 0 ? "success" : "warning"}
+            sx={{
+              textTransform: "capitalize",
+              cursor: row.total_applications > 0 ? "pointer" : "not-allowed",
+            }}
+          />
+          // </Tooltip>
+        );
+      },
+    },
+    {
+      flex: 0.1,
+      minWidth: 170,
       sortable: true,
 
       field: "company_name",
@@ -124,9 +191,9 @@ const ManageJob = () => {
       minWidth: 100,
       sortable: true,
 
-      field: "location",
+      field: "city",
       headerName: "Location",
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
+      // renderCell: ({ row }) => `${row.city}`,
     },
     {
       flex: 0.1,
@@ -201,25 +268,53 @@ const ManageJob = () => {
     },
     {
       flex: 0.1,
-      minWidth: 100,
+      // minWidth: 100,
       sortable: false,
       // field: "Action",
       headerName: "Action",
       renderCell: ({ row }) => {
         return (
-          <Tooltip title="Edit job">
-            <IconButton
-              onClick={() => {
-                setId(row.id);
-                toggleAddUserDrawer();
-              }}
-              color="primary"
-              sx={{ fontSize: "18px" }}
-            >
-              {" "}
-              <Icon icon="tabler:pencil" color="primary" />
-            </IconButton>
-          </Tooltip>
+          <>
+            <Tooltip title="View job">
+              <IconButton
+                onClick={() => {
+                  handleNavigateJobPreview(row?.id);
+                }}
+                color="primary"
+                sx={{ fontSize: "18px" }}
+              >
+                {" "}
+                <Icon icon="tabler:eye" color="primary" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit job">
+              <IconButton
+                onClick={() => {
+                  setId(row.id);
+                  toggleAddUserDrawer();
+                }}
+                color="primary"
+                sx={{ fontSize: "18px" }}
+              >
+                {" "}
+                <Icon icon="tabler:pencil" color="primary" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Share job">
+              <IconButton
+                onClick={() => {
+                  setId(row.id);
+                  // toggleAddUserDrawer();
+                  toggleShareDrawer();
+                }}
+                color="primary"
+                sx={{ fontSize: "18px" }}
+              >
+                {" "}
+                <Icon icon="tabler:share-2" color="primary" />
+              </IconButton>
+            </Tooltip>
+          </>
         );
       },
     },
@@ -245,6 +340,12 @@ const ManageJob = () => {
     setStatus(e.target.value);
   }, []);
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen);
+  const toggleShareDrawer = () => {
+    if (shareOpen) {
+      setId("");
+    }
+    setShareOpen(!shareOpen);
+  };
 
   const handleOnChangeRange = (dates) => {
     const [start, end] = dates;
@@ -407,6 +508,7 @@ const ManageJob = () => {
       </Grid>
 
       <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} id={id} />
+      <SideBarShareJob open={shareOpen} toggle={toggleShareDrawer} id={id} />
     </Grid>
   );
 };
