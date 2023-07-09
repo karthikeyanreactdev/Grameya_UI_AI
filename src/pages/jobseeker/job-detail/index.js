@@ -221,6 +221,43 @@ const CandidateJobDetail = () => {
     getOS();
     // getShareUrl();
   }, []);
+
+  const formatDateTime = (dateTimeStr) => {
+    const dateTime = new Date(dateTimeStr);
+    const currentDate = new Date();
+
+    // Check if the given date is yesterday
+    const isYesterday =
+      new Date(
+        dateTime.getFullYear(),
+        dateTime.getMonth(),
+        dateTime.getDate()
+      ).getTime() ===
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - 1
+      ).getTime();
+
+    // Calculate the time difference in hours
+    const timeDifferenceInHours =
+      Math.abs(currentDate - dateTime) / (1000 * 60 * 60);
+
+    if (timeDifferenceInHours < 24) {
+      // Display only the hour if it's within the last 24 hours
+      return dateTime.toLocaleString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else if (isYesterday) {
+      // Display "yesterday" if the date is yesterday
+      return "Yesterday";
+    } else {
+      // Display the full date
+      return dateTime.toLocaleDateString();
+    }
+  };
+
   return (
     <Grid container spacing={6} className={classes.root}>
       <Grid item xs={12}>
@@ -544,7 +581,7 @@ const CandidateJobDetail = () => {
                       </ListItemAvatar>
                       <ListItemText
                         primary="Date Posted"
-                        secondary="Posted 2 hrs ago"
+                        secondary={formatDateTime(jobDetails?.updated)}
                       />
                     </ListItem>
                   </List>

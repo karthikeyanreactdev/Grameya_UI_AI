@@ -152,6 +152,7 @@ function BasicInfo({
           variant: "success",
         });
         getProfileDetail();
+        onHandleEditCloseChange();
       } catch (e) {
         sendNotification({
           message: e,
@@ -539,7 +540,18 @@ function BasicInfo({
                     .trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  onChange={(e) => formik.handleChange(e)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // Use regular expression to remove non-numeric characters
+                    const numericValue = value.replace(/[^0-9.]/g, "");
+                    // if (numericValue.length > 2) {
+                    //   return;
+                    // }
+
+                    formik.setFieldValue("current_salary", numericValue);
+                    // formik.handleChange(e)
+                  }}
                   error={
                     formik.touched.current_salary &&
                     Boolean(formik.errors.current_salary)
@@ -570,7 +582,19 @@ function BasicInfo({
                     .trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  onChange={(e) => formik.handleChange(e)}
+                  // onChange={(e) => formik.handleChange(e)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // Use regular expression to remove non-numeric characters
+                    const numericValue = value.replace(/[^0-9.]/g, "");
+                    // if (numericValue.length > 2) {
+                    //   return;
+                    // }
+
+                    formik.setFieldValue("expected_salary", numericValue);
+                    // formik.handleChange(e)
+                  }}
                   error={
                     formik.touched.expected_salary &&
                     Boolean(formik.errors.expected_salary)

@@ -143,8 +143,7 @@ const ManageAppliedJob = () => {
       field: "applied_on",
       headerName: "Applied On",
 
-      renderCell: ({ row }) =>
-        `${moment(row.applied_on).format("DD/MM/YYYY  hh:mm A")}`,
+      renderCell: ({ row }) => `${moment(row.applied_on).format("DD/MM/YYYY")}`,
     },
     {
       flex: 0.1,
