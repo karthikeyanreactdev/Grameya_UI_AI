@@ -17,6 +17,13 @@ import axios from "axios";
 import Icon from "src/@core/components/icon";
 import { updateResume } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
+import { useRouter } from "next/router";
+import { LoadingButton } from "@mui/lab";
+import Swal from "sweetalert2";
+import {
+  addShortList,
+  deleteShortListedCandidate,
+} from "src/api-services/recruiter/candidate";
 
 const ProfilePicture = styled("img")(({ theme }) => ({
   width: 108,
@@ -41,6 +48,9 @@ const UserProfileHeader = ({
 }) => {
   const [sendNotification] = useNotification();
   // ** State
+  const router = useRouter();
+  const [isShortListLoading, setIsShortListLoading] = useState(false);
+  const [isShortListLoadingId, setIsShortListLoadingId] = useState("");
   const [data, setData] = useState({
     location: "Chennai",
     joiningDate: "May 2023",
@@ -59,7 +69,80 @@ const UserProfileHeader = ({
   const handleChangeDrawer = (value) => {
     onHandleDrawerStateChangeOpen(value);
   };
+  const handleAddShortList = async (id) => {
+    console.log(id);
+    Swal.fire({
+      title: "Do you want to save?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const params = {
+            seeker_ids: [id],
+          };
+          setIsShortListLoading(true);
+          setIsShortListLoadingId(id);
 
+          const response = await addShortList(params);
+          sendNotification({
+            message: response?.data?.message,
+            variant: "success",
+          });
+        } catch (e) {
+          sendNotification({
+            message: e,
+            variant: "error",
+          });
+        } finally {
+          getProfileDetail();
+          setIsShortListLoading(false);
+        }
+      }
+    });
+  };
+
+  const removeShortList = async (id) => {
+    console.log(id);
+    Swal.fire({
+      title: "Do you want to remove?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // const params = {
+          //   seeker_ids: id,
+          // };
+          setIsShortListLoading(true);
+          setIsShortListLoadingId(id);
+
+          let params = {
+            seeker_ids: [id],
+          };
+          // console.log("re", params);
+          const response = await deleteShortListedCandidate(params);
+          sendNotification({
+            message: response?.data?.message,
+            variant: "success",
+          });
+        } catch (e) {
+          sendNotification({
+            message: e,
+            variant: "error",
+          });
+        } finally {
+          getProfileDetail();
+
+          setIsShortListLoading(false);
+        }
+      }
+    });
+  };
   return data !== null ? (
     <Card>
       <CardMedia
@@ -162,18 +245,46 @@ const UserProfileHeader = ({
             </Box>
           </Box>
           <Box>
-            {/* <Button
-              variant={isEditMode ? "contained" : "outlined"}
-              color={isEditMode ? "primary" : "error"}
-              sx={{ "& svg": { mr: 2 }, mr: 2 }}
-              onClick={onHandleEdit}
+            <LoadingButton
+              loading={isShortListLoading}
+              sx={{ mr: 2 }}
+              color={
+                userDetail?.is_shortlisted_candidate ? "success" : "primary"
+              }
+              title={
+                userDetail?.is_shortlisted_candidate
+                  ? "Remove Candidate"
+                  : "Save Candidate"
+              }
+              onClick={() =>
+                userDetail?.is_shortlisted_candidate
+                  ? removeShortList(userDetail?.applicant_id)
+                  : handleAddShortList(userDetail?.applicant_id)
+              }
             >
-              <Icon
-                icon={isEditMode ? "tabler:pencil" : "material-symbols:close"}
+              {userDetail?.is_shortlisted_candidate ? (
+                <Icon fontSize="1.5rem" icon="tabler:user-check" />
+              ) : (
+                <Icon
+                  fontSize="1.5rem"
+                  icon="tabler:user-plus"
+                  sx={{ bacground: "red" }}
+                  // color="error"
+                />
+              )}
+            </LoadingButton>
+            <Button
+              variant={"outlined"}
+              color={"primary"}
+              sx={{ "& svg": { mr: 2 }, mr: 2 }}
+              onClick={() => router.back()}
+            >
+              {/* <Icon
+                // icon={isEditMode ? "tabler:pencil" : "material-symbols:close"}
                 fontSize="1.125rem"
-              />
-              {isEditMode ? "Edit" : "Cancel"}
-            </Button> */}
+              /> */}
+              {"Back"}
+            </Button>
             {/* {renderRightSectionBtn()} */}
           </Box>
         </Box>

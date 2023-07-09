@@ -61,6 +61,7 @@ const UserDropdown = (props) => {
     setAnchorEl(null);
   };
   const { userData } = useSelector((state) => state.auth);
+  console.log("nav", userData);
   const styles = {
     px: 4,
     py: 1.75,
@@ -112,7 +113,7 @@ const UserDropdown = (props) => {
       >
         <Avatar
           alt={userData?.full_name}
-          // src="/images/avatars/1.png"
+          src={userData?.profile_image_url}
           sx={{
             width: "2.5rem",
             height: "2.5rem",

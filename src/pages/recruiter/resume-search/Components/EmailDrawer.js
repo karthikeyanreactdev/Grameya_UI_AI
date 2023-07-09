@@ -154,6 +154,7 @@ const SideBarEmail = (props) => {
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
+  const [subject, setSubject] = useState("");
 
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
@@ -194,6 +195,7 @@ const SideBarEmail = (props) => {
         setIsLoading(true);
         const params = {
           seeker_ids: selectedId,
+          subject: subject,
           content: `${draftToHtml(
             convertToRaw(jd.getCurrentContent())
           )}`.replace(/\"/g, '"'),
@@ -280,8 +282,30 @@ const SideBarEmail = (props) => {
       </Header>
       <Box sx={{ p: (theme) => theme.spacing(0, 6, 6) }}>
         <Grid container spacing={2}>
-          {/* <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ my: 2 }}>
-            {/* <FormControl size="small" fullWidth sx={{ my: 2 }}> *
+          <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ my: 2 }}>
+            <TextField
+              sx={{ my: 2 }}
+              label={"Subject"}
+              multiline
+              minRows={2}
+              maxRows={2}
+              // required
+              fullWidth
+              name="subject"
+              // error={formik.touched.subject && Boolean(formik.errors.subject)}
+              value={subject
+                .trimStart()
+                .replace(/\s\s+/g, "")
+                .replace(/\p{Emoji_Presentation}/gu, "")}
+              onChange={(e) => setSubject(e.target.value)}
+              // helperText={
+              //   formik.touched.subject &&
+              //   formik.errors.subject &&
+              //   formik.errors.subject
+              // }
+            />
+          </Grid>
+          {/* <FormControl size="small" fullWidth sx={{ my: 2 }}> *
             <InputLabel
               sx={{
                 fontSize: "0.8125rem",

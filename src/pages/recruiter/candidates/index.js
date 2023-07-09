@@ -143,14 +143,7 @@ const Candidates = () => {
         );
       },
     },
-    {
-      flex: 0.1,
-      minWidth: 140,
-      sortable: true,
-      field: "notice_period",
-      headerName: "Notice Period",
-      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
-    },
+
     {
       flex: 0.1,
       minWidth: 200,
@@ -210,7 +203,7 @@ const Candidates = () => {
       sortable: true,
 
       field: "preferred_job_location",
-      headerName: "Prefered Location",
+      headerName: "Pref Location",
       renderCell: ({ row }) => `${row.preferred_job_location}`,
 
       // renderCell: ({ row }) =>
@@ -232,7 +225,25 @@ const Candidates = () => {
     },
     {
       flex: 0.1,
-      minWidth: 150,
+      minWidth: 140,
+      sortable: true,
+      field: "expected_salary",
+      headerName: "Salary",
+      renderCell: ({ row }) =>
+        `${row.current_salary} CTC - ${row.expected_salary} ECTC `,
+    },
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "notice_period",
+      headerName: "Notice Period",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 800,
+      // maxWidth: 1500,
       sortable: true,
       field: "skills",
       headerName: "Skills",
@@ -245,79 +256,105 @@ const Candidates = () => {
             whiteSpace: "normal",
           }}
         >
-          <Tooltip title={row.skills.join(",")}>
-            <Chip
-              size="small"
-              label={row?.skills[0] || "N/A"}
-              color={"primary"}
-              variant="outlined"
-              sx={{
-                mr: 2,
-                height: 24,
-                minWidth: 24,
-                wordWrap: "break-word",
-                "& .MuiChip-label": {
-                  px: 1.5,
-                  textTransform: "capitalize",
-                },
-              }}
-            />
-          </Tooltip>
+          {row?.skills?.map((e) => {
+            return (
+              <Chip
+                size="small"
+                label={e}
+                color={"primary"}
+                variant="outlined"
+                sx={{
+                  mr: 2,
+                  height: 24,
+                  minWidth: 24,
+                  wordWrap: "break-word",
+                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+                }}
+              />
+            );
+          })}
         </Box>
+        // <Box
+        //   sx={{
+        //     display: "flex",
+        //     alignItems: "center",
+        //     wordWrap: "break-word",
+        //     whiteSpace: "normal",
+        //   }}
+        // >
+        //   <Tooltip title={row.skills.join(",")}>
+        //     <Chip
+        //       size="small"
+        //       label={row?.skills[0] || "N/A"}
+        //       color={"primary"}
+        //       variant="outlined"
+        //       sx={{
+        //         mr: 2,
+        //         height: 24,
+        //         minWidth: 24,
+        //         wordWrap: "break-word",
+        //         "& .MuiChip-label": {
+        //           px: 1.5,
+        //           textTransform: "capitalize",
+        //         },
+        //       }}
+        //     />
+        //   </Tooltip>
+        // </Box>
       ),
     },
 
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: false,
-      // field: "Action",
-      headerName: "Action",
-      renderCell: ({ row }) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Tooltip title="View Candidate">
-              <LoadingButton
-                // isLoading={isShortListLoading}
-                onClick={() => {
-                  handleViewCandidate(row);
-                }}
-                sx={{ fontSize: "18px" }}
-              >
-                {" "}
-                <Icon icon="tabler:eye" color="primary" />
-              </LoadingButton>
-            </Tooltip>
-            {/* <Tooltip title="Manage Candidate">
-              <OptionsMenu
-                iconButtonProps={{ size: "small" }}
-                menuProps={{ sx: { "& .MuiMenuItem-root svg": { mr: 2 } } }}
-                options={[
-                  {
-                    text: "Download",
-                    icon: <Icon icon="tabler:download" fontSize="1.25rem" />,
-                  },
-                  {
-                    text: "Edit",
-                    href: `/apps/invoice/edit/${row.id}`,
-                    icon: <Icon icon="tabler:pencil" fontSize="1.25rem" />,
-                  },
-                  {
-                    text: "Duplicate",
-                    icon: <Icon icon="tabler:copy" fontSize="1.25rem" />,
-                  },
-                ]}
-              />
-            </Tooltip> */}
-          </Box>
-        );
-      },
-    },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 100,
+    //   sortable: false,
+    //   // field: "Action",
+    //   headerName: "Action",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           flexDirection: "row",
+    //         }}
+    //       >
+    //         <Tooltip title="View Candidate">
+    //           <LoadingButton
+    //             // isLoading={isShortListLoading}
+    //             onClick={() => {
+    //               handleViewCandidate(row);
+    //             }}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:eye" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //         {/* <Tooltip title="Manage Candidate">
+    //           <OptionsMenu
+    //             iconButtonProps={{ size: "small" }}
+    //             menuProps={{ sx: { "& .MuiMenuItem-root svg": { mr: 2 } } }}
+    //             options={[
+    //               {
+    //                 text: "Download",
+    //                 icon: <Icon icon="tabler:download" fontSize="1.25rem" />,
+    //               },
+    //               {
+    //                 text: "Edit",
+    //                 href: `/apps/invoice/edit/${row.id}`,
+    //                 icon: <Icon icon="tabler:pencil" fontSize="1.25rem" />,
+    //               },
+    //               {
+    //                 text: "Duplicate",
+    //                 icon: <Icon icon="tabler:copy" fontSize="1.25rem" />,
+    //               },
+    //             ]}
+    //           />
+    //         </Tooltip> */}
+    //       </Box>
+    //     );
+    //   },
+    // },
   ];
   const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
   const getCandidates = () => {

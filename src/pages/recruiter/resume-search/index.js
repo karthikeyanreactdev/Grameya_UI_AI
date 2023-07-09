@@ -75,9 +75,25 @@ import Swal from "sweetalert2";
 import SideBarEmail from "./Components/EmailDrawer";
 
 const userStatusObj = {
-  active: "success",
-  pending: "warning",
-  inactive: "secondary",
+  interview_schedulded: "success",
+  shortlisted: "success",
+  false: "success",
+  true: "warning",
+  // hired: "info",
+  inactive_seeker: "warning",
+  call_resheduled: "warning",
+  call_not_picked: "warning",
+  interview_canceled: "error",
+};
+
+const statusObj = {
+  shortlisted: "Shortlisted",
+  call_resheduled: "Call Resheduled",
+  call_not_picked: "Call not picked",
+  inactive_seeker: "Inactive/Not Intrested",
+  interview_schedulded: "Interview Scheduled",
+  interview_canceled: "Interview Canceled",
+  remove: "Remove",
 };
 const ExcelDownload = ({ excelData, fileName }) => {
   const fileType =
@@ -249,8 +265,9 @@ const Dashboard = () => {
   }, [pageCount?.total, setRowCountState]);
 
   const handleAddShortList = async (id) => {
+    console.log(id);
     Swal.fire({
-      title: "Do you want to shortlist this candidate?",
+      title: "Do you want to save?",
       // showDenyButton: true,
       showCancelButton: true,
       confirmButtonText: "Yes",
@@ -259,7 +276,7 @@ const Dashboard = () => {
       if (result.isConfirmed) {
         try {
           const params = {
-            seeker_ids: [id],
+            seeker_ids: id,
           };
           setIsShortListLoading(true);
           setIsShortListLoadingId(id);
@@ -280,7 +297,7 @@ const Dashboard = () => {
       }
     });
   };
-  const searchListColumns = [
+  const searchListColumns2 = [
     {
       flex: 0.1,
       minWidth: 300,
@@ -411,47 +428,300 @@ const Dashboard = () => {
         </Box>
       ),
     },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 100,
+    //   sortable: false,
+    //   // field: "Action",
+    //   headerName: "Action",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           flexDirection: "row",
+    //         }}
+    //       >
+    //         {/* <Button onClick={() => {}}>View</Button> */}
+    //         <Tooltip title="View Candidate">
+    //           <LoadingButton
+    //             // isLoading={isViewLoading}
+    //             onClick={() => {
+    //               handleViewCandidate(row);
+    //             }}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:eye" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //         <Tooltip title="Shortlist Candidate">
+    //           <LoadingButton
+    //             // loading={isShortListLoading && isShortListLoadingId}
+    //             onClick={() => handleAddShortList(row.id)}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:user-check" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //       </Box>
+    //     );
+    //   },
+    // },
+  ];
+
+  const searchListColumns = [
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 300,
+      // sortable: true,
+      field: "full_name",
+      headerName: "Candidate Name",
+      renderCell: ({ row }) => {
+        const { full_name, designation } = row;
+
+        return (
+          <Box
+            sx={{ display: "flex", alignItems: "center", width: "200px" }}
+            onClick={() => {
+              handleViewCandidate(row);
+            }}
+          >
+            {renderClient(row)}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                flexDirection: "column",
+              }}
+            >
+              <Typography
+                noWrap
+                // component={Link}
+                // href="/apps/user/view/account"
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  color: "text.secondary",
+                  "&:hover": { color: "primary.main" },
+                }}
+              >
+                {full_name}
+              </Typography>
+              <Typography
+                noWrap
+                variant="body2"
+                sx={{ color: "text.disabled" }}
+              >
+                {designation}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+
+    {
+      flex: 0.1,
+      minWidth: 200,
       sortable: false,
       // field: "Action",
-      headerName: "Action",
+      field: "status",
+      headerName: "Status",
       renderCell: ({ row }) => {
         return (
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
+              width: 1,
             }}
           >
-            {/* <Button onClick={() => {}}>View</Button> */}
-            <Tooltip title="View Candidate">
-              <LoadingButton
-                // isLoading={isViewLoading}
-                onClick={() => {
-                  handleViewCandidate(row);
-                }}
-                sx={{ fontSize: "18px" }}
-              >
-                {" "}
-                <Icon icon="tabler:eye" color="primary" />
-              </LoadingButton>
-            </Tooltip>
-            <Tooltip title="Shortlist Candidate">
-              <LoadingButton
-                // loading={isShortListLoading && isShortListLoadingId}
-                onClick={() => handleAddShortList(row.id)}
-                sx={{ fontSize: "18px" }}
-              >
-                {" "}
-                <Icon icon="tabler:user-check" color="primary" />
-              </LoadingButton>
-            </Tooltip>
+            <Chip
+              size="small"
+              label={row?.is_shortlisted_candidate ? "Shortlisted" : "New"}
+              color={userStatusObj[row.is_shortlisted_candidate]}
+              onClick={async () => {
+                // setId(row.id);
+                // setRowData(row);
+                // setAddUserOpen(true);
+              }}
+              sx={{
+                // mr: 2,
+                height: 24,
+                minWidth: 24,
+                wordWrap: "break-word",
+                // "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+              }}
+            />
           </Box>
         );
       },
     },
+    {
+      flex: 0.1,
+      minWidth: 150,
+      sortable: true,
+      field: "total_years_of_experience",
+      headerName: "Experience",
+      renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
+      field: "current_location",
+      headerName: "Location",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 150,
+      sortable: true,
+
+      field: "preferred_job_location",
+      headerName: "Pref Location",
+      renderCell: ({ row }) => `${row.preferred_job_location}`,
+
+      // renderCell: ({ row }) =>
+      //   row?.preferred_job_location?.map((e) => {
+      //     return (
+      //       <Chip
+      //         size="small"
+      //         label={e}
+      //         color={"info"}
+      //         sx={{
+      //           mr: 2,
+      //           height: 24,
+      //           minWidth: 24,
+      //           "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+      //         }}
+      //       />
+      //     );
+      //   }),
+    },
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "expected_salary",
+      headerName: "Salary",
+      renderCell: ({ row }) =>
+        `${row.current_salary} CTC - ${row.expected_salary} ECTC `,
+    },
+    {
+      flex: 0.1,
+      minWidth: 140,
+      sortable: true,
+      field: "notice_period",
+      headerName: "Notice Period",
+      // renderCell: ({ row }) => `${row.total_years_of_experience} years`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 800,
+      // maxWidth: 1500,
+      sortable: true,
+      field: "skills",
+      headerName: "Skills",
+      renderCell: ({ row }) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            wordWrap: "break-word",
+            whiteSpace: "normal",
+          }}
+        >
+          {row?.skills?.map((e) => {
+            return (
+              <Chip
+                size="small"
+                label={e}
+                color={"primary"}
+                variant="outlined"
+                sx={{
+                  mr: 2,
+                  height: 24,
+                  minWidth: 24,
+                  wordWrap: "break-word",
+                  "& .MuiChip-label": { px: 1.5, textTransform: "capitalize" },
+                }}
+              />
+            );
+          })}
+        </Box>
+        // <Box
+        //   sx={{
+        //     display: "flex",
+        //     alignItems: "center",
+        //     wordWrap: "break-word",
+        //     whiteSpace: "normal",
+        //   }}
+        // >
+        //   <Tooltip title={row.skills.join(",")}>
+        //     <Chip
+        //       size="small"
+        //       label={row?.skills[0] || "N/A"}
+        //       color={"primary"}
+        //       variant="outlined"
+        //       sx={{
+        //         mr: 2,
+        //         height: 24,
+        //         minWidth: 24,
+        //         wordWrap: "break-word",
+        //         "& .MuiChip-label": {
+        //           px: 1.5,
+        //           textTransform: "capitalize",
+        //         },
+        //       }}
+        //     />
+        //   </Tooltip>
+        // </Box>
+      ),
+    },
+    // {
+    //   flex: 0.1,
+    //   minWidth: 150,
+    //   sortable: false,
+    //   // field: "Action",
+    //   headerName: "Action",
+    //   renderCell: ({ row }) => {
+    //     return (
+    //       <Box
+    //         sx={{
+    //           display: "flex",
+    //           flexDirection: "row",
+    //         }}
+    //       >
+    //         {/* <Button onClick={() => {}}>View</Button> */}
+    //         <Tooltip title="View Candidate">
+    //           <LoadingButton
+    //             // isLoading={isViewLoading}
+    //             onClick={() => {
+    //               handleViewCandidate(row);
+    //             }}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:eye" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //         <Tooltip title="Shortlist Candidate">
+    //           <LoadingButton
+    //             // loading={isShortListLoading && isShortListLoadingId}
+    //             onClick={() => handleAddShortList(row.id)}
+    //             sx={{ fontSize: "18px" }}
+    //           >
+    //             {" "}
+    //             <Icon icon="tabler:user-check" color="primary" />
+    //           </LoadingButton>
+    //         </Tooltip>
+    //       </Box>
+    //     );
+    //   },
+    // },
   ];
   const router = useRouter();
 
@@ -482,6 +752,16 @@ const Dashboard = () => {
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
                   onChange={(e) => setKeyword(e.target.value || "")}
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                 />
               </Grid>
               <Grid item sm={3} xs={12} lg={4} mt={0}>
@@ -497,6 +777,16 @@ const Dashboard = () => {
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
                   onChange={(e) => setLocation(e.target.value || "")}
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter" && keyword !== "") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
@@ -516,6 +806,16 @@ const Dashboard = () => {
                         .replace(/\s\s+/g, "")
                         .replace(/\p{Emoji_Presentation}/gu, "")}
                       onChange={(e) => setSalaryFrom(e.target.value)}
+                      onKeyDown={(ev) => {
+                        console.log(`Pressed keyCode ${ev.key}`);
+                        if (ev.key === "Enter" && keyword !== "") {
+                          // Do code here
+                          ev.preventDefault();
+                          // if (searchKeyword.length >= 3) {
+                          handleSearch();
+                          // }
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item sm={6} xs={12} lg={6}>
@@ -531,6 +831,16 @@ const Dashboard = () => {
                         .replace(/\s\s+/g, "")
                         .replace(/\p{Emoji_Presentation}/gu, "")}
                       onChange={(e) => setSalaryTo(e.target.value)}
+                      onKeyDown={(ev) => {
+                        console.log(`Pressed keyCode ${ev.key}`);
+                        if (ev.key === "Enter" && keyword !== "") {
+                          // Do code here
+                          ev.preventDefault();
+                          // if (searchKeyword.length >= 3) {
+                          handleSearch();
+                          // }
+                        }
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -549,6 +859,16 @@ const Dashboard = () => {
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
                   onChange={(e) => setExperiance(e.target.value || "")}
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter" && keyword !== "") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
                 />
               </Grid>
               <Grid item sm={4} xs={12} lg={3}>
@@ -687,7 +1007,7 @@ const Dashboard = () => {
             <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }}>
               <ExcelDownload
                 excelData={resumeSearchList}
-                fileName={"Resume_Data_" + Date.now().toString()}
+                fileName={"Grameya_Resume_Data_" + Date.now().toString()}
               />
 
               {selectedIds.length > 0 && (
@@ -701,6 +1021,19 @@ const Dashboard = () => {
                   <Icon icon="fxemoji:email" fontSize="1.125rem" />
                   {"Send Email"}
                 </Button>
+              )}
+              {selectedIds.length > 0 && (
+                <LoadingButton
+                  loading={isShortListLoading}
+                  variant={"outlined"}
+                  color={"primary"}
+                  size="small"
+                  sx={{ "& svg": { mr: 2 }, ml: 2 }}
+                  onClick={() => handleAddShortList(selectedIds)}
+                >
+                  <Icon icon="mdi:user-check-outline" fontSize="1.125rem" />
+                  {"Shortlist"}
+                </LoadingButton>
               )}
             </Box>
           )}

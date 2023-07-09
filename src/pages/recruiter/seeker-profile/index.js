@@ -249,6 +249,7 @@ const ACLPage = () => {
       }
     }
   }, [router.isReady]);
+
   return (
     <>
       {/* <CommonLoader isLoading={isLoading} /> */}

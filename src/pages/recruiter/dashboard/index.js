@@ -77,9 +77,10 @@ const Applications = () => {
       flex: 0.1,
       minWidth: 100,
       sortable: true,
-      field: "location",
+
+      field: "city",
       headerName: "Location",
-      renderCell: ({ row }) => `${row.city}, ${row.state}`,
+      // renderCell: ({ row }) => `${row.city}`,
     },
     {
       flex: 0.1,
