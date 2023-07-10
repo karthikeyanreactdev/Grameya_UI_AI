@@ -60,12 +60,14 @@ import _ from "lodash";
 import {
   Button,
   CardActions,
+  Chip,
   CircularProgress,
   FormControl,
   InputLabel,
   Select,
   TablePagination,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import {
   handleMachedJobList,
@@ -75,6 +77,7 @@ import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import { addSaveJob, saveJobList } from "src/api-services/seeker/jobsdetails";
 import useNotification from "src/hooks/useNotification";
+import moment from "moment";
 
 const userStatusObj = {
   active: "success",
@@ -217,6 +220,8 @@ const CandidateSavedJob = () => {
   const viewJob = async () => {
     // setJobList([]);
     // setPageCount([]);
+    setSavedId("");
+
     try {
       setIsLoading(true);
       const params = {
@@ -263,9 +268,9 @@ const CandidateSavedJob = () => {
     // const newdata = jobList.splice(index, 1);
 
     // return;
+    setSavedId(id);
     try {
-      setSavedId(id);
-      setIsLoading(true);
+      setIsBookmarkLoading(true);
       const param = {
         job_id: id,
       };
@@ -304,8 +309,7 @@ const CandidateSavedJob = () => {
         variant: "error",
       });
     } finally {
-      setIsLoading(false);
-      setSavedId("");
+      setIsBookmarkLoading(false);
     }
   };
   return (
@@ -315,7 +319,7 @@ const CandidateSavedJob = () => {
           <CardHeader title="Saved Job" />
           <Divider sx={{ m: "0 !important" }} />
 
-          {isLoading && (
+          {isLoading && savedId !== "" && (
             <Box
               sx={{
                 display: "flex",
@@ -333,13 +337,12 @@ const CandidateSavedJob = () => {
               <Grid container spacing={2}>
                 {jobList?.map((row) => {
                   return (
-                    <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                       <Card
                         raised={false}
                         sx={{
                           mb: 2,
                           border: "1px solid rgba(0, 0, 0, 0.5)",
-                          height: "100%",
                           // boxShadow: "0 0 2px 2px #187de4",
                           "&:hover": {
                             // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
@@ -350,7 +353,10 @@ const CandidateSavedJob = () => {
                           },
                         }}
                       >
-                        <CardContent sx={{ pb: 0 }}>
+                        <CardContent
+                          sx={{ pb: 0, pt: 0 }}
+                          //onClick={() => handleNavigateJobDetail(row?.id)}
+                        >
                           <Grid
                             container
                             spacing={2}
@@ -362,35 +368,46 @@ const CandidateSavedJob = () => {
                           >
                             <Grid item xs={11} sm={11} md={11} lg={11}>
                               <Typography
-                                sx={{ mb: 4 }}
+                                sx={{ mb: 1 }}
                                 color="text.primary"
-                                variant="h5"
+                                variant="h6"
                                 gutterBottom
                               >
                                 {row.job_title?.substring(0, 75)}
                               </Typography>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1}>
-                              <LoadingButton
-                                loading={isBookmarkLoading && row.id == savedId}
-                                color={row?.is_saved ? "success" : "primary"}
-                                title="Save Job"
-                                onClick={() => handleAddSavedJob(row?.job_id)}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  my: 3,
+                                  mr: 2,
+                                }}
                               >
-                                {row?.is_saved ? (
-                                  <Icon
-                                    fontSize="1.5rem"
-                                    icon="mdi:favorite-check"
-                                  />
-                                ) : (
-                                  <Icon
-                                    fontSize="1.5rem"
-                                    icon="mdi:favorite-add-outline"
-                                    sx={{ bacground: "red" }}
-                                    // color="error"
-                                  />
-                                )}
-                              </LoadingButton>
+                                <LoadingButton
+                                  loading={
+                                    isBookmarkLoading && row.job_id === savedId
+                                  }
+                                  color={row?.is_saved ? "success" : "primary"}
+                                  title="Save Job"
+                                  onClick={() => handleAddSavedJob(row?.job_id)}
+                                >
+                                  {row?.is_saved ? (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-check"
+                                    />
+                                  ) : (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-add-outline"
+                                      sx={{ bacground: "red" }}
+                                      // color="error"
+                                    />
+                                  )}
+                                </LoadingButton>
+                              </Box>
                             </Grid>
                           </Grid>
                           <Grid
@@ -398,7 +415,7 @@ const CandidateSavedJob = () => {
                             spacing={2}
                             sx={{ display: "flex", alignItems: "center" }}
                           >
-                            <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
                               <Box
                                 sx={{
                                   display: "flex",
@@ -408,7 +425,7 @@ const CandidateSavedJob = () => {
                               >
                                 <Box sx={{ display: "flex", mr: 2 }}>
                                   <Icon
-                                    fontSize="1.25rem"
+                                    fontSize="1rem"
                                     icon="tabler:building"
                                     color="brown"
                                   />
@@ -422,11 +439,18 @@ const CandidateSavedJob = () => {
                                     alignItems: "center",
                                   }}
                                 >
-                                  <Typography sx={{ color: "text.primary" }}>
+                                  <Typography
+                                    sx={{
+                                      color: "text.primary",
+                                      fontSize: "0.775rem",
+                                    }}
+                                  >
                                     {row.company_name?.substring(0, 30)}
                                   </Typography>
                                 </Box>
                               </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
                               <Box
                                 sx={{
                                   display: "flex",
@@ -436,7 +460,7 @@ const CandidateSavedJob = () => {
                               >
                                 <Box sx={{ display: "flex", mr: 2 }}>
                                   <Icon
-                                    fontSize="1.25rem"
+                                    fontSize="1rem"
                                     icon="tabler:map-pin"
                                     color="red"
                                   />
@@ -450,95 +474,199 @@ const CandidateSavedJob = () => {
                                     alignItems: "center",
                                   }}
                                 >
-                                  <Typography sx={{ color: "text.primary" }}>
-                                    {row.city}, {row.state}
+                                  <Typography
+                                    sx={{
+                                      color: "text.primary",
+
+                                      fontSize: "0.775rem",
+                                    }}
+                                  >
+                                    {row.city}
                                   </Typography>
                                 </Box>
                               </Box>
                             </Grid>
-                            <Grid item xs={12} sm={4} md={3} lg={3}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  "&:not(:last-of-type)": { mb: 3 },
-                                  "& svg": { color: "text.primary" },
-                                }}
-                              >
-                                <Box sx={{ display: "flex", mr: 2 }}>
-                                  <Icon
-                                    fontSize="1.25rem"
-                                    icon="tabler:brand-google-analytics"
-                                    color="darkgreen"
-                                  />
-                                </Box>
-
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              {row?.skills?.slice(0, 2).map((option, index) => (
+                                <Chip
+                                  variant="outlined"
+                                  color="primary"
+                                  size="small"
+                                  // color="black"
+                                  sx={{
+                                    mx: 1,
+                                    fontSize: "0.675rem",
+                                  }}
+                                  // sx={{ color: "#" }}
+                                  label={
+                                    option?.name === null ||
+                                    option?.name === undefined
+                                      ? option.length > 15
+                                        ? option?.substring(0, 15) + "..."
+                                        : option
+                                      : option?.name
+                                  }
+                                />
+                              ))}
+                              <Tooltip title={row?.skills?.join(",")}>
+                                <Chip
+                                  variant="outlined"
+                                  color="primary"
+                                  // color="black"
+                                  size="small"
+                                  sx={{
+                                    mx: 1,
+                                    // my: 1,
+                                    fontSize: "0.675rem",
+                                  }}
+                                  // sx={{ color: "#" }}
+                                  label={"more.."}
+                                />
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
+                              <Tooltip title="Experiance">
                                 <Box
                                   sx={{
-                                    columnGap: 2,
                                     display: "flex",
-                                    flexWrap: "wrap",
-                                    alignItems: "center",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
                                   }}
                                 >
-                                  <Typography sx={{ color: "text.primary" }}>
-                                    {row.experience_from +
-                                      "-" +
-                                      row.experience_to}{" "}
-                                    Years
-                                  </Typography>
+                                  <Box sx={{ display: "flex", mr: 2 }}>
+                                    <Icon
+                                      fontSize="1rem"
+                                      icon="tabler:brand-google-analytics"
+                                      color="darkgreen"
+                                    />
+                                  </Box>
+
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {row.experience_from +
+                                        "-" +
+                                        row.experience_to}{" "}
+                                      Years
+                                    </Typography>
+                                  </Box>
                                 </Box>
-                              </Box>
+                              </Tooltip>
                             </Grid>
-                            <Grid item xs={12} sm={4} md={3} lg={3}>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
                               {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
                         {`₹${row.salary_from + "-" + row.salary_to} LPA`}
                       </Typography> */}
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  "&:not(:last-of-type)": { mb: 3 },
-                                  "& svg": { color: "text.primary" },
-                                }}
-                              >
+                              <Tooltip title={"Salary"}>
                                 <Box
+                                  sx={{
+                                    display: "flex",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
+                                  }}
+                                >
+                                  {/* <Box
                                   sx={{
                                     display: "flex",
                                     mr: 2,
                                     color: "warning",
                                   }}
                                 >
-                                  ₹
-                                </Box>
+                                  
+                                </Box> */}
 
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {`₹${
+                                        row.salary_from + "-" + row.salary_to
+                                      } LPA`}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
+                              <Tooltip title={"Notice Period"}>
                                 <Box
                                   sx={{
-                                    columnGap: 2,
                                     display: "flex",
-                                    flexWrap: "wrap",
-                                    alignItems: "center",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
                                   }}
                                 >
-                                  <Typography sx={{ color: "text.primary" }}>
-                                    {`${
-                                      row.salary_from + "-" + row.salary_to
-                                    } LPA`}
-                                  </Typography>
+                                  <Box sx={{ display: "flex", mr: 2 }}>
+                                    <Icon
+                                      fontSize="1rem"
+                                      icon="medical-icon:i-waiting-area"
+                                      color="palered"
+                                    />
+                                  </Box>
+
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {row?.notice_period}
+                                    </Typography>
+                                  </Box>
                                 </Box>
-                              </Box>
+                              </Tooltip>
                             </Grid>
-                            <Grid item xs={12} sm={4} md={3} lg={3}>
-                              <CustomChip
-                                rounded
-                                skin="light"
-                                size="small"
-                                label={row.job_type}
-                                color={userStatusObj[row.status]}
-                                sx={{ textTransform: "capitalize" }}
-                              />
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              <Typography
+                                sx={{
+                                  color: "text.primary",
+
+                                  fontSize: "0.675rem",
+                                }}
+                              >
+                                {"Posted : "}
+                                {moment
+                                  .utc(row?.created)
+                                  .local()
+                                  .startOf("seconds")
+                                  .fromNow()}
+                              </Typography>
                             </Grid>
                           </Grid>
                         </CardContent>
-                        <CardActions sx={{ pb: 3, pl: 0 }}>
+                        <CardActions sx={{ pb: 3, pl: 0, mt: 1 }}>
                           <Grid container spacing={2}>
                             <Grid item xs={12} lg={6}>
                               <Typography
@@ -564,7 +692,7 @@ const CandidateSavedJob = () => {
                                   handleNavigateJobDetail(row?.job_id)
                                 }
                               >
-                                View Job
+                                {row?.is_applied ? "Applied" : "View & Apply"}
                               </Button>
                             </Grid>
                           </Grid>
@@ -572,6 +700,246 @@ const CandidateSavedJob = () => {
                       </Card>
                     </Grid>
                   );
+                  // return (
+                  //   <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                  //     <Card
+                  //       raised={false}
+                  //       sx={{
+                  //         mb: 2,
+                  //         border: "1px solid rgba(0, 0, 0, 0.5)",
+                  //         height: "100%",
+                  //         // boxShadow: "0 0 2px 2px #187de4",
+                  //         "&:hover": {
+                  //           // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                  //           cursor: "pointer",
+
+                  //           boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                  //           transform: "translateY(-5px)",
+                  //         },
+                  //       }}
+                  //     >
+                  //       <CardContent sx={{ pb: 0 }}>
+                  //         <Grid
+                  //           container
+                  //           spacing={2}
+                  //           sx={{
+                  //             display: "flex",
+                  //             alignItems: "center",
+                  //             justifyContent: "space-between",
+                  //           }}
+                  //         >
+                  //           <Grid item xs={11} sm={11} md={11} lg={11}>
+                  //             <Typography
+                  //               sx={{ mb: 4 }}
+                  //               color="text.primary"
+                  //               variant="h5"
+                  //               gutterBottom
+                  //             >
+                  //               {row.job_title?.substring(0, 75)}
+                  //             </Typography>
+                  //           </Grid>
+                  //           <Grid item xs={1} sm={1} md={1} lg={1}>
+                  //             <LoadingButton
+                  //               loading={isBookmarkLoading && row.id == savedId}
+                  //               color={row?.is_saved ? "success" : "primary"}
+                  //               title="Save Job"
+                  //               onClick={() => handleAddSavedJob(row?.job_id)}
+                  //             >
+                  //               {row?.is_saved ? (
+                  //                 <Icon
+                  //                   fontSize="1.5rem"
+                  //                   icon="mdi:favorite-check"
+                  //                 />
+                  //               ) : (
+                  //                 <Icon
+                  //                   fontSize="1.5rem"
+                  //                   icon="mdi:favorite-add-outline"
+                  //                   sx={{ bacground: "red" }}
+                  //                   // color="error"
+                  //                 />
+                  //               )}
+                  //             </LoadingButton>
+                  //           </Grid>
+                  //         </Grid>
+                  //         <Grid
+                  //           container
+                  //           spacing={2}
+                  //           sx={{ display: "flex", alignItems: "center" }}
+                  //         >
+                  //           <Grid item xs={12} sm={12} md={6} lg={6}>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.secondary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:building"
+                  //                   color="brown"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.company_name?.substring(0, 30)}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.secondary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:map-pin"
+                  //                   color="red"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.city}, {row.state}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.primary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:brand-google-analytics"
+                  //                   color="darkgreen"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.experience_from +
+                  //                     "-" +
+                  //                     row.experience_to}{" "}
+                  //                   Years
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  //       {`₹${row.salary_from + "-" + row.salary_to} LPA`}
+                  //     </Typography> */}
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.primary" },
+                  //               }}
+                  //             >
+                  //               <Box
+                  //                 sx={{
+                  //                   display: "flex",
+                  //                   mr: 2,
+                  //                   color: "warning",
+                  //                 }}
+                  //               >
+                  //                 ₹
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {`${
+                  //                     row.salary_from + "-" + row.salary_to
+                  //                   } LPA`}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             <CustomChip
+                  //               rounded
+                  //               skin="light"
+                  //               size="small"
+                  //               label={row.job_type}
+                  //               color={userStatusObj[row.status]}
+                  //               sx={{ textTransform: "capitalize" }}
+                  //             />
+                  //           </Grid>
+                  //         </Grid>
+                  //       </CardContent>
+                  //       <CardActions sx={{ pb: 3, pl: 0 }}>
+                  //         <Grid container spacing={2}>
+                  //           <Grid item xs={12} lg={6}>
+                  //             <Typography
+                  //               // component="div"
+                  //               color="text.secondary"
+                  //               sx={{ fontSize: 16 }}
+                  //             ></Typography>
+                  //           </Grid>
+                  //           <Grid
+                  //             item
+                  //             xs={12}
+                  //             sm={12}
+                  //             lg={6}
+                  //             sx={{
+                  //               display: "flex",
+                  //               justifyContent: "flex-end",
+                  //             }}
+                  //           >
+                  //             <Button
+                  //               size="small"
+                  //               variant="contained"
+                  //               onClick={() =>
+                  //                 handleNavigateJobDetail(row?.job_id)
+                  //               }
+                  //             >
+                  //               View Job
+                  //             </Button>
+                  //           </Grid>
+                  //         </Grid>
+                  //       </CardActions>
+                  //     </Card>
+                  //   </Grid>
+                  // );
                 })}
               </Grid>
               {jobList.length > 0 && (
@@ -593,6 +961,7 @@ const CandidateSavedJob = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 mb: 16,
+                mt: 16,
               }}
             >
               <Typography>No Match Found</Typography>

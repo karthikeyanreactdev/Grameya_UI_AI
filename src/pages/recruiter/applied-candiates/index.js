@@ -41,6 +41,7 @@ import { LoadingButton } from "@mui/lab";
 import SideBarEmail from "../resume-search/Components/EmailDrawer";
 
 // import "sweetalert2/src/sweetalert2.scss";
+
 const userStatusObj = {
   submitted: "success",
   // hired: "info",
@@ -120,7 +121,10 @@ const Candidates = (props) => {
         const { full_name, designation } = row;
 
         return (
-          <Box sx={{ display: "flex", alignItems: "center", width: "200px" }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", width: "200px" }}
+            onClick={() => handleViewCandidate(row)}
+          >
             {renderClient(row)}
             <Box
               sx={{
@@ -694,6 +698,8 @@ const Candidates = (props) => {
         size: paginationModel?.pageSize,
       };
       dispatch(getAppliedCandidateList(params));
+    } else {
+      router.back();
     }
   };
   useEffect(() => {
@@ -852,7 +858,7 @@ const Candidates = (props) => {
               rowHeight={62}
               rows={appliedCandidateList}
               loading={isLoading}
-              onRowClick={(row) => handleViewCandidate(row?.row)}
+              // onRowClick={(row) => handleViewCandidate(row?.row)}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
@@ -871,6 +877,9 @@ const Candidates = (props) => {
                 // tempEmail.push()
                 //                 })
                 //
+              }}
+              slots={{
+                noRowsOverlay: NoRowsOverlayCandidate,
               }}
               paginationMode="server"
               pageSizeOptions={[10, 25, 50]}
@@ -898,5 +907,12 @@ Candidates.acl = {
   action: "read",
   subject: "appliedCandidates",
 };
-
+export function NoRowsOverlayCandidate() {
+  return (
+    <Stack height="100%" alignItems="center" justifyContent="center">
+      No candidates applied
+      {/* <pre>(rows=&#123;[]&#125;)</pre> */}
+    </Stack>
+  );
+}
 export default Candidates;

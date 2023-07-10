@@ -143,10 +143,11 @@ const CandidateJobDetail = () => {
       // Code using query
       console.log(router.query);
       if (query?.id) {
-        setId(id);
+        setId(query?.id);
+        localStorage.setItem("job_id", query?.id);
         viewJob();
         const url = `${"https://devgrameyaapi.sarosk.net/share_job/"}${
-          query?.id
+          query?.id || localStorage.getItem("job_id")
         }`;
         setShareUrl(url);
       } else {
@@ -228,9 +229,22 @@ const CandidateJobDetail = () => {
     getOS();
     // getShareUrl();
   }, []);
+
+  useEffect(() => {
+    if (!addUserOpen) {
+      viewJob();
+    }
+    // getShareUrl();
+  }, [addUserOpen]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     console.log("unmount");
+  //     ocalStorage.remove("job_id");
+  //   };
+  // }, []);
   return (
     <Grid container spacing={6} className={classes.root}>
-      <SideBarJob open={addUserOpen} toggle={toggleAddUserDrawer} id={id} />
       <Grid item xs={12}>
         <Card>
           <Grid container spacing={2}>
@@ -703,6 +717,7 @@ const CandidateJobDetail = () => {
           </CardContent>
         </Card>
       </Grid>
+      <SideBarJob open={addUserOpen} toggle={toggleAddUserDrawer} id={id} />
     </Grid>
   );
 };

@@ -61,11 +61,28 @@ import {
 } from "src/store/apps/misc/index";
 import { getAppliedJobs } from "src/store/apps/jobseeker/applications";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 const userStatusObj = {
-  Submitted: "success",
-  hired: "info",
-  disabled: "error",
+  interview_schedulded: "success",
+  shortlisted: "success",
+  // hired: "info",
+  submitted: "primary",
+
+  inactive_seeker: "warning",
+  call_resheduled: "warning",
+  call_not_picked: "warning",
+  interview_canceled: "error",
+};
+const statusObj = {
+  shortlisted: "Shortlisted",
+  submitted: "Submitted",
+  call_resheduled: "Call Resheduled",
+  call_not_picked: "Call not picked",
+  inactive_seeker: "Inactive/Not Intrested",
+  interview_schedulded: "Interview Scheduled",
+  interview_canceled: "Interview Canceled",
+  remove: "Remove",
 };
 const ManageAppliedJob = () => {
   // ** Hooks
@@ -86,10 +103,14 @@ const ManageAppliedJob = () => {
     pageSize: 10,
   });
   console.log(paginationModel);
+  const router = useRouter();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(addDays(new Date(), 15));
   const [startDateRange, setStartDateRange] = useState(new Date());
   const [endDateRange, setEndDateRange] = useState(addDays(new Date(), 45));
+  const handleNavigateJobDetail = (id) => {
+    router.push(`${"/jobseeker/job-detail"}?id=${id}`);
+  };
   const jobListColumns = [
     {
       flex: 0.1,
@@ -97,6 +118,20 @@ const ManageAppliedJob = () => {
       sortable: true,
       field: "job_title",
       headerName: "Job Title",
+      renderCell: ({ row }) => (
+        <Typography
+          // variant="caption"
+          sx={{ cursor: "pointer", fontSize: "0.8125rem" }}
+          onClick={() => {
+            // if (row.total_applications > 0) {
+            //   handleApplications(row);
+            // }
+            handleNavigateJobDetail(row?.job_id);
+          }}
+        >
+          {row.job_title}
+        </Typography>
+      ),
       // renderCell: ({ row }) => <RowOptions id={row.id} />,
     },
     {
@@ -121,6 +156,36 @@ const ManageAppliedJob = () => {
       minWidth: 100,
       sortable: true,
 
+      field: "applied_on",
+      headerName: "Applied On",
+
+      renderCell: ({ row }) => `${moment(row.applied_on).format("DD/MM/YYYY")}`,
+    },
+    {
+      flex: 0.1,
+      minWidth: 200,
+      sortable: true,
+
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }) => {
+        return (
+          <CustomChip
+            rounded
+            skin="light"
+            size="small"
+            label={statusObj[row.status]}
+            color={userStatusObj[row.status]}
+            sx={{ textTransform: "capitalize" }}
+          />
+        );
+      },
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      sortable: true,
+
       field: "city",
       headerName: "Location",
       // renderCell: ({ row }) => <RowOptions id={row.id} />,
@@ -135,36 +200,7 @@ const ManageAppliedJob = () => {
       renderCell: ({ row }) =>
         `${row.experience_from}-${row.experience_to} years`,
     },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
 
-      field: "applied_on",
-      headerName: "Applied On",
-
-      renderCell: ({ row }) => `${moment(row.applied_on).format("DD/MM/YYYY")}`,
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }) => {
-        return (
-          <CustomChip
-            rounded
-            skin="light"
-            size="small"
-            label={row.status}
-            color={userStatusObj[row.status]}
-            sx={{ textTransform: "capitalize" }}
-          />
-        );
-      },
-    },
     // {
     //   flex: 0.1,
     //   minWidth: 100,

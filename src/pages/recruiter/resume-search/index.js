@@ -66,6 +66,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Stack,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -738,7 +739,7 @@ const Dashboard = () => {
 
           <CardContent>
             <Grid container spacing={2}>
-              <Grid item sm={6} xs={12} lg={8} mt={0}>
+              <Grid item sm={6} xs={12} lg={8} md={8} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
                   label={"Search keywords"}
@@ -764,7 +765,7 @@ const Dashboard = () => {
                   }}
                 />
               </Grid>
-              <Grid item sm={3} xs={12} lg={4} mt={0}>
+              <Grid item sm={6} xs={12} lg={4} md={4} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
                   label={"Job Location"}
@@ -1073,6 +1074,9 @@ const Dashboard = () => {
               rowCount={rowCountState}
               paginationMode="server"
               checkboxSelection
+              slots={{
+                noRowsOverlay: NoRowsOverlayCandidate,
+              }}
               // maxSelected={1}
               onRowSelectionModelChange={(ids) => {
                 // const selectedIDs = new Set(ids);
@@ -1109,5 +1113,12 @@ Dashboard.acl = {
   action: "read",
   subject: "search",
 };
-
+export function NoRowsOverlayCandidate() {
+  return (
+    <Stack height="100%" alignItems="center" justifyContent="center">
+      No match found
+      {/* <pre>(rows=&#123;[]&#125;)</pre> */}
+    </Stack>
+  );
+}
 export default Dashboard;

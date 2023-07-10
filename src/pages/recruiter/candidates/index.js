@@ -436,6 +436,9 @@ const Candidates = () => {
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
+              slots={{
+                noRowsOverlay: NoRowsOverlayCandidate,
+              }}
               // onRowClick={(row) => handleViewCandidate(row?.row)}
               paginationMode="server"
               // onRowClick={(it) => console.log(it)}
@@ -459,5 +462,12 @@ Candidates.acl = {
   action: "read",
   subject: "candidates",
 };
-
+export function NoRowsOverlayCandidate() {
+  return (
+    <Stack height="100%" alignItems="center" justifyContent="center">
+      No saved candidates
+      {/* <pre>(rows=&#123;[]&#125;)</pre> */}
+    </Stack>
+  );
+}
 export default Candidates;

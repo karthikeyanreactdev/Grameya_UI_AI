@@ -2,10 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/recruiter/resume-search": "pages/recruiter/resume-search.js",
-  "/recruiter/dashboard": "pages/recruiter/dashboard.js",
   "/404": "pages/404.js",
-  "/login": "pages/login.js",
-  "/recruiter/jobs": "pages/recruiter/jobs.js",
-  "/recruiter/profile": "pages/recruiter/profile.js"
+  "/": "pages/index.js",
+  "/recruiter/applied-candiates": "pages/recruiter/applied-candiates.js",
+  "/recruiter/dashboard": "pages/recruiter/dashboard.js",
+  "/recruiter/candidates": "pages/recruiter/candidates.js"
 }

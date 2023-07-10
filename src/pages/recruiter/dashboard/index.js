@@ -261,6 +261,9 @@ const Applications = () => {
                   handleApplications(row?.row);
                 }
               }}
+              slots={{
+                noRowsOverlay: NoRowsOverlayCandidate,
+              }}
               columns={applicationsListcolumns}
               disableRowSelectionOnClick
               rowCount={rowCountState}
@@ -279,5 +282,12 @@ Applications.acl = {
   action: "read",
   subject: "dashboard",
 };
-
+export function NoRowsOverlayCandidate() {
+  return (
+    <Stack height="100%" alignItems="center" justifyContent="center">
+      No candidates applied
+      {/* <pre>(rows=&#123;[]&#125;)</pre> */}
+    </Stack>
+  );
+}
 export default Applications;

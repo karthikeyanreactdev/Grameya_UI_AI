@@ -911,18 +911,20 @@ const Profile = () => {
                 />
               </Grid>
             </Grid> */}
-            <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-              <LoadingButton
-                fullWidth
-                loading={isLoading}
-                variant="contained"
-                sx={{ my: 4 }}
-                //disabled={!isEdit}
-                onClick={() => formik.handleSubmit()}
-              >
-                Save
-              </LoadingButton>
-            </Grid>
+            {isEdit && (
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                <LoadingButton
+                  fullWidth
+                  loading={isLoading}
+                  variant="contained"
+                  sx={{ my: 4 }}
+                  //disabled={!isEdit}
+                  onClick={() => formik.handleSubmit()}
+                >
+                  Save
+                </LoadingButton>
+              </Grid>
+            )}
             {/* <Grid container spacing={2} py={2}>
               <Grid item lg={6} xl={6} xs={12} md={12} sm={12}>
                 <FormControl fullWidth sx={{ my: 2 }}>
