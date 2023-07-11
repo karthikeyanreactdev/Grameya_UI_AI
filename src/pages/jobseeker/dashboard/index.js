@@ -62,6 +62,13 @@ import {
 import { getAppliedJobs } from "src/store/apps/jobseeker/applications";
 import moment from "moment";
 import { useRouter } from "next/router";
+import {
+  addSaveJob,
+  recommendedJobDetail,
+} from "src/api-services/seeker/jobsdetails";
+import { LoadingButton } from "@mui/lab";
+import { CardActions, Chip, Tooltip } from "@mui/material";
+import useNotification from "src/hooks/useNotification";
 
 const userStatusObj = {
   interview_schedulded: "success",
@@ -108,6 +115,11 @@ const ManageAppliedJob = () => {
   const [endDate, setEndDate] = useState(addDays(new Date(), 15));
   const [startDateRange, setStartDateRange] = useState(new Date());
   const [endDateRange, setEndDateRange] = useState(addDays(new Date(), 45));
+  const [recommendedJobList, setRecommendedJobList] = useState([]);
+  const [isBookmarkLoading, setIsLoading] = useState(false);
+  const [savedId, setSavedId] = useState("");
+  const [sendNotification] = useNotification();
+
   const handleNavigateJobDetail = (id) => {
     router.push(`${"/jobseeker/job-detail"}?id=${id}`);
   };
@@ -273,13 +285,34 @@ const ManageAppliedJob = () => {
     };
     dispatch(getAppliedJobs(params));
   };
+
+  const getRecommendedJob = async () => {
+    try {
+      const paramData = {
+        page: 1,
+        size: 10,
+      };
+      const response = await recommendedJobDetail(paramData);
+      console.log("response", response);
+      if (response?.data?.data?.data) {
+        setRecommendedJobList(response.data.data.data);
+      }
+    } catch (e) {
+      console.log("e", e);
+    } finally {
+      // handleChangeLoading(false);
+    }
+  };
+
   useEffect(() => {
     getJobs();
+    getRecommendedJob();
     // dispatch(getJobCategory({}));
     // dispatch(getJobType({}));
     dispatch(getSkills({}));
     // dispatch(getNoticePeriod({}));
   }, []);
+
   useEffect(() => {
     console.log("ca");
     getJobs();
@@ -289,11 +322,38 @@ const ManageAppliedJob = () => {
       getJobs();
     }
   }, [addUserOpen]);
+
   useEffect(() => {
     setRowCountState((prevRowCountState) =>
       pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
     );
   }, [pageCount?.total, setRowCountState]);
+
+  const handleAddSavedJob = async (id) => {
+    try {
+      setSavedId(id);
+      setIsLoading(true);
+      const param = {
+        job_id: id,
+      };
+
+      const result = await addSaveJob(param);
+      sendNotification({
+        message: result?.data?.message,
+        variant: "success",
+      });
+      getRecommendedJob();
+    } catch (e) {
+      sendNotification({
+        message: e,
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+      setSavedId("");
+    }
+  };
+
   return (
     <Grid container spacing={6}>
       {/* <Grid item md={6} xs={12}>
@@ -392,6 +452,377 @@ const ManageAppliedJob = () => {
               onPaginationModelChange={setPaginationModel}
             />
           </Box>
+          <Divider sx={{ m: "0 !important" }} />
+          <CardHeader title="Recommended Job" />
+
+          {recommendedJobList.length > 0 && (
+            <Box p={4}>
+              <Grid container spacing={2}>
+                {recommendedJobList?.map((row) => {
+                  return (
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
+                      <Card
+                        raised={false}
+                        sx={{
+                          mb: 2,
+                          border: "1px solid rgba(0, 0, 0, 0.5)",
+                          // boxShadow: "0 0 2px 2px #187de4",
+                          "&:hover": {
+                            // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                            cursor: "pointer",
+
+                            boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                            transform: "translateY(-5px)",
+                          },
+                        }}
+                      >
+                        <CardContent
+                          sx={{ pb: 0, pt: 0 }}
+                          //onClick={() => handleNavigateJobDetail(row?.id)}
+                        >
+                          <Grid
+                            container
+                            spacing={2}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Grid item xs={11} sm={11} md={11} lg={11}>
+                              <Typography
+                                sx={{ mb: 1 }}
+                                color="text.primary"
+                                variant="h6"
+                                gutterBottom
+                              >
+                                {row.job_title?.substring(0, 75)}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={1} sm={1} md={1} lg={1}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  my: 3,
+                                  mr: 2,
+                                }}
+                              >
+                                <LoadingButton
+                                  loading={
+                                    isBookmarkLoading && row.id == savedId
+                                  }
+                                  color={row?.is_saved ? "success" : "primary"}
+                                  title="Save Job"
+                                  onClick={() => handleAddSavedJob(row?.id)}
+                                >
+                                  {row?.is_saved ? (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-check"
+                                    />
+                                  ) : (
+                                    <Icon
+                                      fontSize="1.5rem"
+                                      icon="mdi:favorite-add-outline"
+                                      sx={{ bacground: "red" }}
+                                      // color="error"
+                                    />
+                                  )}
+                                </LoadingButton>
+                              </Box>
+                            </Grid>
+                          </Grid>
+                          <Grid
+                            container
+                            spacing={2}
+                            sx={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.secondary" },
+                                }}
+                              >
+                                <Box sx={{ display: "flex", mr: 2 }}>
+                                  <Icon
+                                    fontSize="1rem"
+                                    icon="tabler:building"
+                                    color="brown"
+                                  />
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      color: "text.primary",
+                                      fontSize: "0.775rem",
+                                    }}
+                                  >
+                                    {row.company_name?.substring(0, 30)}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  "&:not(:last-of-type)": { mb: 3 },
+                                  "& svg": { color: "text.secondary" },
+                                }}
+                              >
+                                <Box sx={{ display: "flex", mr: 2 }}>
+                                  <Icon
+                                    fontSize="1rem"
+                                    icon="tabler:map-pin"
+                                    color="red"
+                                  />
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    columnGap: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      color: "text.primary",
+                                      fontSize: "0.775rem",
+                                    }}
+                                  >
+                                    {row.city}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              {row?.skills?.slice(0, 2).map((option, index) => (
+                                <Chip
+                                  variant="outlined"
+                                  color="primary"
+                                  // color="black"
+                                  size="small"
+                                  sx={{ mx: 1, fontSize: "0.675rem" }}
+                                  // sx={{ color: "#" }}
+                                  label={
+                                    option?.name === null ||
+                                    option?.name === undefined
+                                      ? option.length > 15
+                                        ? option?.substring(0, 15) + "..."
+                                        : option
+                                      : option?.name
+                                  }
+                                />
+                              ))}
+                              <Tooltip title={row?.skills?.join(",")}>
+                                <Chip
+                                  variant="outlined"
+                                  color="primary"
+                                  // color="black"
+                                  size="small"
+                                  sx={{ mx: 1, fontSize: "0.675rem" }}
+                                  // sx={{ color: "#" }}
+                                  label={"more.."}
+                                />
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
+                              <Tooltip title="Experiance">
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex", mr: 2 }}>
+                                    <Icon
+                                      fontSize="1rem"
+                                      icon="tabler:brand-google-analytics"
+                                      color="darkgreen"
+                                    />
+                                  </Box>
+
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {row.experience_from +
+                                        "-" +
+                                        row.experience_to}{" "}
+                                      Years
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
+                              {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {`₹${row.salary_from + "-" + row.salary_to} LPA`}
+                      </Typography> */}
+                              <Tooltip title={"Salary"}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
+                                  }}
+                                >
+                                  {/* <Box
+                                  sx={{
+                                    display: "flex",
+                                    mr: 2,
+                                    color: "warning",
+                                  }}
+                                >
+                                  
+                                </Box> */}
+
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {`₹${
+                                        row.salary_from + "-" + row.salary_to
+                                      } LPA`}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={4} lg={4}>
+                              <Tooltip title={"Notice Period"}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    "&:not(:last-of-type)": { mb: 3 },
+                                    "& svg": { color: "text.primary" },
+                                  }}
+                                >
+                                  <Box sx={{ display: "flex", mr: 2 }}>
+                                    <Icon
+                                      fontSize="1rem"
+                                      icon="medical-icon:i-waiting-area"
+                                      color="palered"
+                                    />
+                                  </Box>
+
+                                  <Box
+                                    sx={{
+                                      columnGap: 2,
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {row?.notice_period}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                              <Typography
+                                sx={{
+                                  color: "text.primary",
+                                  fontSize: "0.675rem",
+                                }}
+                              >
+                                {"Posted : "}
+                                {moment
+                                  .utc(row?.created)
+                                  .local()
+                                  .startOf("seconds")
+                                  .fromNow()}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                        <CardActions sx={{ pb: 3, pl: 0, mt: 1 }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} lg={6}>
+                              <Typography
+                                // component="div"
+                                color="text.secondary"
+                                sx={{ fontSize: 16 }}
+                              ></Typography>
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              sm={12}
+                              lg={6}
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => handleNavigateJobDetail(row?.id)}
+                              >
+                                {row?.is_applied ? "Applied" : "View & Apply"}
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+              {/* {machedJobList.length > 0 && (
+                <TablePagination
+                  component="div"
+                  count={pageCount?.totalPages}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              )} */}
+            </Box>
+          )}
         </Card>
       </Grid>
 
