@@ -514,7 +514,7 @@ const CandidateJobSearch = () => {
                           // boxShadow: "0 0 2px 2px #187de4",
                           "&:hover": {
                             // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
-                            cursor: "pointer",
+                            // cursor: "pointer",
 
                             boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                             transform: "translateY(-5px)",

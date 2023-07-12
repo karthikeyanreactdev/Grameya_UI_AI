@@ -391,7 +391,7 @@ const ACLPage = () => {
                       {activeTab === "education" && (
                         <Grid item md={12} xs={12}>
                           <Card>
-                            <CardContent
+                            {/* <CardContent
                               sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
@@ -411,8 +411,8 @@ const ACLPage = () => {
                                 }
                               >
                                 Add New Education
-                              </Button> */}
-                            </CardContent>
+                              </Button> *
+                            </CardContent> */}
 
                             <CardContent
                               sx={{
@@ -451,27 +451,43 @@ const ACLPage = () => {
                                                 item
                                                 xs={12}
                                                 sm={6}
-                                                md={6}
+                                                md={4}
+                                                lg={4}
+                                                xl={4}
                                               >
                                                 <Card
                                                   raised={false}
                                                   sx={{
                                                     mb: 2,
-                                                    border: "1px solid #ededed",
+                                                    border:
+                                                      "1px solid rgba(0, 0, 0, 0.5)",
+                                                    // boxShadow: "0 0 2px 2px #187de4",
                                                     "&:hover": {
+                                                      // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                                                      cursor: "pointer",
+
                                                       boxShadow:
                                                         "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                                                       transform:
                                                         "translateY(-5px)",
+                                                      // mb: 2,
+                                                      // border: "1px solid #ededed",
+                                                      // "&:hover": {
+                                                      //   boxShadow:
+                                                      //     "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                                                      //   transform:
+                                                      //     "translateY(-5px)",
                                                     },
                                                     height: "100%",
                                                   }}
                                                 >
                                                   <CardContent>
                                                     <Typography
+                                                      color="text.primary"
+                                                      // variant="h6"
                                                       sx={{
-                                                        fontSize: "20px",
                                                         fontWeight: "500",
+                                                        fontSize: ".800rem",
                                                       }}
                                                     >
                                                       {row?.education_type ===
@@ -479,10 +495,21 @@ const ACLPage = () => {
                                                       row?.education_type ===
                                                         "12th" ? (
                                                         <>
-                                                          {row?.education_type}
+                                                          {row?.education_type?.substring(
+                                                            0,
+                                                            20
+                                                          )}
                                                         </>
                                                       ) : (
-                                                        <>{row?.course}</>
+                                                        <>
+                                                          {row?.course.length >=
+                                                          50
+                                                            ? row?.course?.substring(
+                                                                0,
+                                                                40
+                                                              ) + ".."
+                                                            : row?.course}
+                                                        </>
                                                       )}
                                                     </Typography>
                                                     <Box
@@ -497,13 +524,15 @@ const ACLPage = () => {
                                                         // fontSize="1.25rem"
                                                         icon="emojione-v1:bar-chart"
                                                         color="primary"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
+                                                        fontSize="1rem"
+                                                        // style={{
+                                                        //   fontSize: "24px",
+                                                        // }}
                                                       />
                                                       <Typography
                                                         sx={{
-                                                          fontSize: "16px",
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
                                                         }}
                                                       >
                                                         Passed with a{" "}
@@ -521,16 +550,24 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
+                                                        fontSize="1rem"
                                                         icon="fxemoji:school"
                                                         color="black"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
                                                       />
-                                                      <Typography>
-                                                        {row.university_or_institute_name ||
-                                                          row.board}
+                                                      <Typography
+                                                        sx={{
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
+                                                        }}
+                                                      >
+                                                        {row?.university_or_institute_name?.substring(
+                                                          0,
+                                                          30
+                                                        ) ||
+                                                          row?.board.substring(
+                                                            0,
+                                                            30
+                                                          )}
                                                       </Typography>
                                                     </Box>
                                                     {row.university_or_institute_address && (
@@ -545,17 +582,28 @@ const ACLPage = () => {
                                                           }}
                                                         >
                                                           <Icon
-                                                            fontSize="1.25rem"
+                                                            fontSize="1rem"
                                                             icon="mdi:location"
                                                             color="red"
-                                                            style={{
-                                                              fontSize: "24px",
-                                                            }}
+                                                            // style={{
+                                                            //   color:
+                                                            //     "text.primary",
+                                                            //   fontSize:
+                                                            //     "0.775rem",
+                                                            // }}
                                                           />
-                                                          <Typography>
-                                                            {
-                                                              row.university_or_institute_address
-                                                            }
+                                                          <Typography
+                                                            sx={{
+                                                              color:
+                                                                "text.primary",
+                                                              fontSize:
+                                                                "0.775rem",
+                                                            }}
+                                                          >
+                                                            {row?.university_or_institute_address.substring(
+                                                              0,
+                                                              50
+                                                            )}
                                                           </Typography>
                                                         </Box>
                                                       </>
@@ -570,14 +618,16 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
+                                                        fontSize="1rem"
                                                         icon="fxemoji:graduationcap"
                                                         color="green"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
                                                       />
-                                                      <Typography>
+                                                      <Typography
+                                                        sx={{
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
+                                                        }}
+                                                      >
                                                         Graduated in{" "}
                                                         {row.year_of_passout ||
                                                           row.course_duration_end}
@@ -655,7 +705,7 @@ const ACLPage = () => {
                       {activeTab === "work" && (
                         <Grid item md={12} xs={12}>
                           <Card>
-                            <CardContent
+                            {/* <CardContent
                               sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
@@ -675,8 +725,8 @@ const ACLPage = () => {
                                 }
                               >
                                 Add New
-                              </Button> */}
-                            </CardContent>
+                              </Button> 
+                            </CardContent> */}
 
                             <CardContent
                               sx={{
@@ -706,13 +756,25 @@ const ACLPage = () => {
                                         {userDetail?.jobseekerDetails?.experiences?.map(
                                           (row, index) => {
                                             return (
-                                              <Grid item xs={12} sm={6} md={6}>
+                                              <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                lg={4}
+                                                xl={4}
+                                              >
                                                 <Card
                                                   raised={false}
                                                   sx={{
                                                     mb: 2,
-                                                    border: "1px solid #ededed",
+                                                    border:
+                                                      "1px solid rgba(0, 0, 0, 0.5)",
+                                                    // boxShadow: "0 0 2px 2px #187de4",
                                                     "&:hover": {
+                                                      // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                                                      cursor: "pointer",
+
                                                       boxShadow:
                                                         "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                                                       transform:
@@ -723,12 +785,20 @@ const ACLPage = () => {
                                                 >
                                                   <CardContent>
                                                     <Typography
+                                                      color="text.primary"
+                                                      // variant="h6"
                                                       sx={{
-                                                        fontSize: "20px",
                                                         fontWeight: "500",
+                                                        fontSize: ".800rem",
                                                       }}
                                                     >
-                                                      {row?.company_name}
+                                                      {row?.company_name
+                                                        .length > 50
+                                                        ? row?.company_name?.substring(
+                                                            0,
+                                                            50
+                                                          ) + ".."
+                                                        : row?.company_name}
                                                     </Typography>
                                                     <Box
                                                       sx={{
@@ -739,19 +809,23 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
+                                                        fontSize="1rem"
                                                         icon="eos-icons:role-binding"
                                                         color="black"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
+                                                        // style={{
+                                                        //   fontSize: "24px",
+                                                        // }}
                                                       />
                                                       <Typography
                                                         sx={{
-                                                          fontSize: "16px",
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
                                                         }}
                                                       >
-                                                        {row?.designation}
+                                                        {row?.designation.substring(
+                                                          0,
+                                                          50
+                                                        )}
                                                       </Typography>
                                                     </Box>
 
@@ -764,14 +838,19 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
+                                                        fontSize="1rem"
                                                         icon="material-symbols:mindfulness-outline"
                                                         color="brown"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
+                                                        // style={{
+                                                        //   fontSize: "24px",
+                                                        // }}
                                                       />
-                                                      <Typography>
+                                                      <Typography
+                                                        sx={{
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
+                                                        }}
+                                                      >
                                                         {row?.skills.map(
                                                           (element, index) => (
                                                             <span key={index}>
@@ -796,13 +875,18 @@ const ACLPage = () => {
                                                       }}
                                                     >
                                                       <Icon
-                                                        fontSize="1.25rem"
+                                                        fontSize="1rem"
                                                         icon="clarity:date-line"
-                                                        style={{
-                                                          fontSize: "24px",
-                                                        }}
+                                                        // style={{
+                                                        //   fontSize: "24px",
+                                                        // }}
                                                       />
-                                                      <Typography>
+                                                      <Typography
+                                                        sx={{
+                                                          color: "text.primary",
+                                                          fontSize: "0.775rem",
+                                                        }}
+                                                      >
                                                         Relieving date:{" "}
                                                         {formatDate(
                                                           row.end_date

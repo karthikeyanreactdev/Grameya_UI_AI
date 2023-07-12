@@ -18,7 +18,7 @@ const FallbackSpinner = ({ sx }) => {
         ...sx,
       }}
     >
-      <img height={100} width={100} alt="add-role" src="/images/g.jpg" />
+      <img height={100} width={100} alt="add-role" src="/images/g.png" />
       <CircularProgress disableShrink sx={{ mt: 8 }} />
     </Box>
   );

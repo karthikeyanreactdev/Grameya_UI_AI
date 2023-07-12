@@ -219,7 +219,8 @@ const Dashboard = () => {
   });
 
   const [jobRole, setjobRole] = useState("");
-  const [experience, setExperiance] = useState("");
+  const [experienceFrom, setExperianceFrom] = useState("");
+  const [experienceTo, setExperianceTo] = useState("");
   const [salaryFrom, setSalaryFrom] = useState("");
   const [salaryTo, setSalaryTo] = useState("");
   const [jobType, setJobType] = useState("");
@@ -241,8 +242,8 @@ const Dashboard = () => {
       page: paginationModel?.page + 1,
       size: paginationModel?.pageSize,
       search_keyword: keyword,
-      experience_from: "0",
-      experience_to: experience,
+      experience_from: experienceFrom,
+      experience_to: experienceTo,
       job_type: jobType,
       notice_period: noticePeriod,
       salary_from: salaryFrom,
@@ -739,7 +740,7 @@ const Dashboard = () => {
 
           <CardContent>
             <Grid container spacing={2}>
-              <Grid item sm={6} xs={12} lg={8} md={8} mt={0}>
+              <Grid item sm={6} xs={12} lg={6} md={4} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
                   label={"Search keywords"}
@@ -765,7 +766,7 @@ const Dashboard = () => {
                   }}
                 />
               </Grid>
-              <Grid item sm={6} xs={12} lg={4} md={4} mt={0}>
+              <Grid item sm={6} xs={12} lg={3} md={4} mt={0}>
                 <TextField
                   sx={{ my: 2 }}
                   label={"Job Location"}
@@ -789,6 +790,28 @@ const Dashboard = () => {
                     }
                   }}
                 />
+              </Grid>
+              <Grid item sm={4} xs={12} lg={3} md={4} mt={0}>
+                <FormControl fullWidth sx={{ my: 2 }} size="small">
+                  <InputLabel id="demo-simple-select-label ">
+                    Notice Period
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={noticePeriod}
+                    onChange={(e) => setNoticePeriod(e.target.value || "")}
+                    label="Notice Period"
+                  >
+                    <MenuItem value={""}>All</MenuItem>
+                    <MenuItem value={"immediate"}>Immediate</MenuItem>
+                    <MenuItem value={"15 Days"}>15 Days</MenuItem>
+                    <MenuItem value={"30 Days"}>30 Days</MenuItem>
+                    <MenuItem value={"45 Days"}>45 Days</MenuItem>
+                    <MenuItem value={"60 Days"}>60 Days</MenuItem>
+                    <MenuItem value={"90 Days"}>90 Days</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
             </Grid>
             <Grid container spacing={2}>
@@ -850,16 +873,16 @@ const Dashboard = () => {
               <Grid item sm={4} xs={12} lg={3}>
                 <TextField
                   sx={{ my: 2 }}
-                  label={"Experience (in years)"}
+                  label={"Experience From"}
                   fullWidth
                   size="small"
-                  name="Experience"
-                  placeholder="Experience (in years)"
-                  value={experience
+                  name="ExperienceFrom"
+                  placeholder="Experience From (in years)"
+                  value={experienceFrom
                     ?.trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  onChange={(e) => setExperiance(e.target.value || "")}
+                  onChange={(e) => setExperianceFrom(e.target.value || "")}
                   onKeyDown={(ev) => {
                     console.log(`Pressed keyCode ${ev.key}`);
                     if (ev.key === "Enter" && keyword !== "") {
@@ -873,26 +896,29 @@ const Dashboard = () => {
                 />
               </Grid>
               <Grid item sm={4} xs={12} lg={3}>
-                <FormControl fullWidth sx={{ my: 2 }} size="small">
-                  <InputLabel id="demo-simple-select-label ">
-                    Notice Period
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={noticePeriod}
-                    onChange={(e) => setNoticePeriod(e.target.value || "")}
-                    label="Notice Period"
-                  >
-                    <MenuItem value={""}>All</MenuItem>
-                    <MenuItem value={"immediate"}>Immediate</MenuItem>
-                    <MenuItem value={"15 Days"}>15 Days</MenuItem>
-                    <MenuItem value={"30 Days"}>30 Days</MenuItem>
-                    <MenuItem value={"45 Days"}>45 Days</MenuItem>
-                    <MenuItem value={"60 Days"}>60 Days</MenuItem>
-                    <MenuItem value={"90 Days"}>90 Days</MenuItem>
-                  </Select>
-                </FormControl>
+                <TextField
+                  sx={{ my: 2 }}
+                  label={"Experience To"}
+                  fullWidth
+                  size="small"
+                  name="Experience"
+                  placeholder="Experience To (in years)"
+                  value={experienceTo
+                    ?.trimStart()
+                    .replace(/\s\s+/g, "")
+                    .replace(/\p{Emoji_Presentation}/gu, "")}
+                  onChange={(e) => setExperianceTo(e.target.value || "")}
+                  onKeyDown={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === "Enter" && keyword !== "") {
+                      // Do code here
+                      ev.preventDefault();
+                      // if (searchKeyword.length >= 3) {
+                      handleSearch();
+                      // }
+                    }
+                  }}
+                />
               </Grid>
             </Grid>
 

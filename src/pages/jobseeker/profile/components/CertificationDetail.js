@@ -76,24 +76,24 @@ const CertificationDetail = ({
     <>
       <Grid item md={12} xs={12}>
         <Grid>
-          <CardContent
+          {/* <CardContent
             sx={{
               display: "flex",
               justifyContent: "space-between",
               // mx: 32,
-              mt: 4,
+              // mt: 4,
             }}
           >
-            <Typography variant="h4" component="h4">
+            {/* <Typography variant="h4" component="h4">
               Certification
-            </Typography>
-            {/* <Button
+            </Typography> */}
+          {/* <Button
               variant="contained"
               onClick={() => handleDrawerStateChangeOpen("isAddCertification")}
             >
               Add New
-            </Button> */}
-          </CardContent>
+            </Button> *
+          </CardContent> */}
 
           <CardContent
             sx={{
@@ -115,13 +115,17 @@ const CertificationDetail = ({
                       {userDetail?.jobseekerDetails?.certifications?.map(
                         (row, index) => {
                           return (
-                            <Grid item xs={12} sm={6} md={6}>
+                            <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                               <Card
                                 raised={false}
                                 sx={{
                                   mb: 2,
-                                  border: "1px solid #ededed",
+                                  border: "1px solid rgba(0, 0, 0, 0.5)",
+                                  // boxShadow: "0 0 2px 2px #187de4",
                                   "&:hover": {
+                                    // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                                    cursor: "pointer",
+
                                     boxShadow:
                                       "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                                     transform: "translateY(-5px)",
@@ -131,12 +135,19 @@ const CertificationDetail = ({
                               >
                                 <CardContent>
                                   <Typography
+                                    color="text.primary"
+                                    // variant="h6"
                                     sx={{
-                                      fontSize: "20px",
                                       fontWeight: "500",
+                                      fontSize: ".800rem",
                                     }}
                                   >
-                                    {row?.certification_name}
+                                    {row?.certification_name?.length > 50
+                                      ? row?.certification_name?.substring(
+                                          0,
+                                          50
+                                        ) + ".."
+                                      : row?.certification_name}
                                   </Typography>
                                   <Box
                                     sx={{
@@ -147,19 +158,25 @@ const CertificationDetail = ({
                                     }}
                                   >
                                     <Icon
-                                      fontSize="1.25rem"
+                                      fontSize="1rem"
                                       icon="ph:certificate-light"
                                       color="brown"
-                                      style={{
-                                        fontSize: "24px",
-                                      }}
+                                      style={
+                                        {
+                                          // fontSize: "24px",
+                                        }
+                                      }
                                     />
                                     <Typography
                                       sx={{
-                                        fontSize: "16px",
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
                                       }}
                                     >
-                                      {row.certification_completion_id}
+                                      {row?.certification_completion_id.substring(
+                                        0,
+                                        50
+                                      )}
                                     </Typography>
                                   </Box>
 
@@ -172,14 +189,21 @@ const CertificationDetail = ({
                                     }}
                                   >
                                     <Icon
-                                      fontSize="1.25rem"
+                                      fontSize="1rem"
                                       icon="clarity:date-line"
                                       color="brown"
-                                      style={{
-                                        fontSize: "24px",
-                                      }}
+                                      style={
+                                        {
+                                          // fontSize: "24px",
+                                        }
+                                      }
                                     />
-                                    <Typography>
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
                                       {formatDate(
                                         row?.certification_valid_from
                                       )}{" "}
@@ -196,15 +220,22 @@ const CertificationDetail = ({
                                     }}
                                   >
                                     <Icon
-                                      fontSize="1.25rem"
+                                      fontSize="1rem"
                                       icon="mdi:web"
                                       color="green"
-                                      style={{
-                                        fontSize: "24px",
-                                      }}
+                                      style={
+                                        {
+                                          // fontSize: "24px",
+                                        }
+                                      }
                                     />
-                                    <Typography>
-                                      {row?.certification_url}
+                                    <Typography
+                                      sx={{
+                                        color: "text.primary",
+                                        fontSize: "0.775rem",
+                                      }}
+                                    >
+                                      {row?.certification_url?.substring(0, 50)}
                                     </Typography>
                                   </Box>
                                 </CardContent>

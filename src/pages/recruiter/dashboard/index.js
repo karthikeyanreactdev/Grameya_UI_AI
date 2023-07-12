@@ -70,7 +70,7 @@ const Applications = () => {
       minWidth: 100,
       sortable: true,
       field: "company_name",
-      headerName: "Comapny Name",
+      headerName: "Company Name",
       // renderCell: ({ row }) => <RowOptions id={row.id} />,
     },
     {

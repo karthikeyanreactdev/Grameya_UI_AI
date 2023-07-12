@@ -268,7 +268,7 @@ const ManageJob = () => {
     },
     {
       flex: 0.1,
-      // minWidth: 100,
+      minWidth: 150,
       sortable: false,
       // field: "Action",
       headerName: "Action",
