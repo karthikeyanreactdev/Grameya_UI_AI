@@ -46,6 +46,32 @@ const AuthProvider = ({ children }) => {
         authConfig.storageTokenKeyName
       );
       console.log("reloaded");
+      if (router.pathname === "/verify_email") {
+        console.log("router ready 2", router);
+        setLoading(false);
+
+        const token = router.asPath.split("=")[1];
+        console.log(token);
+
+        router.replace({
+          pathname: "/verify_email",
+          query: { token: token },
+        });
+        return;
+      }
+      if (router.pathname === "/reset_password") {
+        console.log("router ready 2", router);
+        setLoading(false);
+
+        const token = router.asPath.split("=")[1];
+        console.log(token);
+
+        router.replace({
+          pathname: "/reset_password",
+          query: { token: token },
+        });
+        return;
+      }
       if (storedToken) {
         setLoading(true);
         await axios

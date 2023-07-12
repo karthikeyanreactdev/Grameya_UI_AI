@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiGet, apiPost } from "src/utils/axios";
+import { apiGet, apiPost, apiPut } from "src/utils/axios";
 import { errorHandler } from "src/utils/errorHandler";
 import {
   forgotPasswordUrl,
   loginUrl,
   registerUrl,
+  resetPasswordUrl,
   userProfileUrl,
+  verifyTokenUrl,
 } from "src/utils/pathConst";
 
 export const authLogin = createAsyncThunk(
@@ -19,6 +21,19 @@ export const authLogin = createAsyncThunk(
     }
   }
 );
+
+export const verifyToken = createAsyncThunk(
+  "auth/verifyToken",
+  async ({ formValue }, { rejectWithValue }) => {
+    try {
+      const response = await apiPut(`${verifyTokenUrl}`, formValue);
+      return response;
+    } catch (error) {
+      return rejectWithValue(errorHandler(error));
+    }
+  }
+);
+
 export const getUserData = createAsyncThunk(
   "auth/getUserData",
   async ({}, { rejectWithValue }) => {
@@ -48,6 +63,18 @@ export const authRegister = createAsyncThunk(
   async ({ formValue }, { rejectWithValue }) => {
     try {
       const response = await apiPost(`${registerUrl}`, formValue);
+      return response;
+    } catch (error) {
+      return rejectWithValue(errorHandler(error));
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async ({ formValue }, { rejectWithValue }) => {
+    try {
+      const response = await apiPut(`${resetPasswordUrl}`, formValue);
       return response;
     } catch (error) {
       return rejectWithValue(errorHandler(error));
