@@ -7,6 +7,7 @@ import {
   registerUrl,
   resetPasswordUrl,
   userProfileUrl,
+  verifyEmailUrl,
   verifyTokenUrl,
 } from "src/utils/pathConst";
 
@@ -15,6 +16,18 @@ export const authLogin = createAsyncThunk(
   async ({ formValue }, { rejectWithValue }) => {
     try {
       const response = await apiPost(`${loginUrl}`, formValue);
+      return response;
+    } catch (error) {
+      return rejectWithValue(errorHandler(error));
+    }
+  }
+);
+
+export const resendEmailVerify = createAsyncThunk(
+  "auth/resendEmailVerify",
+  async ({ formValue }, { rejectWithValue }) => {
+    try {
+      const response = await apiPost(`${verifyEmailUrl}`, formValue);
       return response;
     } catch (error) {
       return rejectWithValue(errorHandler(error));

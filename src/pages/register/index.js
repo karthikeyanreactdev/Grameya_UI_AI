@@ -47,6 +47,7 @@ import { validateEmail, validatePassword } from "src/utils/commonUtils";
 import { useDispatch } from "react-redux";
 import { authRegister } from "src/store/apps/auth";
 import useNotification from "src/hooks/useNotification";
+import { LoadingButton } from "@mui/lab";
 
 // ** Styled Components
 const RegisterIllustration = styled("img")(({ theme }) => ({
@@ -104,8 +105,7 @@ const Register = () => {
   const [termsCheck, setTermsCheck] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sendNotification] = useNotification();
-  console.log("formValue", formValue);
-  console.log("termsCheck", termsCheck);
+  const [isLoading, setIsLoading] = useState();
 
   // ** Hooks
   const theme = useTheme();
@@ -171,6 +171,7 @@ const Register = () => {
       phone: formValue.phone,
       password: formValue.password,
     };
+    setIsLoading(true);
 
     const response = await dispatch(
       authRegister({
@@ -189,6 +190,7 @@ const Register = () => {
         variant: "error",
       });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -432,14 +434,15 @@ const Register = () => {
                   </FormHelperText>
                 </>
               )}
-              <Button
+              <LoadingButton
                 fullWidth
                 onClick={handleFormSubmit}
                 variant="contained"
                 sx={{ mb: 4 }}
+                loading={isLoading}
               >
                 Sign up
-              </Button>
+              </LoadingButton>
               <Box
                 sx={{
                   display: "flex",

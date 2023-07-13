@@ -59,6 +59,7 @@ const AddNewEducation = ({
   });
   const [submitted, setSubmitted] = useState(false);
   const [sendNotification] = useNotification();
+  const [isLoading, setIsLoading] = useState();
 
   useEffect(() => {
     console.log("selectedEducation", selectedEducation);
@@ -139,6 +140,7 @@ const AddNewEducation = ({
 
   const callSubmitApi = async (apiData) => {
     try {
+      setIsLoading(true);
       const response = await addJobseekerEducation(apiData);
       console.log("response", response);
       if (response.status === 200) {
@@ -156,12 +158,14 @@ const AddNewEducation = ({
         variant: "error",
       });
     } finally {
-      onHandleChangeLoading(false);
+      setIsLoading(false);
+      // onHandleChangeLoading(false);
     }
   };
 
   const callEditSubmitApi = async (apiData) => {
     try {
+      setIsLoading(true);
       const response = await updateJobseekerEducation(apiData);
       console.log("response", response);
       if (response.status === 200) {
@@ -179,7 +183,8 @@ const AddNewEducation = ({
         variant: "error",
       });
     } finally {
-      onHandleChangeLoading(false);
+      setIsLoading(false);
+      // onHandleChangeLoading(false);
     }
   };
 
@@ -240,11 +245,11 @@ const AddNewEducation = ({
 
     if (selectedEducation) {
       apiData.education_id = selectedEducation?.id;
-      onHandleChangeLoading(true);
+      // onHandleChangeLoading(true);
 
       callEditSubmitApi(apiData);
     } else {
-      onHandleChangeLoading(true);
+      // onHandleChangeLoading(true);
 
       callSubmitApi(apiData);
     }
@@ -779,6 +784,7 @@ const AddNewEducation = ({
                   fullWidth
                   variant="contained"
                   onClick={handleFormSubmit}
+                  loading={isLoading}
                 >
                   Save
                 </LoadingButton>

@@ -9,3 +9,4 @@ export const registerUrl = `${baseURL}/registration`;
 export const userProfileUrl = `${baseURL}/profile`;
 export const verifyTokenUrl = `${baseURL}/verify_token`;
 export const resetPasswordUrl = `${baseURL}/reset_password`;
+export const verifyEmailUrl = `${baseURL}/resend_verification_link`;

@@ -61,6 +61,7 @@ import {
   getSkills,
 } from "src/store/apps/misc";
 import { LoadingButton } from "@mui/lab";
+import ResendVerificationEmail from "./ResendVerificationEmail";
 
 // ** Styled Components
 const LoginIllustration = styled("img")(({ theme }) => ({
@@ -128,6 +129,7 @@ const LoginPage = () => {
   const bgColors = useBgColor();
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
+  const [isResendEmailOpen, setIsResendEmailOpen] = useState(false);
 
   const { userData, isLoading } = useSelector((state) => state.auth);
   console.log("UserData", userData);
@@ -218,65 +220,82 @@ const LoginPage = () => {
       });
     }
   }, [userData]);
+
+  const handleResendEmailClose = () => {
+    setIsResendEmailOpen(false);
+  };
+
+  const handleResendEmailOpen = () => {
+    setIsResendEmailOpen(true);
+  };
+
   return (
-    <Box className="content-right" sx={{ backgroundColor: "background.paper" }}>
-      {!hidden ? (
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            position: "relative",
-            alignItems: "center",
-            borderRadius: "20px",
-            justifyContent: "center",
-            backgroundColor: "customColors.bodyBg",
-            margin: (theme) => theme.spacing(8, 0, 8, 8),
-          }}
-        >
-          {/* <LoginIllustration alt='login-illustration' src={`/images/pages/${imageSource}-${theme.palette.mode}.png`} /> */}
-          <LoginIllustration
-            alt="login-illustration"
-            src={`/images/pages/login.png`}
-          />
-          <FooterIllustrationsV2 />
-        </Box>
-      ) : null}
-      <RightWrapper>
-        <Box
-          sx={{
-            p: [6, 12],
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box sx={{ width: "100%", maxWidth: 400 }}>
-            <Box
-              sx={{
-                height: "100%",
-                minHeight: 140,
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-              }}
-            >
-              <img
-                height={50}
-                width={250}
-                alt="add-role"
-                src="/images/glogo.png"
-              />
-            </Box>
-            <Box sx={{ my: 6 }}>
-              <Typography variant="h3" sx={{ mb: 1.5 }}>
-                {`Welcome to ${themeConfig.templateName}! 👋🏻`}
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                Please sign-in to your account and start the adventure
-              </Typography>
-            </Box>
-            {/* <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
+    <>
+      <ResendVerificationEmail
+        isOpen={isResendEmailOpen}
+        onClose={handleResendEmailClose}
+      />
+      <Box
+        className="content-right"
+        sx={{ backgroundColor: "background.paper" }}
+      >
+        {!hidden ? (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              position: "relative",
+              alignItems: "center",
+              borderRadius: "20px",
+              justifyContent: "center",
+              backgroundColor: "customColors.bodyBg",
+              margin: (theme) => theme.spacing(8, 0, 8, 8),
+            }}
+          >
+            {/* <LoginIllustration alt='login-illustration' src={`/images/pages/${imageSource}-${theme.palette.mode}.png`} /> */}
+            <LoginIllustration
+              alt="login-illustration"
+              src={`/images/pages/login.png`}
+            />
+            <FooterIllustrationsV2 />
+          </Box>
+        ) : null}
+        <RightWrapper>
+          <Box
+            sx={{
+              p: [6, 12],
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box sx={{ width: "100%", maxWidth: 400 }}>
+              <Box
+                sx={{
+                  height: "100%",
+                  minHeight: 140,
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  height={50}
+                  width={250}
+                  alt="add-role"
+                  src="/images/glogo.png"
+                />
+              </Box>
+              <Box sx={{ my: 6 }}>
+                <Typography variant="h3" sx={{ mb: 1.5 }}>
+                  {`Welcome to ${themeConfig.templateName}! 👋🏻`}
+                </Typography>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Please sign-in to your account and start the adventure
+                </Typography>
+              </Box>
+              {/* <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
               <Typography variant='body2' sx={{ mb: 2, color: 'primary.main' }}>
                 Admin: <strong>admin@vuexy.com</strong> / Pass: <strong>admin</strong>
               </Typography>
@@ -284,63 +303,67 @@ const LoginPage = () => {
                 Client: <strong>client@vuexy.com</strong> / Pass: <strong>client</strong>
               </Typography>
             </Alert> */}
-            <form noValidate autoComplete="off">
-              <Box sx={{ mb: 4 }}>
-                <FormControl fullWidth>
-                  <TextField
-                    id="outlined-basic"
-                    label="Email"
-                    variant="outlined"
-                    name="username"
-                    onChange={handleInputChange}
-                  />
-                </FormControl>
-                {submitted && !formValue.username && (
-                  <>
-                    <FormHelperText error={true}>
-                      Email is required
-                    </FormHelperText>
-                  </>
-                )}
-                {submitted && !validateEmail(formValue.username) && (
-                  <>
-                    <FormHelperText error={true}>Invalid email</FormHelperText>
-                  </>
-                )}
-
-                <FormControl sx={{ mt: 4 }} fullWidth variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Password
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-password"
-                    name="password"
-                    onChange={handleInputChange}
-                    type={showPassword ? "text" : "password"}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          // onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                  {submitted && !formValue.password && (
+              <form noValidate autoComplete="off">
+                <Box sx={{ mb: 4 }}>
+                  <FormControl fullWidth>
+                    <TextField
+                      id="outlined-basic"
+                      label="Email"
+                      variant="outlined"
+                      name="username"
+                      onChange={handleInputChange}
+                    />
+                  </FormControl>
+                  {submitted && !formValue.username && (
                     <>
-                      <FormHelperText error={true}>
-                        Password is required
+                      <FormHelperText error={true} sx={{ ml: 2 }}>
+                        Email is required
                       </FormHelperText>
                     </>
                   )}
-                </FormControl>
+                  {submitted &&
+                    formValue.username &&
+                    !validateEmail(formValue.username) && (
+                      <>
+                        <FormHelperText error={true} sx={{ ml: 2 }}>
+                          Invalid email
+                        </FormHelperText>
+                      </>
+                    )}
 
-                {/* <Controller
+                  <FormControl sx={{ mt: 4 }} fullWidth variant="outlined">
+                    <InputLabel htmlFor="outlined-adornment-password">
+                      Password
+                    </InputLabel>
+                    <OutlinedInput
+                      id="outlined-adornment-password"
+                      name="password"
+                      onChange={handleInputChange}
+                      type={showPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            // onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Password"
+                    />
+                    {submitted && !formValue.password && (
+                      <>
+                        <FormHelperText error={true}>
+                          Password is required
+                        </FormHelperText>
+                      </>
+                    )}
+                  </FormControl>
+
+                  {/* <Controller
                   name="email"
                   control={control}
                   rules={{ required: true }}
@@ -360,8 +383,8 @@ const LoginPage = () => {
                     />
                   )}
                 /> */}
-              </Box>
-              {/* <Box sx={{ mb: 1.5 }}>
+                </Box>
+                {/* <Box sx={{ mb: 1.5 }}>
                 <Controller
                   name="password"
                   control={control}
@@ -401,16 +424,16 @@ const LoginPage = () => {
                   )}
                 />
               </Box> */}
-              <Box
-                sx={{
-                  mb: 1.75,
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <FormControlLabel
+                <Box
+                  sx={{
+                    mb: 1.75,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {/* <FormControlLabel
                   label="Remember Me"
                   control={
                     <Checkbox
@@ -418,93 +441,104 @@ const LoginPage = () => {
                       onChange={(e) => setRememberMe(e.target.checked)}
                     />
                   }
-                />
-                <Typography component={LinkStyled} href="/forgot-password">
-                  Forgot Password?
-                </Typography>
-              </Box>
-              <LoadingButton
-                fullWidth
-                loading={isLoading}
-                variant="contained"
-                sx={{ mb: 4 }}
-                onClick={handleSubmit}
-              >
-                Login
-              </LoadingButton>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography sx={{ color: "text.secondary", mr: 2 }}>
-                  New to our platform?
-                </Typography>
-                <Typography href="/register" component={LinkStyled}>
-                  Register
-                </Typography>
-              </Box>
-              <Divider
-                sx={{
-                  color: "text.disabled",
-                  "& .MuiDivider-wrapper": { px: 6 },
-                  fontSize: theme.typography.body2.fontSize,
-                  my: (theme) => `${theme.spacing(6)} !important`,
-                }}
-              >
-                or
-              </Divider>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <IconButton
-                  href="/"
-                  component={Link}
-                  sx={{ color: "#497ce2" }}
-                  onClick={(e) => e.preventDefault()}
+                /> */}
+                  <Typography
+                    sx={{
+                      cursor: "pointer",
+                      color: "#187de4",
+                    }}
+                    // component={LinkStyled}
+                    onClick={handleResendEmailOpen}
+                  >
+                    Resend Verify Email
+                  </Typography>
+                  <Typography component={LinkStyled} href="/forgot-password">
+                    Forgot Password?
+                  </Typography>
+                </Box>
+                <LoadingButton
+                  fullWidth
+                  loading={isLoading}
+                  variant="contained"
+                  sx={{ my: 4 }}
+                  onClick={handleSubmit}
                 >
-                  <Icon icon="mdi:facebook" />
-                </IconButton>
-                <IconButton
-                  href="/"
-                  component={Link}
-                  sx={{ color: "#1da1f2" }}
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Icon icon="mdi:twitter" />
-                </IconButton>
-                <IconButton
-                  href="/"
-                  component={Link}
-                  onClick={(e) => e.preventDefault()}
+                  Login
+                </LoadingButton>
+                <Box
                   sx={{
-                    color: (theme) =>
-                      theme.palette.mode === "light" ? "#272727" : "grey.300",
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
                   }}
                 >
-                  <Icon icon="mdi:github" />
-                </IconButton>
-                <IconButton
-                  href="/"
-                  component={Link}
-                  sx={{ color: "#db4437" }}
-                  onClick={(e) => e.preventDefault()}
+                  <Typography sx={{ color: "text.secondary", mr: 2 }}>
+                    New to our platform?
+                  </Typography>
+                  <Typography href="/register" component={LinkStyled}>
+                    Register
+                  </Typography>
+                </Box>
+                <Divider
+                  sx={{
+                    color: "text.disabled",
+                    "& .MuiDivider-wrapper": { px: 6 },
+                    fontSize: theme.typography.body2.fontSize,
+                    my: (theme) => `${theme.spacing(6)} !important`,
+                  }}
                 >
-                  <Icon icon="mdi:google" />
-                </IconButton>
-              </Box>
-            </form>
+                  or
+                </Divider>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <IconButton
+                    href="/"
+                    component={Link}
+                    sx={{ color: "#497ce2" }}
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Icon icon="mdi:facebook" />
+                  </IconButton>
+                  <IconButton
+                    href="/"
+                    component={Link}
+                    sx={{ color: "#1da1f2" }}
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Icon icon="mdi:twitter" />
+                  </IconButton>
+                  <IconButton
+                    href="/"
+                    component={Link}
+                    onClick={(e) => e.preventDefault()}
+                    sx={{
+                      color: (theme) =>
+                        theme.palette.mode === "light" ? "#272727" : "grey.300",
+                    }}
+                  >
+                    <Icon icon="mdi:github" />
+                  </IconButton>
+                  <IconButton
+                    href="/"
+                    component={Link}
+                    sx={{ color: "#db4437" }}
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <Icon icon="mdi:google" />
+                  </IconButton>
+                </Box>
+              </form>
+            </Box>
           </Box>
-        </Box>
-      </RightWrapper>
-    </Box>
+        </RightWrapper>
+      </Box>
+    </>
   );
 };
 LoginPage.getLayout = (page) => <BlankLayout>{page}</BlankLayout>;
