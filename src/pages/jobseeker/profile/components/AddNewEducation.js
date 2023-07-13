@@ -25,6 +25,9 @@ import {
   updateJobseekerEducation,
 } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
+import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
+import DatePicker from "react-datepicker";
+import { useTheme } from "@mui/material/styles";
 
 const menuProps = {
   PaperProps: {
@@ -41,6 +44,9 @@ const AddNewEducation = ({
   onHandleChangeLoading,
   selectedEducation,
 }) => {
+  const theme = useTheme();
+  const { direction } = theme;
+  const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
   const [mainCourse, setMainCourse] = useState(null);
   const [subCourse, setSubCourse] = useState(null);
   const [formValue, setFormValue] = useState({
@@ -69,10 +75,13 @@ const AddNewEducation = ({
     const newStateValue = { ...formValue };
     newStateValue.board = selectedEducation.board || "";
     newStateValue.course = selectedEducation.course_id || "";
-    newStateValue.course_duration_end =
-      selectedEducation.course_duration_end || "";
+    newStateValue.course_duration_end = selectedEducation.course_duration_end
+      ? new Date(selectedEducation.course_duration_end)
+      : "";
     newStateValue.course_duration_start =
-      selectedEducation.course_duration_start || "";
+      selectedEducation.course_duration_start
+        ? new Date(selectedEducation.course_duration_start)
+        : "";
     newStateValue.course_type = selectedEducation.course_type || "";
     newStateValue.education_type = selectedEducation.education_type || "";
     newStateValue.grade_or_marks = selectedEducation.grade_or_marks || "";
@@ -82,7 +91,9 @@ const AddNewEducation = ({
       selectedEducation.university_or_institute_address || "";
     newStateValue.university_or_institute_name =
       selectedEducation.university_or_institute_name || "";
-    newStateValue.year_of_passout = selectedEducation.year_of_passout || "";
+    newStateValue.year_of_passout = selectedEducation.year_of_passout
+      ? new Date(selectedEducation.year_of_passout)
+      : "";
     console.log("newStateValue", newStateValue);
     setFormValue(newStateValue);
     if (selectedEducation.course_id) {
@@ -90,6 +101,19 @@ const AddNewEducation = ({
     }
     fetchMainCourse();
   }, []);
+
+  const handleDateChange = (parentName, value) => {
+    const newFormValue = { ...formValue };
+    console.log("parentName", parentName);
+    if (parentName === "course_duration_start") {
+      newFormValue["course_duration_start"] = value;
+      newFormValue["course_duration_end"] = "";
+      setFormValue(newFormValue);
+      return;
+    }
+    newFormValue[parentName] = value;
+    setFormValue(newFormValue);
+  };
 
   const fetchMainCourse = async () => {
     try {
@@ -476,7 +500,7 @@ const AddNewEducation = ({
                   <Grid container spacing={2} py={2}>
                     <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                       <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
+                        {/* <TextField
                           sx={{ mb: 2 }}
                           label={"Year of passout"}
                           // required
@@ -497,7 +521,37 @@ const AddNewEducation = ({
                           //     .replace(/\p{Emoji_Presentation}/gu, "")}
                           //   onChange={(e) => formik.handleChange(e)}
                           //   helperText={}
-                        />
+                        /> */}
+
+                        <DatePickerWrapper>
+                          <DatePicker
+                            id="join-date"
+                            showYearPicker
+                            selected={formValue.year_of_passout}
+                            dateFormat="yyyy"
+                            fullWidth
+                            minDate={formValue.year_of_passout}
+                            sx={{ width: 1 }}
+                            popperPlacement={popperPlacement}
+                            onChange={(date) => {
+                              handleDateChange("year_of_passout", date);
+                            }}
+                            customInput={
+                              <TextField
+                                sx={{ mb: 2 }}
+                                label={"Year of passout"}
+                                value={formValue.year_of_passout}
+                                fullWidth
+                                error={submitted && !formValue.year_of_passout}
+                                helperText={
+                                  submitted &&
+                                  !formValue.year_of_passout &&
+                                  "Year of passout is required"
+                                }
+                              />
+                            }
+                          />
+                        </DatePickerWrapper>
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -748,7 +802,38 @@ const AddNewEducation = ({
                   <Grid container spacing={2} py={2}>
                     <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
                       <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
+                        <DatePickerWrapper>
+                          <DatePicker
+                            id="join-date"
+                            showYearPicker
+                            selected={formValue.course_duration_start}
+                            dateFormat="yyyy"
+                            fullWidth
+                            minDate={formValue.certification_valid_from}
+                            sx={{ width: 1 }}
+                            popperPlacement={popperPlacement}
+                            onChange={(date) => {
+                              handleDateChange("course_duration_start", date);
+                            }}
+                            customInput={
+                              <TextField
+                                sx={{ mb: 2 }}
+                                label={"Start Year"}
+                                value={formValue.course_duration_start}
+                                fullWidth
+                                error={
+                                  submitted && !formValue.course_duration_start
+                                }
+                                helperText={
+                                  submitted &&
+                                  !formValue.course_duration_start &&
+                                  "End Year is required"
+                                }
+                              />
+                            }
+                          />
+                        </DatePickerWrapper>
+                        {/* <TextField
                           sx={{ mb: 2 }}
                           label={"Start Year"}
                           // required
@@ -777,13 +862,43 @@ const AddNewEducation = ({
                           //     .replace(/\p{Emoji_Presentation}/gu, "")}
                           //   onChange={(e) => formik.handleChange(e)}
                           //   helperText={}
-                        />
+                        /> */}
                       </FormControl>
                     </Grid>
                   </Grid>
 
                   <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                    <TextField
+                    <DatePickerWrapper>
+                      <DatePicker
+                        id="join-date"
+                        showYearPicker
+                        selected={formValue.course_duration_end}
+                        dateFormat="yyyy"
+                        fullWidth
+                        minDate={formValue.course_duration_start}
+                        sx={{ width: 1 }}
+                        popperPlacement={popperPlacement}
+                        onChange={(date) => {
+                          handleDateChange("course_duration_end", date);
+                        }}
+                        customInput={
+                          <TextField
+                            sx={{ mb: 2 }}
+                            label={"End Year"}
+                            value={formValue.course_duration_end}
+                            fullWidth
+                            error={submitted && !formValue.course_duration_end}
+                            helperText={
+                              submitted &&
+                              !formValue.course_duration_end &&
+                              "End Year is required"
+                            }
+                          />
+                        }
+                      />
+                    </DatePickerWrapper>
+
+                    {/* <TextField
                       sx={{ mb: 2 }}
                       label={"End Year"}
                       // required
@@ -806,14 +921,8 @@ const AddNewEducation = ({
                       }
                       value={formValue?.course_duration_end}
                       error={submitted && !formValue?.course_duration_end}
-                      //   value={formik.values.aboutMe
-                      //     .trimStart()
-                      //     .replace(/\s\s+/g, "")
-                      //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                      //   onChange={(e) => formik.handleChange(e)}
-                      //   helperText={}
-                    />
-                    {submitted &&
+                    /> */}
+                    {/* {submitted &&
                       formValue?.course_duration_end &&
                       formValue?.course_duration_start &&
                       parseInt(formValue?.course_duration_end, 10) >
@@ -823,7 +932,7 @@ const AddNewEducation = ({
                             Invalid year selection
                           </FormHelperText>
                         </>
-                      )}
+                      )} */}
                   </Grid>
                 </>
               )}
