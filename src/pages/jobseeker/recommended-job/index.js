@@ -224,9 +224,9 @@ const RecommendedJob = () => {
   const viewJob = async () => {
     // setJobList([]);
     // setPageCount([]);
-    setSavedId("");
 
     try {
+      // setSavedId("");
       setIsLoading(true);
       const params = {
         page: page,
@@ -250,11 +250,13 @@ const RecommendedJob = () => {
       //   variant: "error",
       // });
     } finally {
+      // setSavedId("");
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    // setSavedId("");
     viewJob();
   }, [rowsPerPage, page]);
 
@@ -285,6 +287,7 @@ const RecommendedJob = () => {
       console.log(result?.data?.data);
       // setJobDetails(result?.data?.data);
       // viewJob();
+      // setSavedId("");
       var copy = JSON.parse(JSON.stringify(machedJobList));
       copy.map((elem) => {
         elem.is_saved = elem.id == id ? !elem.is_saved : elem.is_saved;
@@ -314,7 +317,9 @@ const RecommendedJob = () => {
         variant: "error",
       });
     } finally {
+      // setSavedId("");
       setIsBookmarkLoading(false);
+      // setSavedId("");
     }
   };
   return (
@@ -324,7 +329,7 @@ const RecommendedJob = () => {
           <CardHeader title="Recommended Job" />
           <Divider sx={{ m: "0 !important" }} />
 
-          {isLoading && savedId !== "" && (
+          {isLoading && savedId === "" && (
             <Box
               sx={{
                 display: "flex",

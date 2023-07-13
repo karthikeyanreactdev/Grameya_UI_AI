@@ -281,18 +281,29 @@ const LoginPage = () => {
                 }}
               >
                 <img
-                  height={50}
+                  height={60}
                   width={250}
                   alt="add-role"
                   src="/images/glogo.png"
                 />
               </Box>
               <Box sx={{ my: 6 }}>
-                <Typography variant="h3" sx={{ mb: 1.5 }}>
-                  {`Welcome to ${themeConfig.templateName}! 👋🏻`}
-                </Typography>
-                <Typography sx={{ color: "text.secondary" }}>
-                  Please sign-in to your account and start the adventure
+                <Box
+                  sx={{
+                    display: "flex",
+                    // alignItems: "flex-end",
+                    justifyContent: "center",
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h3" sx={{ mb: 1.5 }}>
+                    {`Welcome to ${themeConfig.templateName}! 👋🏻`}
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{ color: "text.secondary", textAlign: "center" }}
+                >
+                  Please sign-in to your account
                 </Typography>
               </Box>
               {/* <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
@@ -446,13 +457,22 @@ const LoginPage = () => {
                     sx={{
                       cursor: "pointer",
                       color: "#187de4",
+                      fontSize: "0.775rem",
                     }}
                     // component={LinkStyled}
                     onClick={handleResendEmailOpen}
                   >
-                    Resend Verify Email
+                    Resend Verification Mail?
                   </Typography>
-                  <Typography component={LinkStyled} href="/forgot-password">
+                  <Typography
+                    component={LinkStyled}
+                    href="/forgot-password"
+                    sx={{
+                      cursor: "pointer",
+                      color: "#187de4",
+                      fontSize: "0.775rem",
+                    }}
+                  >
                     Forgot Password?
                   </Typography>
                 </Box>
@@ -471,16 +491,31 @@ const LoginPage = () => {
                     alignItems: "center",
                     flexWrap: "wrap",
                     justifyContent: "center",
+                    fontSize: "0.775rem",
                   }}
                 >
-                  <Typography sx={{ color: "text.secondary", mr: 2 }}>
+                  <Typography
+                    sx={{
+                      color: "text.secondary",
+                      mr: 2,
+                      fontSize: "0.875rem",
+                    }}
+                  >
                     New to our platform?
                   </Typography>
-                  <Typography href="/register" component={LinkStyled}>
+                  <Typography
+                    href="/register"
+                    component={LinkStyled}
+                    sx={{
+                      cursor: "pointer",
+                      color: "#187de4",
+                      fontSize: "0.875rem",
+                    }}
+                  >
                     Register
                   </Typography>
                 </Box>
-                <Divider
+                {/* <Divider
                   sx={{
                     color: "text.disabled",
                     "& .MuiDivider-wrapper": { px: 6 },
@@ -532,7 +567,7 @@ const LoginPage = () => {
                   >
                     <Icon icon="mdi:google" />
                   </IconButton>
-                </Box>
+                </Box> */}
               </form>
             </Box>
           </Box>

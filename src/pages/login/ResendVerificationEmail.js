@@ -81,7 +81,7 @@ const ResendVerificationEmail = (props) => {
               p: 4,
             }}
           >
-            <Typography variant="h3" component="div">
+            <Typography variant="h5" component="div">
               Resend Verification email
             </Typography>
 
@@ -97,7 +97,7 @@ const ResendVerificationEmail = (props) => {
                   <FormControl fullWidth sx={{ my: 2 }}>
                     <TextField
                       sx={{ mb: 2 }}
-                      label={"Email"}
+                      label={"Email *"}
                       // required
                       fullWidth
                       onChange={handleInputChange}
@@ -110,7 +110,7 @@ const ResendVerificationEmail = (props) => {
                           {submitted &&
                             formValue.email &&
                             !validateEmail(formValue.email) && (
-                              <>Invalid email</>
+                              <> Please enter the valid email</>
                             )}
                         </>
                       }
@@ -126,7 +126,7 @@ const ResendVerificationEmail = (props) => {
                 </Grid>
               </Grid>
 
-              <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ mt: 4 }}>
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12} sx={{ mt: 0 }}>
                 <LoadingButton
                   fullWidth
                   variant="contained"

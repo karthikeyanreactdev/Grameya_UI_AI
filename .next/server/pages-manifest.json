@@ -2,8 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/login": "pages/login.js",
-  "/register": "pages/register.js",
-  "/verify_email": "pages/verify_email.js",
-  "/404": "pages/404.js"
+  "/jobseeker/dashboard": "pages/jobseeker/dashboard.js",
+  "/jobseeker/profile": "pages/jobseeker/profile.js"
 }

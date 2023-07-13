@@ -21,6 +21,7 @@ import { removeCertificationSeeker } from "src/api-services/seeker/profile";
 import useNotification from "src/hooks/useNotification";
 import Icon from "src/@core/components/icon";
 import { DeleteOutline } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
 const CertificationDetail = ({
   userDetail,
@@ -32,26 +33,36 @@ const CertificationDetail = ({
   const [sendNotification] = useNotification();
 
   const handleDeleteCertification = async (item) => {
-    onHandleChangeLoading(true);
-    const apiDate = {
-      id: item?.id,
-    };
-    try {
-      const response = await removeCertificationSeeker(apiDate);
+    Swal.fire({
+      title: "Do you want to Delete?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        onHandleChangeLoading(true);
+        const apiDate = {
+          id: item?.id,
+        };
+        try {
+          const response = await removeCertificationSeeker(apiDate);
 
-      console.log("response", response);
-      if (response.status === 200) {
-        sendNotification({
-          message: response?.data?.message,
-          variant: "success",
-        });
-        getProfileDetail();
+          console.log("response", response);
+          if (response.status === 200) {
+            sendNotification({
+              message: response?.data?.message,
+              variant: "success",
+            });
+            getProfileDetail();
+          }
+        } catch (e) {
+          console.log("e", e);
+        } finally {
+          onHandleChangeLoading(false);
+        }
       }
-    } catch (e) {
-      console.log("e", e);
-    } finally {
-      onHandleChangeLoading(false);
-    }
+    });
   };
 
   const formatDate = (dateValue) => {

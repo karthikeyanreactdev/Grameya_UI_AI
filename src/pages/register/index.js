@@ -48,6 +48,8 @@ import { useDispatch } from "react-redux";
 import { authRegister } from "src/store/apps/auth";
 import useNotification from "src/hooks/useNotification";
 import { LoadingButton } from "@mui/lab";
+import { useRouter } from "next/router";
+import themeConfig from "src/configs/themeConfig";
 
 // ** Styled Components
 const RegisterIllustration = styled("img")(({ theme }) => ({
@@ -93,6 +95,7 @@ const Register = () => {
   // ** States
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
   const [formValue, setFormValue] = useState({
     user_type: "",
     name: "",
@@ -184,6 +187,7 @@ const Register = () => {
         message: response.payload?.data?.message,
         variant: "success",
       });
+      router.replace("/login");
     } else {
       sendNotification({
         message: response.payload?.message,
@@ -226,28 +230,47 @@ const Register = () => {
           }}
         >
           <Box sx={{ width: "100%", maxWidth: 400 }}>
-            <img
-              height={50}
-              width={250}
-              alt="add-role"
-              src="/images/glogo.png"
-            />
+            <Box
+              sx={{
+                height: "100%",
+                minHeight: 140,
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                height={60}
+                width={250}
+                alt="add-role"
+                src="/images/glogo.png"
+              />
+            </Box>
             <Box sx={{ my: 6 }}>
-              <Typography variant="h3" sx={{ mb: 1.5 }}>
-                Adventure starts here 🚀
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                Make your app management easy and fun!
+              <Box
+                sx={{
+                  display: "flex",
+                  // alignItems: "flex-end",
+                  justifyContent: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h3" sx={{ mb: 1.5 }}>
+                  {`Welcome to ${themeConfig.templateName}! 👋🏻`}
+                </Typography>
+              </Box>
+              <Typography sx={{ color: "text.secondary", textAlign: "center" }}>
+                Please sign-up to your account
               </Typography>
             </Box>
             <form>
               <FormControl fullWidth>
-                <InputLabel id="user_type-select-label">Type</InputLabel>
+                <InputLabel id="user_type-select-label">User Type</InputLabel>
                 <Select
                   labelId="user_type-select-label"
                   id="user_type-select"
                   value={formValue?.user_type}
-                  label="Type"
+                  label="User Type"
                   name="user_type"
                   onChange={handleInputChange}
                 >
@@ -256,13 +279,29 @@ const Register = () => {
                 </Select>
                 {submitted && !formValue.user_type && (
                   <>
-                    <FormHelperText error={true}>
-                      Type is required
+                    <FormHelperText error={true} sx={{ mt: 2 }}>
+                      User Type is required
                     </FormHelperText>
                   </>
                 )}
               </FormControl>
 
+              <FormControl fullWidth sx={{ mt: 4 }}>
+                <TextField
+                  id="outlined-basic"
+                  label="Full Name"
+                  variant="outlined"
+                  name="name"
+                  onChange={handleInputChange}
+                />
+                {submitted && !formValue.name && (
+                  <>
+                    <FormHelperText error={true} sx={{ mt: 2 }}>
+                      Full Name is required
+                    </FormHelperText>
+                  </>
+                )}
+              </FormControl>
               <FormControl fullWidth sx={{ mt: 4 }}>
                 <TextField
                   id="outlined-basic"
@@ -273,7 +312,7 @@ const Register = () => {
                 />
                 {submitted && !formValue.email && (
                   <>
-                    <FormHelperText error={true}>
+                    <FormHelperText error={true} sx={{ mt: 2 }}>
                       Email is required
                     </FormHelperText>
                   </>
@@ -282,28 +321,11 @@ const Register = () => {
                   formValue.email &&
                   !validateEmail(formValue.email) && (
                     <>
-                      <FormHelperText error={true}>
-                        Invalid email
+                      <FormHelperText error={true} sx={{ mt: 2 }}>
+                        Please enter the valid email
                       </FormHelperText>
                     </>
                   )}
-              </FormControl>
-
-              <FormControl fullWidth sx={{ mt: 4 }}>
-                <TextField
-                  id="outlined-basic"
-                  label="Name"
-                  variant="outlined"
-                  name="name"
-                  onChange={handleInputChange}
-                />
-                {submitted && !formValue.name && (
-                  <>
-                    <FormHelperText error={true}>
-                      Name is required
-                    </FormHelperText>
-                  </>
-                )}
               </FormControl>
 
               {formValue.user_type === "recruiter" && (
@@ -318,7 +340,7 @@ const Register = () => {
                     />
                     {submitted && !formValue.company_name && (
                       <>
-                        <FormHelperText error={true}>
+                        <FormHelperText error={true} sx={{ mt: 2 }}>
                           Company Name is required
                         </FormHelperText>
                       </>
@@ -339,7 +361,7 @@ const Register = () => {
                 />
                 {submitted && !formValue.phone && (
                   <>
-                    <FormHelperText error={true}>
+                    <FormHelperText error={true} sx={{ mt: 2 }}>
                       Phone is required
                     </FormHelperText>
                   </>
@@ -371,7 +393,7 @@ const Register = () => {
                 />
                 {submitted && !formValue.password && (
                   <>
-                    <FormHelperText error={true}>
+                    <FormHelperText error={true} sx={{ mt: 2 }}>
                       Password is required
                     </FormHelperText>
                   </>
@@ -398,7 +420,8 @@ const Register = () => {
                   />
                 }
                 sx={{
-                  mb: 4,
+                  // mb: 4,
+                  mb: 0,
                   mt: 1.5,
                   "& .MuiFormControlLabel-label": {
                     fontSize: theme.typography.body2.fontSize,
@@ -422,7 +445,7 @@ const Register = () => {
                       onClick={(e) => e.preventDefault()}
                       sx={{ ml: 1 }}
                     >
-                      privacy policy & terms
+                      The Terms & Conditions
                     </Typography>
                   </Box>
                 }
@@ -430,7 +453,7 @@ const Register = () => {
               {submitted && !termsCheck && (
                 <>
                   <FormHelperText error={true} sx={{ mb: 4 }}>
-                    Please check terms and check
+                    Please agree the Terms & Conditions
                   </FormHelperText>
                 </>
               )}
@@ -458,7 +481,7 @@ const Register = () => {
                   Sign in instead
                 </Typography>
               </Box>
-              <Divider
+              {/* <Divider
                 sx={{
                   color: "text.disabled",
                   "& .MuiDivider-wrapper": { px: 6 },
@@ -510,7 +533,7 @@ const Register = () => {
                 >
                   <Icon icon="mdi:google" />
                 </IconButton>
-              </Box>
+              </Box> */}
             </form>
           </Box>
         </Box>

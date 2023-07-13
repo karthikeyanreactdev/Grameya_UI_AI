@@ -220,7 +220,7 @@ const CandidateSavedJob = () => {
   const viewJob = async () => {
     // setJobList([]);
     // setPageCount([]);
-    setSavedId("");
+    // setSavedId("");
 
     try {
       setIsLoading(true);
@@ -310,6 +310,7 @@ const CandidateSavedJob = () => {
       });
     } finally {
       setIsBookmarkLoading(false);
+      // setSavedId("");
     }
   };
   return (
@@ -319,7 +320,7 @@ const CandidateSavedJob = () => {
           <CardHeader title="Saved Job" />
           <Divider sx={{ m: "0 !important" }} />
 
-          {isLoading && savedId !== "" && (
+          {isLoading && savedId === "" && (
             <Box
               sx={{
                 display: "flex",

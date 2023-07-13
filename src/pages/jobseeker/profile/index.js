@@ -49,6 +49,7 @@ import { DeleteOutline } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "src/store/apps/auth";
+import Swal from "sweetalert2";
 const userStatusObj = {
   active: "success",
   pending: "warning",
@@ -158,57 +159,77 @@ const ACLPage = () => {
   }, []);
 
   const handleDeleteEducation = async (formValue) => {
-    console.log("check");
-    // setSubmitted(true);
-    handleChangeLoading(true);
-    try {
-      const apiData = {
-        education_id: formValue,
-      };
-      const response = await removeJobseekerEducation(apiData);
-      console.log("response", response);
-      if (response.status === 200) {
-        sendNotification({
-          message: response?.data?.message,
-          variant: "success",
-        });
-        getProfileDetail();
-        // handleClose();
+    Swal.fire({
+      title: "Do you want to Delete?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        console.log("check");
+        // setSubmitted(true);
+        handleChangeLoading(true);
+        try {
+          const apiData = {
+            education_id: formValue,
+          };
+          const response = await removeJobseekerEducation(apiData);
+          console.log("response", response);
+          if (response.status === 200) {
+            sendNotification({
+              message: response?.data?.message,
+              variant: "success",
+            });
+            getProfileDetail();
+            // handleClose();
+          }
+        } catch (e) {
+          console.log("e", e);
+          sendNotification({
+            message: e,
+            variant: "error",
+          });
+        } finally {
+          handleChangeLoading(false);
+        }
       }
-    } catch (e) {
-      console.log("e", e);
-      sendNotification({
-        message: e,
-        variant: "error",
-      });
-    } finally {
-      handleChangeLoading(false);
-    }
+    });
   };
 
   const handleDeleteExpirince = async (formValue) => {
-    console.log("check");
-    // setSubmitted(true);
-    handleChangeLoading(true);
-    try {
-      const apiData = {
-        experience_id: formValue,
-      };
-      const response = await removeJobseekerExperience(apiData);
-      console.log("response", response);
-      if (response.status === 200) {
-        sendNotification({
-          message: response?.data?.message,
-          variant: "success",
-        });
-        getProfileDetail();
-        // handleClose();
+    Swal.fire({
+      title: "Do you want to Delete?",
+      // showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      // denyButtonText: `Don't save`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        console.log("check");
+        // setSubmitted(true);
+        handleChangeLoading(true);
+        try {
+          const apiData = {
+            experience_id: formValue,
+          };
+          const response = await removeJobseekerExperience(apiData);
+          console.log("response", response);
+          if (response.status === 200) {
+            sendNotification({
+              message: response?.data?.message,
+              variant: "success",
+            });
+            getProfileDetail();
+            // handleClose();
+          }
+        } catch (e) {
+          console.log("e", e);
+        } finally {
+          handleChangeLoading(false);
+        }
       }
-    } catch (e) {
-      console.log("e", e);
-    } finally {
-      handleChangeLoading(false);
-    }
+    });
   };
 
   const handleEditChange = () => {

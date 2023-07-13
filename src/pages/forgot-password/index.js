@@ -25,6 +25,8 @@ import { authForgotPasswor } from "src/store/apps/auth";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import useNotification from "src/hooks/useNotification";
+import { LoadingButton } from "@mui/lab";
+import { useRouter } from "next/router";
 
 // Styled Components
 const ForgotPasswordIllustration = styled("img")(({ theme }) => ({
@@ -66,10 +68,12 @@ const ForgotPassword = () => {
   // ** Hooks
   const dispatch = useDispatch();
   const theme = useTheme();
+  const router = useRouter();
   const [formValue, setFormValue] = useState({
     email: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [sendNotification] = useNotification();
 
   // ** Vars
@@ -90,6 +94,7 @@ const ForgotPassword = () => {
       return;
     }
     console.log("formValue", formValue);
+    setIsLoading(true);
     const response = await dispatch(
       authForgotPasswor({
         formValue: formValue,
@@ -101,12 +106,14 @@ const ForgotPassword = () => {
         message: response.payload?.data?.message,
         variant: "success",
       });
+      router.replace("/login");
     } else {
       sendNotification({
         message: response.payload?.message,
         variant: "error",
       });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -142,24 +149,43 @@ const ForgotPassword = () => {
           }}
         >
           <Box sx={{ width: "100%", maxWidth: 400 }}>
-            <img
-              height={50}
-              width={250}
-              alt="add-role"
-              src="/images/glogo.png"
-            />
+            <Box
+              sx={{
+                height: "100%",
+                minHeight: 140,
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                height={60}
+                width={250}
+                alt="add-role"
+                src="/images/glogo.png"
+              />
+            </Box>
             <Box sx={{ my: 6 }}>
-              <Typography
+              <Box
                 sx={{
-                  mb: 1.5,
-                  fontWeight: 500,
-                  fontSize: "1.625rem",
-                  lineHeight: 1.385,
+                  display: "flex",
+                  // alignItems: "flex-end",
+                  justifyContent: "center",
+                  mb: 2,
                 }}
               >
-                Forgot Password? 🔒
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
+                <Typography
+                  sx={{
+                    mb: 1.5,
+                    fontWeight: 500,
+                    fontSize: "1.625rem",
+                    lineHeight: 1.385,
+                  }}
+                >
+                  Forgot Password? 🔒
+                </Typography>
+              </Box>
+              <Typography sx={{ color: "text.secondary", textAlign: "center" }}>
                 Enter your email and we&prime;ll send you instructions to reset
                 your password
               </Typography>
@@ -172,15 +198,21 @@ const ForgotPassword = () => {
               <FormControl fullWidth>
                 <TextField
                   id="outlined-basic"
-                  label="Email"
+                  label="Email *"
                   variant="outlined"
                   name="email"
                   onChange={handleInputChange}
+                  error={
+                    (submitted && !formValue.email) ||
+                    (submitted &&
+                      formValue.email &&
+                      !validateEmail(formValue.email))
+                  }
                 />
               </FormControl>
               {submitted && !formValue.email && (
                 <>
-                  <FormHelperText error={true}>
+                  <FormHelperText error={true} sx={{ ml: 3, mt: 1 }}>
                     Email is required
                   </FormHelperText>
                 </>
@@ -189,19 +221,28 @@ const ForgotPassword = () => {
                 formValue.email &&
                 !validateEmail(formValue.email) && (
                   <>
-                    <FormHelperText error={true} sx={{ ml: 2 }}>
-                      Invalid email
+                    <FormHelperText error={true} sx={{ ml: 3, mt: 1 }}>
+                      Please enter the valid email
                     </FormHelperText>
                   </>
                 )}
-              <Button
+              <LoadingButton
                 fullWidth
                 onClick={handleSubmitForgotPassword}
+                loading={isLoading}
                 variant="contained"
+                // disabled={
+                //   !(submitted && !formValue.email) ||
+                //   !(
+                //     submitted &&
+                //     formValue.email &&
+                //     !validateEmail(formValue.email)
+                //   )
+                // }
                 sx={{ mb: 4, mt: 4 }}
               >
                 Send reset link
-              </Button>
+              </LoadingButton>
               <Typography
                 sx={{
                   display: "flex",
