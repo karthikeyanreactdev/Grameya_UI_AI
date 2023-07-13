@@ -54,7 +54,7 @@ const AddNewEducation = ({
     board: "",
     course: "",
     course_duration_start: "",
-    course_type: "",
+    course_type: "full_time",
     education_type: "",
     grade_or_marks: "",
     school_medium: "",
@@ -311,9 +311,10 @@ const AddNewEducation = ({
               alignItems: "center",
               justifyContent: "space-between",
               p: 4,
+              ml: 2,
             }}
           >
-            <Typography variant="h3" component="div">
+            <Typography variant="h5" component="div">
               {selectedEducation ? "Edit Education" : "Add Education"}
             </Typography>
 
@@ -324,183 +325,168 @@ const AddNewEducation = ({
 
           <Box sx={{ p: (theme) => theme.spacing(0, 6, 6) }}>
             <Grid container spacing={0}>
-              <Grid container spacing={2} py={2}>
-                <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                  <FormControl fullWidth sx={{ my: 2 }}>
-                    <InputLabel
-                      id="demo-simple-select-label"
-                      error={submitted && !formValue?.education_type}
-                    >
-                      Education *
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Education *"
-                      name="education_type"
-                      onChange={handleInputChange}
-                      value={formValue?.education_type}
-                      error={submitted && !formValue?.education_type}
-                    >
-                      <MenuItem value={"10th"}>10th</MenuItem>
-                      <MenuItem value={"12th"}>12th</MenuItem>
-                      <MenuItem value={"diploma"}>Diploma</MenuItem>
-                      <MenuItem value={"under_graduate"}>
-                        Under Graduate
-                      </MenuItem>
-                      <MenuItem value={"post_graduate"}>Post Graduate</MenuItem>
-                      <MenuItem value={"doctorate"}>Doctorate</MenuItem>
-                    </Select>
-                    {submitted && !formValue?.education_type && (
-                      <FormHelperText error={true}>
-                        Education is required
-                      </FormHelperText>
-                    )}
-                    <FormHelperText></FormHelperText>
-                  </FormControl>
-                </Grid>
+              <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                <FormControl fullWidth sx={{ my: 2 }}>
+                  <InputLabel
+                    id="demo-simple-select-label"
+                    error={submitted && !formValue?.education_type}
+                  >
+                    Education *
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Education *"
+                    name="education_type"
+                    onChange={handleInputChange}
+                    value={formValue?.education_type}
+                    error={submitted && !formValue?.education_type}
+                  >
+                    <MenuItem value={"10th"}>10th</MenuItem>
+                    <MenuItem value={"12th"}>12th</MenuItem>
+                    <MenuItem value={"diploma"}>Diploma</MenuItem>
+                    <MenuItem value={"under_graduate"}>Under Graduate</MenuItem>
+                    <MenuItem value={"post_graduate"}>Post Graduate</MenuItem>
+                    <MenuItem value={"doctorate"}>Doctorate</MenuItem>
+                  </Select>
+                  {submitted && !formValue?.education_type && (
+                    <FormHelperText error={true}>
+                      Education is required
+                    </FormHelperText>
+                  )}
+                  <FormHelperText></FormHelperText>
+                </FormControl>
               </Grid>
 
               {formValue?.education_type === "10th" ||
               formValue?.education_type === "12th" ? (
                 <>
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <InputLabel
-                          id="demo-simple-select-label"
-                          error={submitted && !formValue?.board}
-                        >
-                          Board *
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Board *"
-                          MenuProps={menuProps}
-                          onChange={handleMainCourseChange}
-                          name="board"
-                          value={formValue?.board}
-                          error={submitted && !formValue?.board}
-                        >
-                          <MenuItem value="State Board" sx={{ width: "10rem" }}>
-                            State Board
-                          </MenuItem>
-                          <MenuItem
-                            value="Central Board"
-                            sx={{ width: "10rem" }}
-                          >
-                            Central Board
-                          </MenuItem>
-                        </Select>
-                        {submitted && !formValue?.board && (
-                          <FormHelperText error={true}>
-                            Board is required
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <InputLabel
+                        id="demo-simple-select-label"
+                        error={submitted && !formValue?.board}
+                      >
+                        Board *
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Board *"
+                        MenuProps={menuProps}
+                        onChange={handleMainCourseChange}
+                        name="board"
+                        value={formValue?.board}
+                        error={submitted && !formValue?.board}
+                      >
+                        <MenuItem value="State Board" sx={{ width: "10rem" }}>
+                          State Board
+                        </MenuItem>
+                        <MenuItem value="Central Board" sx={{ width: "10rem" }}>
+                          Central Board
+                        </MenuItem>
+                      </Select>
+                      {submitted && !formValue?.board && (
+                        <FormHelperText error={true}>
+                          Board is required
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
-                          sx={{ mb: 2 }}
-                          label={"Address"}
-                          // required
-                          fullWidth
-                          onChange={handleInputChange}
-                          name="university_or_institute_address"
-                          helperText={
-                            submitted &&
-                            !formValue?.university_or_institute_address && (
-                              <>Address is required</>
-                            )
-                          }
-                          error={
-                            submitted &&
-                            !formValue?.university_or_institute_address
-                          }
-                          // error={false}
-                          //   value={formik.values.aboutMe
-                          //     .trimStart()
-                          //     .replace(/\s\s+/g, "")
-                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                          //   onChange={(e) => formik.handleChange(e)}
-                          //   helperText={}
-                        />
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        label={"Address *"}
+                        // required
+                        fullWidth
+                        onChange={handleInputChange}
+                        name="university_or_institute_address"
+                        helperText={
+                          submitted &&
+                          !formValue?.university_or_institute_address && (
+                            <>Address is required</>
+                          )
+                        }
+                        error={
+                          submitted &&
+                          !formValue?.university_or_institute_address
+                        }
+                        // error={false}
+                        //   value={formik.values.aboutMe
+                        //     .trimStart()
+                        //     .replace(/\s\s+/g, "")
+                        //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                        //   onChange={(e) => formik.handleChange(e)}
+                        //   helperText={}
+                      />
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <InputLabel
-                          id="demo-simple-select-label"
-                          error={submitted && !formValue?.school_medium}
-                        >
-                          Medium *
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Medium *"
-                          MenuProps={menuProps}
-                          onChange={handleMainCourseChange}
-                          name="school_medium"
-                          value={formValue?.school_medium || ""}
-                          error={submitted && !formValue?.school_medium}
-                        >
-                          <MenuItem value="English" sx={{ width: "10rem" }}>
-                            English
-                          </MenuItem>
-                          <MenuItem value="Tamil" sx={{ width: "10rem" }}>
-                            Tamil
-                          </MenuItem>
-                        </Select>
-                        {submitted && !formValue?.school_medium && (
-                          <FormHelperText error={true}>
-                            Medium is required
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
-                          sx={{ mb: 2 }}
-                          label={"Percentage"}
-                          // required
-                          fullWidth
-                          name="grade_or_marks"
-                          onChange={handleInputChange}
-                          helperText={
-                            submitted &&
-                            !formValue?.grade_or_marks && (
-                              <>Percentage is required</>
-                            )
-                          }
-                          error={submitted && !formValue?.grade_or_marks}
-                          value={formValue?.grade_or_marks}
-                          //   value={formik.values.aboutMe
-                          //     .trimStart()
-                          //     .replace(/\s\s+/g, "")
-                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                          //   onChange={(e) => formik.handleChange(e)}
-                          //   helperText={}
-                        />
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <InputLabel
+                        id="demo-simple-select-label"
+                        error={submitted && !formValue?.school_medium}
+                      >
+                        Medium *
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Medium *"
+                        MenuProps={menuProps}
+                        onChange={handleMainCourseChange}
+                        name="school_medium"
+                        value={formValue?.school_medium || ""}
+                        error={submitted && !formValue?.school_medium}
+                      >
+                        <MenuItem value="English" sx={{ width: "10rem" }}>
+                          English
+                        </MenuItem>
+                        <MenuItem value="Tamil" sx={{ width: "10rem" }}>
+                          Tamil
+                        </MenuItem>
+                      </Select>
+                      {submitted && !formValue?.school_medium && (
+                        <FormHelperText error={true}>
+                          Medium is required
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        {/* <TextField
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        label={"Percentage *"}
+                        // required
+                        fullWidth
+                        name="grade_or_marks"
+                        onChange={handleInputChange}
+                        helperText={
+                          submitted &&
+                          !formValue?.grade_or_marks && (
+                            <>Percentage is required</>
+                          )
+                        }
+                        error={submitted && !formValue?.grade_or_marks}
+                        value={formValue?.grade_or_marks}
+                        //   value={formik.values.aboutMe
+                        //     .trimStart()
+                        //     .replace(/\s\s+/g, "")
+                        //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                        //   onChange={(e) => formik.handleChange(e)}
+                        //   helperText={}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      {/* <TextField
                           sx={{ mb: 2 }}
                           label={"Year of passout"}
                           // required
@@ -523,37 +509,36 @@ const AddNewEducation = ({
                           //   helperText={}
                         /> */}
 
-                        <DatePickerWrapper>
-                          <DatePicker
-                            id="join-date"
-                            showYearPicker
-                            selected={formValue.year_of_passout}
-                            dateFormat="yyyy"
-                            fullWidth
-                            minDate={formValue.year_of_passout}
-                            sx={{ width: 1 }}
-                            popperPlacement={popperPlacement}
-                            onChange={(date) => {
-                              handleDateChange("year_of_passout", date);
-                            }}
-                            customInput={
-                              <TextField
-                                sx={{ mb: 2 }}
-                                label={"Year of passout"}
-                                value={formValue.year_of_passout}
-                                fullWidth
-                                error={submitted && !formValue.year_of_passout}
-                                helperText={
-                                  submitted &&
-                                  !formValue.year_of_passout &&
-                                  "Year of passout is required"
-                                }
-                              />
-                            }
-                          />
-                        </DatePickerWrapper>
-                      </FormControl>
-                    </Grid>
+                      <DatePickerWrapper>
+                        <DatePicker
+                          id="join-date"
+                          showYearPicker
+                          selected={formValue.year_of_passout}
+                          dateFormat="yyyy"
+                          fullWidth
+                          minDate={formValue.year_of_passout}
+                          sx={{ width: 1 }}
+                          popperPlacement={popperPlacement}
+                          onChange={(date) => {
+                            handleDateChange("year_of_passout", date);
+                          }}
+                          customInput={
+                            <TextField
+                              sx={{ mb: 2 }}
+                              label={"Year of passout *"}
+                              value={formValue.year_of_passout}
+                              fullWidth
+                              error={submitted && !formValue.year_of_passout}
+                              helperText={
+                                submitted &&
+                                !formValue.year_of_passout &&
+                                "Year of passout is required"
+                              }
+                            />
+                          }
+                        />
+                      </DatePickerWrapper>
+                    </FormControl>
                   </Grid>
 
                   {/* <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
@@ -582,258 +567,244 @@ const AddNewEducation = ({
                 </>
               ) : (
                 <>
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <InputLabel
-                          id="demo-simple-select-label"
-                          error={submitted && !formValue?.course}
-                        >
-                          Course *
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Course *"
-                          MenuProps={menuProps}
-                          onChange={handleMainCourseChange}
-                          name="course"
-                          error={submitted && !formValue?.course}
-                          value={formValue?.course}
-                        >
-                          {mainCourse?.map((option, index) => {
-                            return (
-                              <MenuItem
-                                key={index}
-                                value={option.id}
-                                sx={{ width: "10rem" }}
-                              >
-                                {option.name}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                        {submitted && !formValue?.course && (
-                          <FormHelperText error={true}>
-                            Course is required
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <InputLabel
+                        id="demo-simple-select-label"
+                        error={submitted && !formValue?.course}
+                      >
+                        Course *
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Course *"
+                        MenuProps={menuProps}
+                        onChange={handleMainCourseChange}
+                        name="course"
+                        error={submitted && !formValue?.course}
+                        value={formValue?.course}
+                      >
+                        {mainCourse?.map((option, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={option.id}
+                              sx={{ width: "10rem" }}
+                            >
+                              {option.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                      {submitted && !formValue?.course && (
+                        <FormHelperText error={true}>
+                          Course is required
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <InputLabel
-                          id="demo-simple-select-label"
-                          error={submitted && !formValue?.specialization}
-                        >
-                          Specialization *
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Specialization *"
-                          MenuProps={menuProps}
-                          onChange={handleInputChange}
-                          name="specialization"
-                          error={submitted && !formValue?.specialization}
-                          value={formValue?.specialization}
-                        >
-                          {subCourse?.map((option, index) => {
-                            return (
-                              <MenuItem
-                                key={index}
-                                value={option.id}
-                                sx={{ width: "10rem" }}
-                              >
-                                {option.name}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                        {submitted && !formValue?.specialization && (
-                          <FormHelperText error={true}>
-                            Specialization is required
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <InputLabel
+                        id="demo-simple-select-label"
+                        error={submitted && !formValue?.specialization}
+                      >
+                        Specialization *
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Specialization *"
+                        MenuProps={menuProps}
+                        onChange={handleInputChange}
+                        name="specialization"
+                        error={submitted && !formValue?.specialization}
+                        value={formValue?.specialization}
+                      >
+                        {subCourse?.map((option, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={option.id}
+                              sx={{ width: "10rem" }}
+                            >
+                              {option.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                      {submitted && !formValue?.specialization && (
+                        <FormHelperText error={true}>
+                          Specialization is required
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
-                          sx={{ mb: 2 }}
-                          label={"University / Institute"}
-                          // required
-                          fullWidth
-                          onChange={handleInputChange}
-                          name="university_or_institute_name"
-                          helperText={
-                            submitted &&
-                            !formValue?.university_or_institute_name && (
-                              <>University / Institute is required</>
-                            )
-                          }
-                          error={
-                            submitted &&
-                            !formValue?.university_or_institute_name
-                          }
-                          value={formValue?.university_or_institute_name}
-                          // error={false}
-                          //   value={formik.values.aboutMe
-                          //     .trimStart()
-                          //     .replace(/\s\s+/g, "")
-                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                          //   onChange={(e) => formik.handleChange(e)}
-                          //   helperText={}
-                        />
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        label={"University / Institute *"}
+                        // required
+                        fullWidth
+                        onChange={handleInputChange}
+                        name="university_or_institute_name"
+                        helperText={
+                          submitted &&
+                          !formValue?.university_or_institute_name && (
+                            <>University / Institute is required</>
+                          )
+                        }
+                        error={
+                          submitted && !formValue?.university_or_institute_name
+                        }
+                        value={formValue?.university_or_institute_name}
+                        // error={false}
+                        //   value={formik.values.aboutMe
+                        //     .trimStart()
+                        //     .replace(/\s\s+/g, "")
+                        //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                        //   onChange={(e) => formik.handleChange(e)}
+                        //   helperText={}
+                      />
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
-                          sx={{ mb: 2 }}
-                          label={"University / Institute Address"}
-                          // required
-                          fullWidth
-                          onChange={handleInputChange}
-                          name="university_or_institute_address"
-                          helperText={
-                            submitted &&
-                            !formValue?.university_or_institute_address && (
-                              <>University / Institute Address is required</>
-                            )
-                          }
-                          error={
-                            submitted &&
-                            !formValue?.university_or_institute_address
-                          }
-                          value={formValue?.university_or_institute_address}
-                          // error={false}
-                          //   value={formik.values.aboutMe
-                          //     .trimStart()
-                          //     .replace(/\s\s+/g, "")
-                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                          //   onChange={(e) => formik.handleChange(e)}
-                          //   helperText={}
-                        />
-                      </FormControl>
-                    </Grid>
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        label={"University / Institute Address *"}
+                        // required
+                        fullWidth
+                        onChange={handleInputChange}
+                        name="university_or_institute_address"
+                        helperText={
+                          submitted &&
+                          !formValue?.university_or_institute_address && (
+                            <>University / Institute Address is required</>
+                          )
+                        }
+                        error={
+                          submitted &&
+                          !formValue?.university_or_institute_address
+                        }
+                        value={formValue?.university_or_institute_address}
+                        // error={false}
+                        //   value={formik.values.aboutMe
+                        //     .trimStart()
+                        //     .replace(/\s\s+/g, "")
+                        //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                        //   onChange={(e) => formik.handleChange(e)}
+                        //   helperText={}
+                      />
+                    </FormControl>
                   </Grid>
 
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <FormControl>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Course type
-                          </FormLabel>
-                          <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            defaultValue="full_time"
-                            name="course_type"
-                            onChange={handleInputChange}
-                            helperText={
-                              submitted &&
-                              !formValue?.course_type && (
-                                <>Course type is required</>
-                              )
-                            }
-                            value={formValue?.course_type}
-                            error={submitted && !formValue?.course_type}
-                          >
-                            <FormControlLabel
-                              value="full_time"
-                              control={<Radio />}
-                              label="Full time"
-                            />
-                            <FormControlLabel
-                              value="part_time"
-                              control={<Radio />}
-                              label="Part time"
-                            />
-                            <FormControlLabel
-                              value="correspondance"
-                              control={<Radio />}
-                              label="Correspondance/Distance learning"
-                            />
-                          </RadioGroup>
-                        </FormControl>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <TextField
-                          sx={{ mb: 2 }}
-                          label={"Percentage"}
-                          // required
-                          fullWidth
-                          name="grade_or_marks"
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <FormControl>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Course type *
+                        </FormLabel>
+                        <RadioGroup
+                          aria-labelledby="demo-radio-buttons-group-label"
+                          defaultValue="full_time"
+                          name="course_type"
                           onChange={handleInputChange}
                           helperText={
                             submitted &&
-                            !formValue?.grade_or_marks && (
-                              <>Percentage is required</>
+                            !formValue?.course_type && (
+                              <>Course type is required</>
                             )
                           }
-                          value={formValue?.grade_or_marks}
-                          error={submitted && !formValue?.grade_or_marks}
-                          //   value={formik.values.aboutMe
-                          //     .trimStart()
-                          //     .replace(/\s\s+/g, "")
-                          //     .replace(/\p{Emoji_Presentation}/gu, "")}
-                          //   onChange={(e) => formik.handleChange(e)}
-                          //   helperText={}
-                        />
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container spacing={2} py={2}>
-                    <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
-                      <FormControl fullWidth sx={{ my: 2 }}>
-                        <DatePickerWrapper>
-                          <DatePicker
-                            id="join-date"
-                            showYearPicker
-                            selected={formValue.course_duration_start}
-                            dateFormat="yyyy"
-                            fullWidth
-                            minDate={formValue.certification_valid_from}
-                            sx={{ width: 1 }}
-                            popperPlacement={popperPlacement}
-                            onChange={(date) => {
-                              handleDateChange("course_duration_start", date);
-                            }}
-                            customInput={
-                              <TextField
-                                sx={{ mb: 2 }}
-                                label={"Start Year"}
-                                value={formValue.course_duration_start}
-                                fullWidth
-                                error={
-                                  submitted && !formValue.course_duration_start
-                                }
-                                helperText={
-                                  submitted &&
-                                  !formValue.course_duration_start &&
-                                  "End Year is required"
-                                }
-                              />
-                            }
+                          value={formValue?.course_type}
+                          error={submitted && !formValue?.course_type}
+                        >
+                          <FormControlLabel
+                            value="full_time"
+                            control={<Radio />}
+                            label="Full time"
                           />
-                        </DatePickerWrapper>
-                        {/* <TextField
+                          <FormControlLabel
+                            value="part_time"
+                            control={<Radio />}
+                            label="Part time"
+                          />
+                          <FormControlLabel
+                            value="correspondance"
+                            control={<Radio />}
+                            label="Correspondance/Distance learning"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        label={"Percentage *"}
+                        // required
+                        fullWidth
+                        name="grade_or_marks"
+                        onChange={handleInputChange}
+                        helperText={
+                          submitted &&
+                          !formValue?.grade_or_marks && (
+                            <>Percentage is required</>
+                          )
+                        }
+                        value={formValue?.grade_or_marks}
+                        error={submitted && !formValue?.grade_or_marks}
+                        //   value={formik.values.aboutMe
+                        //     .trimStart()
+                        //     .replace(/\s\s+/g, "")
+                        //     .replace(/\p{Emoji_Presentation}/gu, "")}
+                        //   onChange={(e) => formik.handleChange(e)}
+                        //   helperText={}
+                      />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
+                    <FormControl fullWidth sx={{ my: 2 }}>
+                      <DatePickerWrapper>
+                        <DatePicker
+                          id="join-date"
+                          showYearPicker
+                          selected={formValue.course_duration_start}
+                          dateFormat="yyyy"
+                          fullWidth
+                          minDate={formValue.certification_valid_from}
+                          sx={{ width: 1 }}
+                          popperPlacement={popperPlacement}
+                          onChange={(date) => {
+                            handleDateChange("course_duration_start", date);
+                          }}
+                          customInput={
+                            <TextField
+                              sx={{ mb: 2 }}
+                              label={"Start Year *"}
+                              value={formValue.course_duration_start}
+                              fullWidth
+                              error={
+                                submitted && !formValue.course_duration_start
+                              }
+                              helperText={
+                                submitted &&
+                                !formValue.course_duration_start &&
+                                "End Year is required"
+                              }
+                            />
+                          }
+                        />
+                      </DatePickerWrapper>
+                      {/* <TextField
                           sx={{ mb: 2 }}
                           label={"Start Year"}
                           // required
@@ -863,8 +834,7 @@ const AddNewEducation = ({
                           //   onChange={(e) => formik.handleChange(e)}
                           //   helperText={}
                         /> */}
-                      </FormControl>
-                    </Grid>
+                    </FormControl>
                   </Grid>
 
                   <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
@@ -884,7 +854,7 @@ const AddNewEducation = ({
                         customInput={
                           <TextField
                             sx={{ mb: 2 }}
-                            label={"End Year"}
+                            label={"End Year *"}
                             value={formValue.course_duration_end}
                             fullWidth
                             error={submitted && !formValue.course_duration_end}

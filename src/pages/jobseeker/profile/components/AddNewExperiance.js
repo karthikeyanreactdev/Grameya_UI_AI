@@ -169,9 +169,10 @@ const AddNewExperiance = ({
               alignItems: "center",
               justifyContent: "space-between",
               p: 4,
+              ml: 2,
             }}
           >
-            <Typography variant="h3" component="div">
+            <Typography variant="h5" component="div">
               {selectedExp ? "Edit Experiance" : "Add Experiance"}
             </Typography>
 

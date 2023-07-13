@@ -375,12 +375,19 @@ function BasicInfo({
                     label={"Alternate Mobile Number"}
                     // required
                     fullWidth
+                    // type="number"
                     name="alternate_phone"
                     value={formik.values.alternate_phone
+                      .toString()
                       .trimStart()
                       .replace(/\s\s+/g, "")
                       .replace(/\p{Emoji_Presentation}/gu, "")}
-                    onChange={(e) => formik.handleChange(e)}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        formik.handleChange(e);
+                      }
+                    }}
                     error={
                       formik.touched.alternate_phone &&
                       Boolean(formik.errors.alternate_phone)

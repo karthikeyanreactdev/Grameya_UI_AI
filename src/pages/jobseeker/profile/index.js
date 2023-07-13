@@ -50,6 +50,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "src/store/apps/auth";
 import Swal from "sweetalert2";
+import moment from "moment";
 const userStatusObj = {
   active: "success",
   pending: "warning",
@@ -650,8 +651,10 @@ const ACLPage = () => {
                                                         }}
                                                       >
                                                         Graduated in{" "}
-                                                        {row.year_of_passout ||
-                                                          row.course_duration_end}
+                                                        {moment(
+                                                          row.year_of_passout ||
+                                                            row.course_duration_end
+                                                        ).format("YYYY")}
                                                         .
                                                       </Typography>
                                                     </Box>
