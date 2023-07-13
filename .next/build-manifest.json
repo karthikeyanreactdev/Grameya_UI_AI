@@ -30,10 +30,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/login.js"
     ],
-    "/register": [
+    "/recruiter/candidates": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/register.js"
+      "static/chunks/pages/recruiter/candidates.js"
+    ],
+    "/recruiter/dashboard": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recruiter/dashboard.js"
     ]
   },
   "ampFirstPages": []

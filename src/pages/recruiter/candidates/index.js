@@ -28,7 +28,7 @@ import CustomChip from "src/@core/components/mui/chip";
 import moment from "moment/moment";
 import Swal from "sweetalert2";
 import { getCandidateList } from "src/store/apps/recruiter/candidates";
-import { Button, Chip, Select, Tooltip } from "@mui/material";
+import { Button, Chip, Select, Stack, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import SideBarJob from "./manageStatus";
 import { LoadingButton } from "@mui/lab";
