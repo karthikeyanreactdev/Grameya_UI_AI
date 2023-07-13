@@ -101,6 +101,13 @@ const navigation = () => {
       icon: "ph:star",
     },
     {
+      path: "/jobseeker/recommended-job",
+      action: "read",
+      subject: "jsRecommendedJob",
+      title: "Recommended Job",
+      icon: "solar:checklist-minimalistic-linear",
+    },
+    {
       path: "/jobseeker/profile",
       action: "read",
       subject: "jsprofile",

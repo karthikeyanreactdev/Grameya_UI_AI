@@ -28,6 +28,7 @@ const defineRulesFor = (role, subject) => {
     can("read", "jsSavedJob");
     can("read", "jssearch");
     can("read", "jsJobDetail");
+    can("read", "jsRecommendedJob");
   } else {
     can(["read", "create", "update", "delete"], subject);
   }

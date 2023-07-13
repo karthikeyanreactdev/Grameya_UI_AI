@@ -15,10 +15,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import { DataGrid } from "@mui/x-data-grid";
@@ -45,62 +42,95 @@ import axios from "axios";
 
 // ** Custom Table Components Imports
 import TableHeader from "src/views/apps/user/list/TableHeader";
-// import AddUserDrawer from "./components/ManageJobDrawer";
+// import AddUserDrawer from "src/views/apps/user/list/AddUserDrawer";
 import format from "date-fns/format";
 import addDays from "date-fns/addDays";
 import DatePicker from "react-datepicker";
 import { useTheme } from "@mui/material/styles";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
-import { getJobList } from "src/store/apps/recruiter/manageJob";
+import { makeStyles } from "@mui/styles";
+
 import {
-  getJobCategory,
-  getJobType,
-  getNoticePeriod,
-  getSkills,
-} from "src/store/apps/misc/index";
-import { getAppliedJobs } from "src/store/apps/jobseeker/applications";
-import moment from "moment";
+  handleResumeSearch,
+  resumeCandidates,
+  resumeSearchByFilter,
+} from "src/store/apps/recruiter/resume-search";
+import _ from "lodash";
+import {
+  Button,
+  CardActions,
+  Chip,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  TablePagination,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import {
+  handleMachedJobList,
+  jobSearchSeeker,
+} from "src/store/apps/jobseeker/job-search";
+import { LoadingButton } from "@mui/lab";
 import { useRouter } from "next/router";
 import {
   addSaveJob,
   recommendedJobDetail,
+  saveJobList,
 } from "src/api-services/seeker/jobsdetails";
-import { LoadingButton } from "@mui/lab";
-import { CardActions, Chip, Tooltip } from "@mui/material";
 import useNotification from "src/hooks/useNotification";
+import moment from "moment";
 
 const userStatusObj = {
-  interview_schedulded: "success",
-  shortlisted: "success",
-  // hired: "info",
-  submitted: "primary",
+  active: "success",
+  pending: "warning",
+  inactive: "secondary",
+};
+const renderClient = (row) => {
+  // if (row.avatar.length) {
+  //   return (
+  //     <CustomAvatar src={row.avatar} sx={{ mr: 2.5, width: 38, height: 38 }} />
+  //   );
+  // } else {
+  return (
+    <CustomAvatar
+      skin="light"
+      // color={row.avatarColor}
+      sx={{
+        mr: 2.5,
+        width: 38,
+        height: 38,
+        fontWeight: 500,
+        fontSize: (theme) => theme.typography.body1.fontSize,
+      }}
+    >
+      {getInitials(row.full_name ? row.full_name[0] : "NA")}
+    </CustomAvatar>
+  );
+  // }
+};
+const useStyles = makeStyles({
+  root: {
+    "& .MuiDataGrid-root.MuiDataGrid-cell": {
+      border: "none",
+      borderColor: "transparent",
+    },
+  },
+});
 
-  inactive_seeker: "warning",
-  call_resheduled: "warning",
-  call_not_picked: "warning",
-  interview_canceled: "error",
-};
-const statusObj = {
-  shortlisted: "Shortlisted",
-  submitted: "Submitted",
-  call_resheduled: "Call Resheduled",
-  call_not_picked: "Call not picked",
-  inactive_seeker: "Inactive/Not Intrested",
-  interview_schedulded: "Interview Scheduled",
-  interview_canceled: "Interview Canceled",
-  remove: "Remove",
-};
-const ManageAppliedJob = () => {
+const RecommendedJob = () => {
+  const router = useRouter();
   // ** Hooks
   const ability = useContext(AbilityContext);
   const theme = useTheme();
+  const classes = useStyles();
+  const [sendNotification] = useNotification();
+
   const dispatch = useDispatch();
   const { direction } = theme;
-
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
-  const [id, setId] = useState("");
-  const [role, setRole] = useState("");
   const [plan, setPlan] = useState("");
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("");
@@ -109,144 +139,21 @@ const ManageAppliedJob = () => {
     page: 0,
     pageSize: 10,
   });
-  console.log(paginationModel);
-  const router = useRouter();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(addDays(new Date(), 15));
   const [startDateRange, setStartDateRange] = useState(new Date());
   const [endDateRange, setEndDateRange] = useState(addDays(new Date(), 45));
-  const [recommendedJobList, setRecommendedJobList] = useState([]);
-  const [isBookmarkLoading, setIsLoading] = useState(false);
-  const [savedId, setSavedId] = useState("");
-  const [sendNotification] = useNotification();
-
-  const handleNavigateJobDetail = (id) => {
-    router.push(`${"/jobseeker/job-detail"}?id=${id}`);
-  };
-  const jobListColumns = [
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-      field: "job_title",
-      headerName: "Job Title",
-      renderCell: ({ row }) => (
-        <Typography
-          // variant="caption"
-          sx={{ cursor: "pointer", fontSize: "0.8125rem" }}
-          onClick={() => {
-            // if (row.total_applications > 0) {
-            //   handleApplications(row);
-            // }
-            handleNavigateJobDetail(row?.job_id);
-          }}
-        >
-          {row.job_title}
-        </Typography>
-      ),
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "company_name",
-      headerName: "Company Name",
-      // renderHeader: (params) => (
-      //   <strong>
-      //     {"Company Name "}
-      //     <span role="img" aria-label="enjoy">
-      //       🏢
-      //     </span>
-      //   </strong>
-      // ),
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "applied_on",
-      headerName: "Applied On",
-
-      renderCell: ({ row }) => `${moment(row.applied_on).format("DD/MM/YYYY")}`,
-    },
-    {
-      flex: 0.1,
-      minWidth: 200,
-      sortable: true,
-
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }) => {
-        return (
-          <CustomChip
-            rounded
-            skin="light"
-            size="small"
-            label={statusObj[row.status]}
-            color={userStatusObj[row.status]}
-            sx={{ textTransform: "capitalize" }}
-          />
-        );
-      },
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "city",
-      headerName: "Location",
-      // renderCell: ({ row }) => <RowOptions id={row.id} />,
-    },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      sortable: true,
-
-      field: "experience",
-      headerName: "Experience",
-      renderCell: ({ row }) =>
-        `${row.experience_from}-${row.experience_to} years`,
-    },
-
-    // {
-    //   flex: 0.1,
-    //   minWidth: 100,
-    //   sortable: false,
-    //   // field: "Action",
-    //   headerName: "Action",
-    //   renderCell: ({ row }) => {
-    //     return (
-    //       <Button
-    //         onClick={() => {
-    //           setId(row.id);
-    //           toggleAddUserDrawer();
-    //         }}
-    //       >
-    //         Edit
-    //       </Button>
-    //     );
-    //   },
-    // },
-  ];
-
-  const { appliedJobs, isLoading, pageCount } = useSelector(
-    (state) => state?.appliedJobs
-  );
-  const [rowCountState, setRowCountState] = useState(pageCount?.total || 0);
-
-  console.log("ddd", appliedJobs);
   const handleFilter = useCallback((val) => {
     setValue(val);
   }, []);
 
-  const handleRoleChange = useCallback((e) => {
-    setRole(e.target.value);
-  }, []);
+  const handleNavigateJobDetail = (id) => {
+    router.push(`${"/jobseeker/job-detail"}?id=${id}`);
+  };
+
+  // const handleLocationChange = useCallback((e) => {
+  //   setLocation(e.target.value);
+  // }, []);
 
   const handlePlanChange = useCallback((e) => {
     setPlan(e.target.value);
@@ -278,187 +185,162 @@ const ManageAppliedJob = () => {
     );
   });
 
-  const getJobs = () => {
+  const [jobRole, setjobRole] = useState("");
+  const [experience, setExperience] = useState("");
+  const [salaryFrom, setSalaryFrom] = useState("");
+  const [salaryTo, setSalaryTo] = useState("");
+  const [jobType, setJobType] = useState("");
+  const [noticePeriod, setNoticePeriod] = useState("");
+  const [location, setLocation] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [savedId, setSavedId] = useState("");
+  const { machedJobList } = useSelector((state) => state.jobSearch);
+  const [jobList, setJobList] = useState([]);
+  const [pageCount, setPageCount] = useState(null);
+  const handleSearch = async () => {
+    if (keyword === "") {
+      return;
+    }
     const params = {
-      page: paginationModel?.page + 1,
-      size: paginationModel?.pageSize,
+      page: page,
+      size: rowsPerPage,
+      search_keyword: keyword,
+      experience_from: "0",
+      experience_to: experience,
+      job_type: jobType,
+      notice_period: noticePeriod,
+      salary_from: salaryFrom,
+      salary_to: salaryTo,
+      job_location: location,
     };
-    dispatch(getAppliedJobs(params));
+    dispatch(jobSearchSeeker(params));
   };
 
-  const getRecommendedJob = async () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const viewJob = async () => {
+    // setJobList([]);
+    // setPageCount([]);
+    setSavedId("");
+
     try {
-      const paramData = {
-        page: 1,
-        size: 10,
-      };
-      const response = await recommendedJobDetail(paramData);
-      console.log("response", response);
-      if (response?.data?.data?.data) {
-        setRecommendedJobList(response.data.data.data);
-      }
-    } catch (e) {
-      console.log("e", e);
-    } finally {
-      // handleChangeLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getJobs();
-    // getRecommendedJob();
-    // dispatch(getJobCategory({}));
-    // dispatch(getJobType({}));
-    dispatch(getSkills({}));
-    // dispatch(getNoticePeriod({}));
-  }, []);
-
-  useEffect(() => {
-    console.log("ca");
-    getJobs();
-  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
-  useEffect(() => {
-    if (addUserOpen === false) {
-      getJobs();
-    }
-  }, [addUserOpen]);
-
-  useEffect(() => {
-    setRowCountState((prevRowCountState) =>
-      pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
-    );
-  }, [pageCount?.total, setRowCountState]);
-
-  const handleAddSavedJob = async (id) => {
-    try {
-      setSavedId(id);
       setIsLoading(true);
+      const params = {
+        page: page,
+        size: rowsPerPage,
+      };
+
+      const result = await recommendedJobDetail();
+      // toggle();
+      console.log("result", result);
+      console.log(result?.data?.data);
+      setJobList(result?.data?.data?.data);
+      setPageCount(result?.data?.data?.total);
+      // setJobDetails(result?.data?.data);
+      // sendNotification({
+      //   message: result?.data?.message,
+      //   variant: "success",
+      // });
+    } catch (e) {
+      // sendNotification({
+      //   message: e,
+      //   variant: "error",
+      // });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    viewJob();
+  }, [rowsPerPage, page]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  const handleAddSavedJob = async (id) => {
+    console.log("id", id);
+    // const index = _.findIndex(jobList, ["job_id", id]);
+    // // var result1 = _.slice(jobList, result, 1);
+    // const newdata = jobList.splice(index, 1);
+
+    // return;
+    setSavedId(id);
+    try {
+      setIsBookmarkLoading(true);
       const param = {
         job_id: id,
       };
 
       const result = await addSaveJob(param);
+      // toggle();
+      console.log(result?.data?.data);
+      // setJobDetails(result?.data?.data);
+      // viewJob();
+      var copy = JSON.parse(JSON.stringify(machedJobList));
+      copy.map((elem) => {
+        elem.is_saved = elem.id == id ? !elem.is_saved : elem.is_saved;
+        return elem;
+      });
+      console.log(copy);
+      viewJob();
+      // const index2 = jobList.findIndex((obj) => obj.job_id === id);
+      // const newData = [
+      //   ...jobList.slice(0, index2),
+      //   ...jobList.slice(index2 + 1),
+      // ];
+      // console.log(newData);
+      // // setJobList(newData);
+      // // setPageCount(pageCount - 1);
+      // // dispatch(handleMachedJobList(copy));
+      // // let data = _.find(machedJobList, { id: id });
+      // // data.is_saved = true;
+      // // console.log(data);
       sendNotification({
         message: result?.data?.message,
         variant: "success",
       });
-      getRecommendedJob();
     } catch (e) {
       sendNotification({
         message: e,
         variant: "error",
       });
     } finally {
-      setIsLoading(false);
-      setSavedId("");
+      setIsBookmarkLoading(false);
     }
   };
-
   return (
-    <Grid container spacing={6}>
-      {/* <Grid item md={6} xs={12}>
-        <Card>
-          <CardHeader title='Employer Dashboard' />
-          <CardContent>
-            <Typography sx={{ mb: 4 }}>Employer Dashboard</Typography>
-            <Typography sx={{ color: 'primary.main' }}>This card is visible to 'user' and 'admin' both</Typography>
-          </CardContent>
-        </Card>
-      </Grid> */}
+    <Grid container spacing={6} className={classes.root}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title="Dashboard" />
+          <CardHeader title="Recommended Job" />
           <Divider sx={{ m: "0 !important" }} />
 
-          <CardContent></CardContent>
-          {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
-          {/* <Box
-            sx={{
-              pb: 4,
-              px: 6,
-              rowGap: 2,
-              columnGap: 4,
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
+          {isLoading && savedId !== "" && (
             <Box
               sx={{
-                rowGap: 2,
                 display: "flex",
-                flexWrap: "wrap",
+                justifyContent: "center",
                 alignItems: "center",
-                justifyContent: "flex-end",
+                mb: 16,
+                mt: 10,
               }}
             >
-              {/* <CustomTextField
-                value={value}
-                sx={{ mr: 4 }}
-                placeholder="Search Jobs"
-                onChange={(e) => handleFilter(e.target.value)}
-              /> 
-
-              <Button
-                onClick={() => {
-                  toggleAddUserDrawer();
-                  setId("");
-                }}
-                variant="contained"
-                color="primary"
-                sx={{ "& svg": { mr: 2 } }}
-              >
-                {/* <Icon fontSize='1.125rem' icon='tabler:plus' /> 
-                Create a Job
-              </Button>
+              <CircularProgress />
             </Box>
-          </Box> */}
-          <Box p={4}>
-            <DataGrid
-              autoHeight
-              rowHeight={62}
-              rows={appliedJobs}
-              columns={jobListColumns}
-              loading={isLoading}
-              sx={{
-                "& .MuiDataGrid-columnHeaders ": {
-                  backgroundColor: theme.palette.primary.main,
-                  color: "#fff",
-                  "& .MuiButtonBase-root.MuiIconButton-root ": {
-                    color: "#fff",
-                  },
-                  borderTopLeftRadius: "6px",
-                  borderTopRightRadius: "6px",
-                },
-                "& .MuiDataGrid-columnSeparator ": {
-                  color: "#fff",
-                },
-                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
-                  borderColor: `${theme.palette.primary.main}`,
-                },
-
-                "& .MuiDataGrid-virtualScroller": {
-                  // border: `1px solid ${theme.palette.primary.main}`,
-                  border: `.25px solid grey`,
-                },
-              }}
-              // getRowId={(row) => row.job_id}
-              rowCount={rowCountState}
-              paginationMode="server"
-              disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-            />
-          </Box>
-          {/* <Divider sx={{ m: "0 !important" }} />
-          <CardHeader title="Recommended Job" /> */}
-
-          {/* {recommendedJobList.length > 0 && (
+          )}
+          {jobList.length > 0 && (
             <Box p={4}>
               <Grid container spacing={2}>
-                {recommendedJobList?.map((row) => {
+                {jobList?.map((row) => {
                   return (
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                       <Card
@@ -466,8 +348,10 @@ const ManageAppliedJob = () => {
                         sx={{
                           mb: 2,
                           border: "1px solid rgba(0, 0, 0, 0.5)",
+                          // boxShadow: "0 0 2px 2px #187de4",
                           "&:hover": {
-                            cursor: "pointer",
+                            // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                            // cursor: "pointer",
 
                             boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
                             transform: "translateY(-5px)",
@@ -476,6 +360,7 @@ const ManageAppliedJob = () => {
                       >
                         <CardContent
                           sx={{ pb: 0, pt: 0 }}
+                          //onClick={() => handleNavigateJobDetail(row?.id)}
                         >
                           <Grid
                             container
@@ -507,7 +392,7 @@ const ManageAppliedJob = () => {
                               >
                                 <LoadingButton
                                   loading={
-                                    isBookmarkLoading && row.id == savedId
+                                    isBookmarkLoading && row.id === savedId
                                   }
                                   color={row?.is_saved ? "success" : "primary"}
                                   title="Save Job"
@@ -597,6 +482,7 @@ const ManageAppliedJob = () => {
                                   <Typography
                                     sx={{
                                       color: "text.primary",
+
                                       fontSize: "0.775rem",
                                     }}
                                   >
@@ -611,7 +497,12 @@ const ManageAppliedJob = () => {
                                   variant="outlined"
                                   color="primary"
                                   size="small"
-                                  sx={{ mx: 1, fontSize: "0.675rem" }}
+                                  // color="black"
+                                  sx={{
+                                    mx: 1,
+                                    fontSize: "0.675rem",
+                                  }}
+                                  // sx={{ color: "#" }}
                                   label={
                                     option?.name === null ||
                                     option?.name === undefined
@@ -626,8 +517,14 @@ const ManageAppliedJob = () => {
                                 <Chip
                                   variant="outlined"
                                   color="primary"
+                                  // color="black"
                                   size="small"
-                                  sx={{ mx: 1, fontSize: "0.675rem" }}
+                                  sx={{
+                                    mx: 1,
+                                    // my: 1,
+                                    fontSize: "0.675rem",
+                                  }}
+                                  // sx={{ color: "#" }}
                                   label={"more.."}
                                 />
                               </Tooltip>
@@ -660,6 +557,7 @@ const ManageAppliedJob = () => {
                                     <Typography
                                       sx={{
                                         color: "text.primary",
+
                                         fontSize: "0.775rem",
                                       }}
                                     >
@@ -673,6 +571,9 @@ const ManageAppliedJob = () => {
                               </Tooltip>
                             </Grid>
                             <Grid item xs={12} sm={4} md={4} lg={4}>
+                              {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {`₹${row.salary_from + "-" + row.salary_to} LPA`}
+                      </Typography> */}
                               <Tooltip title={"Salary"}>
                                 <Box
                                   sx={{
@@ -681,6 +582,15 @@ const ManageAppliedJob = () => {
                                     "& svg": { color: "text.primary" },
                                   }}
                                 >
+                                  {/* <Box
+                                  sx={{
+                                    display: "flex",
+                                    mr: 2,
+                                    color: "warning",
+                                  }}
+                                >
+                                  
+                                </Box> */}
 
                                   <Box
                                     sx={{
@@ -693,6 +603,7 @@ const ManageAppliedJob = () => {
                                     <Typography
                                       sx={{
                                         color: "text.primary",
+
                                         fontSize: "0.775rem",
                                       }}
                                     >
@@ -732,6 +643,7 @@ const ManageAppliedJob = () => {
                                     <Typography
                                       sx={{
                                         color: "text.primary",
+
                                         fontSize: "0.775rem",
                                       }}
                                     >
@@ -745,6 +657,7 @@ const ManageAppliedJob = () => {
                               <Typography
                                 sx={{
                                   color: "text.primary",
+
                                   fontSize: "0.675rem",
                                 }}
                               >
@@ -762,6 +675,7 @@ const ManageAppliedJob = () => {
                           <Grid container spacing={2}>
                             <Grid item xs={12} lg={6}>
                               <Typography
+                                // component="div"
                                 color="text.secondary"
                                 sx={{ fontSize: 16 }}
                               ></Typography>
@@ -789,20 +703,281 @@ const ManageAppliedJob = () => {
                       </Card>
                     </Grid>
                   );
+                  // return (
+                  //   <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                  //     <Card
+                  //       raised={false}
+                  //       sx={{
+                  //         mb: 2,
+                  //         border: "1px solid rgba(0, 0, 0, 0.5)",
+                  //         height: "100%",
+                  //         // boxShadow: "0 0 2px 2px #187de4",
+                  //         "&:hover": {
+                  //           // boxShadow: "0px 5px 5px 5px rgba(0, 0, 0, 0.5)",
+                  //           cursor: "pointer",
+
+                  //           boxShadow: "rgba(0, 0, 0, 0.5) 0px 5px 15px 0px",
+                  //           transform: "translateY(-5px)",
+                  //         },
+                  //       }}
+                  //     >
+                  //       <CardContent sx={{ pb: 0 }}>
+                  //         <Grid
+                  //           container
+                  //           spacing={2}
+                  //           sx={{
+                  //             display: "flex",
+                  //             alignItems: "center",
+                  //             justifyContent: "space-between",
+                  //           }}
+                  //         >
+                  //           <Grid item xs={11} sm={11} md={11} lg={11}>
+                  //             <Typography
+                  //               sx={{ mb: 4 }}
+                  //               color="text.primary"
+                  //               variant="h5"
+                  //               gutterBottom
+                  //             >
+                  //               {row.job_title?.substring(0, 75)}
+                  //             </Typography>
+                  //           </Grid>
+                  //           <Grid item xs={1} sm={1} md={1} lg={1}>
+                  //             <LoadingButton
+                  //               loading={isBookmarkLoading && row.id == savedId}
+                  //               color={row?.is_saved ? "success" : "primary"}
+                  //               title="Save Job"
+                  //               onClick={() => handleAddSavedJob(row?.job_id)}
+                  //             >
+                  //               {row?.is_saved ? (
+                  //                 <Icon
+                  //                   fontSize="1.5rem"
+                  //                   icon="mdi:favorite-check"
+                  //                 />
+                  //               ) : (
+                  //                 <Icon
+                  //                   fontSize="1.5rem"
+                  //                   icon="mdi:favorite-add-outline"
+                  //                   sx={{ bacground: "red" }}
+                  //                   // color="error"
+                  //                 />
+                  //               )}
+                  //             </LoadingButton>
+                  //           </Grid>
+                  //         </Grid>
+                  //         <Grid
+                  //           container
+                  //           spacing={2}
+                  //           sx={{ display: "flex", alignItems: "center" }}
+                  //         >
+                  //           <Grid item xs={12} sm={12} md={6} lg={6}>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.secondary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:building"
+                  //                   color="brown"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.company_name?.substring(0, 30)}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.secondary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:map-pin"
+                  //                   color="red"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.city}, {row.state}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.primary" },
+                  //               }}
+                  //             >
+                  //               <Box sx={{ display: "flex", mr: 2 }}>
+                  //                 <Icon
+                  //                    fontSize="1rem"
+                  //                   icon="tabler:brand-google-analytics"
+                  //                   color="darkgreen"
+                  //                 />
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {row.experience_from +
+                  //                     "-" +
+                  //                     row.experience_to}{" "}
+                  //                   Years
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                  //       {`₹${row.salary_from + "-" + row.salary_to} LPA`}
+                  //     </Typography> */}
+                  //             <Box
+                  //               sx={{
+                  //                 display: "flex",
+                  //                 "&:not(:last-of-type)": { mb: 3 },
+                  //                 "& svg": { color: "text.primary" },
+                  //               }}
+                  //             >
+                  //               <Box
+                  //                 sx={{
+                  //                   display: "flex",
+                  //                   mr: 2,
+                  //                   color: "warning",
+                  //                 }}
+                  //               >
+                  //                 ₹
+                  //               </Box>
+
+                  //               <Box
+                  //                 sx={{
+                  //                   columnGap: 2,
+                  //                   display: "flex",
+                  //                   flexWrap: "wrap",
+                  //                   alignItems: "center",
+                  //                 }}
+                  //               >
+                  //                 <Typography sx={{ color: "text.primary" }}>
+                  //                   {`${
+                  //                     row.salary_from + "-" + row.salary_to
+                  //                   } LPA`}
+                  //                 </Typography>
+                  //               </Box>
+                  //             </Box>
+                  //           </Grid>
+                  //           <Grid item xs={12} sm={4} md={3} lg={3}>
+                  //             <CustomChip
+                  //               rounded
+                  //               skin="light"
+                  //               size="small"
+                  //               label={row.job_type}
+                  //               color={userStatusObj[row.status]}
+                  //               sx={{ textTransform: "capitalize" }}
+                  //             />
+                  //           </Grid>
+                  //         </Grid>
+                  //       </CardContent>
+                  //       <CardActions sx={{ pb: 3, pl: 0 }}>
+                  //         <Grid container spacing={2}>
+                  //           <Grid item xs={12} lg={6}>
+                  //             <Typography
+                  //               // component="div"
+                  //               color="text.secondary"
+                  //               sx={{ fontSize: 16 }}
+                  //             ></Typography>
+                  //           </Grid>
+                  //           <Grid
+                  //             item
+                  //             xs={12}
+                  //             sm={12}
+                  //             lg={6}
+                  //             sx={{
+                  //               display: "flex",
+                  //               justifyContent: "flex-end",
+                  //             }}
+                  //           >
+                  //             <Button
+                  //               size="small"
+                  //               variant="contained"
+                  //               onClick={() =>
+                  //                 handleNavigateJobDetail(row?.job_id)
+                  //               }
+                  //             >
+                  //               View Job
+                  //             </Button>
+                  //           </Grid>
+                  //         </Grid>
+                  //       </CardActions>
+                  //     </Card>
+                  //   </Grid>
+                  // );
                 })}
               </Grid>
+              {jobList.length > 0 && (
+                <TablePagination
+                  component="div"
+                  count={pageCount}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              )}
             </Box>
-          )} */}
+          )}
+          {!isLoading && jobList.length === 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mb: 16,
+                mt: 16,
+              }}
+            >
+              <Typography>No Match Found</Typography>
+            </Box>
+          )}
         </Card>
       </Grid>
-
-      {/* <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} id={id} /> */}
     </Grid>
   );
 };
-ManageAppliedJob.acl = {
+RecommendedJob.acl = {
   action: "read",
-  subject: "jsdashboard",
+  subject: "jsRecommendedJob",
 };
 
-export default ManageAppliedJob;
+export default RecommendedJob;
