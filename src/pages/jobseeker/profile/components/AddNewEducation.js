@@ -138,6 +138,21 @@ const AddNewEducation = ({
     setFormValue(newStateValue);
   };
 
+  const handleInputYearChange = (event) => {
+    const enteredValue = event.target.value;
+    console.log("check");
+
+    // Allow only numbers
+    const numbersOnly = /^[0-9\b]+$/;
+    console.log("sd", enteredValue);
+
+    if (enteredValue === "" || numbersOnly.test(enteredValue)) {
+      const newStateValue = { ...formValue };
+      newStateValue[event.target.name] = event.target.value;
+      setFormValue(newStateValue);
+    }
+  };
+
   const callSubmitApi = async (apiData) => {
     try {
       setIsLoading(true);
@@ -229,6 +244,13 @@ const AddNewEducation = ({
       ) {
         return;
       }
+      if (
+        parseInt(formValue?.course_duration_end, 10) >
+        parseInt(formValue?.course_duration_start, 10)
+      ) {
+        return;
+      }
+
       apiData = {
         education_type: formValue.education_type,
         university_or_institute_name: formValue.university_or_institute_name,
@@ -732,6 +754,14 @@ const AddNewEducation = ({
                           // required
                           fullWidth
                           onChange={handleInputChange}
+                          onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                              event.preventDefault();
+                            }
+                          }}
+                          inputProps={{
+                            maxlength: 4,
+                          }}
                           name="course_duration_start"
                           helperText={
                             submitted &&
@@ -758,7 +788,15 @@ const AddNewEducation = ({
                       label={"End Year"}
                       // required
                       fullWidth
+                      inputProps={{
+                        maxlength: 4,
+                      }}
                       onChange={handleInputChange}
+                      onKeyPress={(event) => {
+                        if (!/[0-9]/.test(event.key)) {
+                          event.preventDefault();
+                        }
+                      }}
                       name="course_duration_end"
                       helperText={
                         submitted &&
@@ -775,6 +813,17 @@ const AddNewEducation = ({
                       //   onChange={(e) => formik.handleChange(e)}
                       //   helperText={}
                     />
+                    {submitted &&
+                      formValue?.course_duration_end &&
+                      formValue?.course_duration_start &&
+                      parseInt(formValue?.course_duration_end, 10) >
+                        parseInt(formValue?.course_duration_start, 10) && (
+                        <>
+                          <FormHelperText error={true} sx={{ ml: 2 }}>
+                            Invalid year selection
+                          </FormHelperText>
+                        </>
+                      )}
                   </Grid>
                 </>
               )}

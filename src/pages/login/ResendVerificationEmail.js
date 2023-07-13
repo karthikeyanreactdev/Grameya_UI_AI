@@ -40,7 +40,7 @@ const ResendVerificationEmail = (props) => {
 
   const handleSubmit = async () => {
     setSubmitted(true);
-    setIsLoading(true);
+
     if (!formValue.email) {
       return;
     }
@@ -48,6 +48,7 @@ const ResendVerificationEmail = (props) => {
       return;
     }
     console.log("formValue", formValue);
+    setIsLoading(true);
     const response = await dispatch(
       resendEmailVerify({
         formValue: formValue,

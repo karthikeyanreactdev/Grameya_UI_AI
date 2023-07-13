@@ -142,6 +142,12 @@ const AddNewExperiance = ({
 
   const handleDateChange = (parentName, value) => {
     const newFormValue = { ...formValue };
+    if (parentName === "start_date") {
+      newFormValue["start_date"] = value;
+      newFormValue["end_date"] = "";
+      setFormValue(newFormValue);
+      return;
+    }
     newFormValue[parentName] = value;
     setFormValue(newFormValue);
   };
@@ -298,6 +304,7 @@ const AddNewExperiance = ({
                       dateFormat="dd/MM/yyyy"
                       fullWidth
                       sx={{ width: 1 }}
+                      minDate={formValue.start_date}
                       popperPlacement={popperPlacement}
                       onChange={(date) => {
                         handleDateChange("end_date", date);

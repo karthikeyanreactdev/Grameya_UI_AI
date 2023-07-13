@@ -185,11 +185,15 @@ const ForgotPassword = () => {
                   </FormHelperText>
                 </>
               )}
-              {submitted && !validateEmail(formValue.email) && (
-                <>
-                  <FormHelperText error={true}>Invalid email</FormHelperText>
-                </>
-              )}
+              {submitted &&
+                formValue.email &&
+                !validateEmail(formValue.email) && (
+                  <>
+                    <FormHelperText error={true} sx={{ ml: 2 }}>
+                      Invalid email
+                    </FormHelperText>
+                  </>
+                )}
               <Button
                 fullWidth
                 onClick={handleSubmitForgotPassword}

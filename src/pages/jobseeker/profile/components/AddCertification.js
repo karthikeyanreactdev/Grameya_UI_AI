@@ -159,6 +159,13 @@ const AddCertification = ({
 
   const handleDateChange = (parentName, value) => {
     const newFormValue = { ...formValue };
+    console.log("parentName", parentName);
+    if (parentName === "certification_valid_from") {
+      newFormValue["certification_valid_from"] = value;
+      newFormValue["certification_valid_to"] = "";
+      setFormValue(newFormValue);
+      return;
+    }
     newFormValue[parentName] = value;
     setFormValue(newFormValue);
   };
@@ -245,6 +252,7 @@ const AddCertification = ({
                         !formValue.certification_url &&
                         "Certification Completion URL is required"}
                       {submitted &&
+                        formValue?.certification_url &&
                         !validateURL(formValue?.certification_url) &&
                         "Certification Completion URL is invalid"}
                     </>
@@ -305,6 +313,7 @@ const AddCertification = ({
                       selected={formValue.certification_valid_to}
                       dateFormat="dd/MM/yyyy"
                       fullWidth
+                      minDate={formValue.certification_valid_from}
                       sx={{ width: 1 }}
                       popperPlacement={popperPlacement}
                       onChange={(date) => {
@@ -314,7 +323,7 @@ const AddCertification = ({
                         <TextField
                           sx={{ mb: 2 }}
                           label={"Certification Valid To"}
-                          // value={formValue.end_date}
+                          value={formValue.certification_valid_to}
                           fullWidth
                           error={submitted && !formValue.certification_valid_to}
                           helperText={
