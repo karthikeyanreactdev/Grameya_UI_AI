@@ -374,6 +374,7 @@ const Candidates = () => {
   }, []);
   useEffect(() => {
     if (!addUserOpen) {
+      console.log("u1 called props");
       getCandidates();
     }
   }, [

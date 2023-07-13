@@ -282,7 +282,7 @@ const SideBarStatus = (props) => {
       open={open}
       anchor="right"
       variant="temporary"
-      onClose={handleClose}
+      onClose={() => handleClose()}
       ModalProps={{ keepMounted: true }}
       className={classes.root}
       sx={{
