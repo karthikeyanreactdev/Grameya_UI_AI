@@ -176,7 +176,7 @@ function BasicInfo({
       formik.setFieldValue("mobile", userData?.phone);
       formik.setFieldValue("alternate_phone", userData?.alternate_phone);
       formik.setFieldValue("email", userData?.email);
-      formik.setFieldValue("skills", userData?.jobseekerDetails?.skills);
+      formik.setFieldValue("skills", userData?.jobseekerDetails?.skills || []);
 
       formik.setFieldValue(
         "current_location",
@@ -193,11 +193,11 @@ function BasicInfo({
       );
       formik.setFieldValue(
         "current_salary",
-        userData?.jobseekerDetails?.current_salary
+        userData?.jobseekerDetails?.current_salary || 0
       );
       formik.setFieldValue(
         "expected_salary",
-        userData?.jobseekerDetails?.expected_salary
+        userData?.jobseekerDetails?.expected_salary || 0
       );
 
       formik.setFieldValue(
@@ -206,7 +206,7 @@ function BasicInfo({
       );
       formik.setFieldValue(
         "total_years_of_experience",
-        userData?.jobseekerDetails?.total_years_of_experience
+        userData?.jobseekerDetails?.total_years_of_experience || 0
       );
     }
   }, [userData]);
@@ -414,7 +414,7 @@ function BasicInfo({
                 label={"Skills"}
                 name={"skills"}
                 fullWidth
-                value={formik.values.skills}
+                value={formik.values?.skills}
                 multiple
                 onChange={(event, item) => {
                   if (!isEditMode) {

@@ -342,13 +342,13 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
                 /> */}
                 <Autocomplete
                   multiple
-                  value={formValue.skills}
+                  value={formValue?.skills}
                   id="tags-filled"
                   onChange={(event, newValue) => {
                     handleMultiSelectChange("skills", newValue);
                   }}
                   // options={categoryList}
-                  options={skills.map((option) => option.name)}
+                  options={skills.map((option) => option?.name)}
                   freeSolo
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
@@ -410,7 +410,7 @@ const EditBasicInfo = ({ isOpen, onClose, userDetail, getProfileDetail }) => {
                     multiple
                     id="tags-filled"
                     // options={categoryList}
-                    options={location.map((option) => option.name)}
+                    options={location.map((option) => option?.name)}
                     value={formValue.preferred_job_location}
                     onChange={(event, newValue) => {
                       handleMultiSelectChange(

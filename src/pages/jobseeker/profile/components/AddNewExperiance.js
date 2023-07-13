@@ -219,8 +219,8 @@ const AddNewExperiance = ({
               <Grid item lg={12} xl={12} md={12} xs={12} sm={12}>
                 <Autocomplete
                   multiple
-                  error={submitted && formValue.skills.length === 0}
-                  value={formValue.skills}
+                  error={submitted && formValue?.skills?.length === 0}
+                  value={formValue?.skills}
                   id="tags-filled"
                   onChange={(event, newValue) => {
                     handleMultiSelectChange("skills", newValue);
@@ -242,10 +242,10 @@ const AddNewExperiance = ({
                       {...params}
                       label="Skills"
                       placeholder="Skills"
-                      error={submitted && formValue.skills.length === 0}
+                      error={submitted && formValue?.skills?.length === 0}
                       helperText={
                         submitted &&
-                        formValue.skills.length === 0 &&
+                        formValue?.skills?.length === 0 &&
                         "Skills is required"
                       }
                     />
