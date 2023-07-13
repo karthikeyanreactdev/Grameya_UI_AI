@@ -64,17 +64,23 @@ const VerifyEmail = () => {
                 }}
               >
                 <img
-                  height={50}
+                  height={60}
                   width={250}
                   alt="add-role"
                   src="/images/glogo.png"
                 />
               </Box>
             </Box>
-            <Box sx={{ mb: 6 }}>
+            <Box sx={{ mb: 6, textAlign: "center", display: "flex" }}>
               {errorMsg ? (
                 <>
-                  <Typography sx={{ color: "text.secondary" }}>
+                  <Typography
+                    sx={{
+                      color: "text.secondary",
+                      textAlign: "center",
+                      display: "flex",
+                    }}
+                  >
                     {errorMsg}
                   </Typography>
                 </>

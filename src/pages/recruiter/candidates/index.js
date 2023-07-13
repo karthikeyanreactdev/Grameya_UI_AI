@@ -379,7 +379,7 @@ const Candidates = () => {
   }, [
     paginationModel?.page,
     paginationModel?.pageSize,
-    rowCountState,
+    // rowCountState,
     addUserOpen,
   ]);
   useEffect(() => {

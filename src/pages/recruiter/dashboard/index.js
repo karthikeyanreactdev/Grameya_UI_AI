@@ -23,7 +23,7 @@ import moment from "moment/moment";
 import { makeStyles } from "@mui/styles";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import { Tooltip } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 
 const userStatusObj = {
   active: "success",
@@ -189,7 +189,7 @@ const Applications = () => {
   }, []);
   useEffect(() => {
     getApplicants();
-  }, [paginationModel?.page, paginationModel?.pageSize, rowCountState]);
+  }, [paginationModel?.page, paginationModel?.pageSize]);
   useEffect(() => {
     setRowCountState((prevRowCountState) =>
       pageCount?.total !== undefined ? pageCount?.total : prevRowCountState
@@ -201,8 +201,8 @@ const Applications = () => {
       {
         pathname: "/recruiter/applied-candiates",
         query: { cid: row?.id },
-      },
-      "/recruiter/applied-candiates"
+      }
+      // "/recruiter/applied-candiates"
     );
   };
 

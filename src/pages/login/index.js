@@ -336,8 +336,8 @@ const LoginPage = () => {
                     formValue.username &&
                     !validateEmail(formValue.username) && (
                       <>
-                        <FormHelperText error={true} sx={{ ml: 2 }}>
-                          Invalid email
+                        <FormHelperText error={true} sx={{ ml: 2, mt: 1 }}>
+                          Please enter the valid email
                         </FormHelperText>
                       </>
                     )}
