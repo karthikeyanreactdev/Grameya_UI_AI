@@ -83,15 +83,21 @@ const Profile = () => {
     companyName: yup
       .string("Company Name is required")
       .trim()
-      .required("Company Name is required"),
+      .required("Company Name is required")
+      .min(10, "Minimum 10 character required")
+      .max(70, "Maximum 70 character only allowed"),
     fullname: yup
       .string("Full Name is required")
       .trim()
-      .required("Full Name is required"),
+      .required("Full Name is required")
+      .min(10, "Minimum 10 character required")
+      .max(70, "Maximum 70 character only allowed"),
     designation: yup
       .string("Designation is required")
       .trim()
-      .required("Designation is required"),
+      .required("Designation is required")
+      .min(10, "Minimum 10 character required")
+      .max(50, "Maximum 50 character only allowed"),
 
     addressLineOne: yup
       .string("Address Line 1 is required")
@@ -602,7 +608,7 @@ const Profile = () => {
                   //disabled={!isEdit}
                   fullWidth
                   multiline
-                  minRows={!isEdit ? 2 : 3}
+                  minRows={!isEdit ? 1 : 3}
                   maxRows={3}
                   // size="small"
                   // required
@@ -632,49 +638,77 @@ const Profile = () => {
               </Grid>
             </Grid>
             <Grid>
-              <Autocomplete
-                id="location"
-                name="location"
-                label="Job Location*"
-                variant="outlined"
-                //disabled={!isEdit}
-                fullWidth
-                sx={{ my: 2, mt: 4 }}
-                value={formik.values.location}
-                onChange={(event, item) => {
-                  if (item) {
-                    getLatLngByAddress(item?.description);
+              {!isEdit ? (
+                <TextField
+                  id="location"
+                  name="location"
+                  label="Location*"
+                  // variant="outlined"
+                  //disabled={!isEdit}
+                  fullWidth
+                  sx={{ my: 2, mt: 4 }}
+                  value={formik.values.location}
+                  freeSolo={!isEdit}
+                  variant={!isEdit ? "standard" : "outlined"}
+                  InputProps={{
+                    readOnly: !isEdit,
+                    disableUnderline: !isEdit,
+                  }}
+                  error={
+                    formik.touched.location && Boolean(formik.errors.location)
+                  }
+                  helperText={
+                    formik.touched.location &&
+                    formik.errors.location &&
+                    formik.errors.location
+                  }
+                />
+              ) : (
+                <Autocomplete
+                  id="location"
+                  name="location"
+                  label="Location*"
+                  variant="outlined"
+                  //disabled={!isEdit}
+                  fullWidth
+                  sx={{ my: 2, mt: 4 }}
+                  value={formik.values.location}
+                  onChange={(event, item) => {
+                    if (item) {
+                      getLatLngByAddress(item?.description);
 
-                    formik.setFieldValue("location", item?.label);
-                  }
-                }}
-                onInputChange={(event) => {
-                  if (event?.target?.value) {
-                    getPlacePredictions({ input: event?.target?.value });
-                  } else {
-                    getPlacePredictions({ input: "" });
-                  }
-                }}
-                options={placePredictions.map((item) => ({
-                  ...item,
-                  label: item.description,
-                  value: item.place_id,
-                }))}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Location *"
-                    error={
-                      formik.touched.location && Boolean(formik.errors.location)
+                      formik.setFieldValue("location", item?.label);
                     }
-                    helperText={
-                      formik.touched.location &&
-                      formik.errors.location &&
-                      formik.errors.location
+                  }}
+                  onInputChange={(event) => {
+                    if (event?.target?.value) {
+                      getPlacePredictions({ input: event?.target?.value });
+                    } else {
+                      getPlacePredictions({ input: "" });
                     }
-                  />
-                )}
-              />
+                  }}
+                  options={placePredictions.map((item) => ({
+                    ...item,
+                    label: item.description,
+                    value: item.place_id,
+                  }))}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Location *"
+                      error={
+                        formik.touched.location &&
+                        Boolean(formik.errors.location)
+                      }
+                      helperText={
+                        formik.touched.location &&
+                        formik.errors.location &&
+                        formik.errors.location
+                      }
+                    />
+                  )}
+                />
+              )}
             </Grid>
             <Grid container spacing={2}>
               <Grid item lg={12} xl={12} xs={12} md={12} sm={6} sx={{ my: 2 }}>

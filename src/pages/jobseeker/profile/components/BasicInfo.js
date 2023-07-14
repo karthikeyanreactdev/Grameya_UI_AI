@@ -39,6 +39,8 @@ import { useSelector } from "react-redux";
 //     },
 //   },
 // }));
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 function BasicInfo({
   userDetail,
@@ -53,6 +55,12 @@ function BasicInfo({
   const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = yup.object({
+    alternate_phone: yup
+      .string()
+      .trim()
+      .min(10, "Minimum 10 character required")
+      .max(10, "Maximum 10 character is allowed")
+      .matches(phoneRegExp, "Phone number is not valid"),
     resume_headline: yup
       .string("Resume Headline is required")
       .trim()
@@ -83,7 +91,9 @@ function BasicInfo({
 
     current_location: yup
       .string("Current Location is required")
-      .required("Current Location is required"),
+      .required("Current Location is required")
+      .min(3, "Minimum 3 character required")
+      .max(70, "Maximum 70 character only allowed"),
     current_salary: yup
       .string("Current Salary is required")
       .trim()
@@ -95,7 +105,9 @@ function BasicInfo({
     preferred_job_location: yup
       .string()
       // .trim()
-      .required("Preferred Location is required"),
+      .required("Preferred Location is required")
+      .min(3, "Minimum 3 character required")
+      .max(70, "Maximum 70 character only allowed"),
 
     total_years_of_experience: yup
       .string("Total Experience is required")
@@ -122,6 +134,18 @@ function BasicInfo({
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       console.log(values);
+      let addedSkills = [];
+      let skills = [];
+      if (values.skills && values.skills.length > 0) {
+        values.skills.map((item) => {
+          const val = typeof item;
+          if (val === "string" && val !== "object") {
+            skills.push(item);
+          } else {
+            skills.push(item?.name);
+          }
+        });
+      }
       const params = {
         full_name: values.full_name,
         alternate_phone: values.alternate_phone,
@@ -136,7 +160,7 @@ function BasicInfo({
         expected_salary: `${values.expected_salary}`,
         current_location: values.current_location,
         preferred_job_location: [values.preferred_job_location],
-        skills: values.skills,
+        skills: skills,
         actively_looking_for_job: values.actively_looking_for_job,
       };
       console.log(params);
@@ -376,6 +400,9 @@ function BasicInfo({
                     // required
                     fullWidth
                     // type="number"
+                    inputProps={{
+                      maxlength: 15,
+                    }}
                     name="alternate_phone"
                     value={formik.values.alternate_phone
                       .toString()
@@ -542,6 +569,9 @@ function BasicInfo({
                   type="text"
                   required
                   fullWidth
+                  inputProps={{
+                    maxlength: 15,
+                  }}
                   name="current_salary"
                   value={`${formik.values.current_salary}`
                     .trimStart()
@@ -585,6 +615,9 @@ function BasicInfo({
                   required
                   fullWidth
                   name="expected_salary"
+                  inputProps={{
+                    maxlength: 15,
+                  }}
                   value={`${formik.values.expected_salary}`
                     .trimStart()
                     .replace(/\s\s+/g, "")
@@ -709,13 +742,30 @@ function BasicInfo({
                   label={"Total Experience (in Years) "}
                   type="text"
                   required
+                  inputProps={{
+                    maxlength: 2,
+                  }}
                   fullWidth
                   name="total_years_of_experience"
                   value={`${formik.values.total_years_of_experience}`
                     .trimStart()
                     .replace(/\s\s+/g, "")
                     .replace(/\p{Emoji_Presentation}/gu, "")}
-                  onChange={(e) => formik.handleChange(e)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // Use regular expression to remove non-numeric characters
+                    const numericValue = value.replace(/[^0-9.]/g, "");
+                    // if (numericValue.length > 2) {
+                    //   return;
+                    // }
+
+                    formik.setFieldValue(
+                      "total_years_of_experience",
+                      numericValue
+                    );
+                    // formik.handleChange(e)
+                  }}
                   error={
                     formik.touched.total_years_of_experience &&
                     Boolean(formik.errors.total_years_of_experience)

@@ -79,8 +79,10 @@ const ManageJob = () => {
   const [sendNotification] = useNotification();
 
   const { direction } = theme;
+
   const popperPlacement = direction === "ltr" ? "bottom-start" : "bottom-end";
   const [id, setId] = useState("");
+  const [eid, setEid] = useState("");
   const [role, setRole] = useState("");
   const [plan, setPlan] = useState("");
   const [value, setValue] = useState("");
@@ -290,7 +292,8 @@ const ManageJob = () => {
             <Tooltip title="Edit job">
               <IconButton
                 onClick={() => {
-                  setId(row.id);
+                  // setId(row.id);
+                  setEid(row?.id);
                   toggleAddUserDrawer();
                 }}
                 color="primary"
@@ -303,7 +306,8 @@ const ManageJob = () => {
             <Tooltip title="Share job">
               <IconButton
                 onClick={() => {
-                  setId(row.id);
+                  // setId(row.id);
+                  setEid(row?.id);
                   // toggleAddUserDrawer();
                   toggleShareDrawer();
                 }}
@@ -408,107 +412,145 @@ const ManageJob = () => {
           </CardContent>
         </Card>
       </Grid> */}
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title="Manage Jobs" />
-          <Divider sx={{ m: "0 !important" }} />
+      {!addUserOpen && (
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader title="Manage Jobs" />
+            <Divider sx={{ m: "0 !important" }} />
 
-          <CardContent></CardContent>
-          {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
-          <Box
-            sx={{
-              pb: 4,
-              px: 6,
-              rowGap: 2,
-              columnGap: 4,
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
+            <CardContent></CardContent>
+            {/* <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
             <Box
               sx={{
+                pb: 4,
+                px: 6,
                 rowGap: 2,
+                columnGap: 4,
                 display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
                 justifyContent: "flex-end",
               }}
             >
-              {/* <CustomTextField
+              <Box
+                sx={{
+                  rowGap: 2,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {/* <CustomTextField
                 value={value}
                 sx={{ mr: 4 }}
                 placeholder="Search Jobs"
                 onChange={(e) => handleFilter(e.target.value)}
               /> */}
 
-              <Button
-                onClick={() => {
-                  toggleAddUserDrawer();
-                  setId("");
-                }}
-                variant="contained"
-                color="primary"
-                sx={{ "& svg": { mr: 2 } }}
-              >
-                {/* <Icon fontSize='1.125rem' icon='tabler:plus' /> */}
-                Create a Job
-              </Button>
+                <Button
+                  onClick={() => {
+                    toggleAddUserDrawer();
+                    setId("");
+                  }}
+                  variant="contained"
+                  color="primary"
+                  sx={{ "& svg": { mr: 2 } }}
+                >
+                  {/* <Icon fontSize='1.125rem' icon='tabler:plus' /> */}
+                  Create a Job
+                </Button>
+              </Box>
             </Box>
-          </Box>
-          <Box p={4}>
-            <DataGrid
-              sx={{
-                "& .MuiDataGrid-row": {
-                  cursor: "pointer",
-                },
-                "& .MuiDataGrid-columnHeaders ": {
-                  backgroundColor: theme.palette.primary.main,
-                  color: "#fff",
-                  "& .MuiButtonBase-root.MuiIconButton-root ": {
+            <Box p={4}>
+              <DataGrid
+                sx={{
+                  "& .MuiDataGrid-row": {
+                    cursor: "pointer",
+                  },
+                  "& .MuiDataGrid-columnHeaders ": {
+                    backgroundColor: theme.palette.primary.main,
+                    color: "#fff",
+                    "& .MuiButtonBase-root.MuiIconButton-root ": {
+                      color: "#fff",
+                    },
+                    borderTopLeftRadius: "6px",
+                    borderTopRightRadius: "6px",
+                  },
+                  "& .MuiDataGrid-columnSeparator ": {
                     color: "#fff",
                   },
-                  borderTopLeftRadius: "6px",
-                  borderTopRightRadius: "6px",
-                },
-                "& .MuiDataGrid-columnSeparator ": {
-                  color: "#fff",
-                },
-                "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
-                  borderColor: `${theme.palette.primary.main}`,
-                },
-                "& .MuiDataGrid-virtualScroller": {
-                  // border: `1px solid ${theme.palette.primary.main}`,
-                  border: `.25px solid grey`,
-                },
-              }}
-              autoHeight
-              rowHeight={62}
-              rows={recruiterJobList}
-              columns={jobListColumns}
-              loading={isLoading}
-              onRowClick={(it) => console.log(it)}
-              // {...recruiterJobList}
-              // initialState={{
-              //   // ...data.initialState,
-              //   pagination: { paginationModel: { pageSize: 5 } },
-              // }}
-              // getRowId={(row) => row.job_id}
-              // autoPageSize
-              rowCount={rowCountState}
-              paginationMode="server"
-              disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-            />
-          </Box>
-        </Card>
-      </Grid>
+                  "& .MuiDataGrid-columnHeaders.MuiDataGrid-withBorderColor": {
+                    borderColor: `${theme.palette.primary.main}`,
+                  },
+                  "& .MuiDataGrid-virtualScroller": {
+                    // border: `1px solid ${theme.palette.primary.main}`,
+                    border: `.25px solid grey`,
+                  },
+                }}
+                autoHeight
+                rowHeight={62}
+                rows={recruiterJobList}
+                columns={jobListColumns}
+                loading={isLoading}
+                onRowClick={(it) => console.log(it)}
+                // {...recruiterJobList}
+                // initialState={{
+                //   // ...data.initialState,
+                //   pagination: { paginationModel: { pageSize: 5 } },
+                // }}
+                // getRowId={(row) => row.job_id}
+                // autoPageSize
+                rowCount={rowCountState}
+                paginationMode="server"
+                disableRowSelectionOnClick
+                pageSizeOptions={[10, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+              />
+            </Box>
+          </Card>
+        </Grid>
+      )}
 
-      <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} id={id} />
-      <SideBarShareJob open={shareOpen} toggle={toggleShareDrawer} id={id} />
+      {addUserOpen && (
+        <Grid item xs={12}>
+          <Card>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <CardHeader title={id !== "" ? "Edit a Job" : "Create a Job"} />
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={toggleAddUserDrawer}
+                sx={{ mx: 4, py: 0, my: 4 }}
+                // sx={{
+                //   p: "0.438rem",
+                //   borderRadius: 1,
+                //   color: "text.primary",
+                //   backgroundColor: "action.selected",
+                //   "&:hover": {
+                //     backgroundColor: (theme) =>
+                //       `rgba(${theme.palette.customColors.main}, 0.16)`,
+                //   },
+                // }}
+              >
+                {/* <Icon icon="tabler:x" fontSize="1.125rem" /> */}
+                Back
+              </Button>
+            </Box>
+            <Divider sx={{ m: "0 !important" }} />
+
+            <Box p={4}>
+              <AddUserDrawer
+                open={addUserOpen}
+                toggle={toggleAddUserDrawer}
+                id={eid}
+              />
+            </Box>
+          </Card>
+        </Grid>
+      )}
+      <SideBarShareJob open={shareOpen} toggle={toggleShareDrawer} id={eid} />
     </Grid>
   );
 };

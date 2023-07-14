@@ -483,7 +483,7 @@ const CandidateJobDetail = () => {
                     }}
                   >
                     <List sx={{ px: 4 }}>
-                      <ListItem sx={{ p: 0, mt: 3 }}>
+                      {/* <ListItem sx={{ p: 0, mt: 3 }}>
                         <ListItemAvatar>
                           <Avatar>
                             <Icon fontSize="1.25rem" icon="carbon:location" />
@@ -493,7 +493,7 @@ const CandidateJobDetail = () => {
                           primary="Location"
                           secondary={jobDetails?.city}
                         />
-                      </ListItem>
+                      </ListItem> */}
 
                       <ListItem sx={{ p: 0, mt: 3 }}>
                         <ListItemAvatar>
@@ -717,7 +717,7 @@ const CandidateJobDetail = () => {
           </CardContent>
         </Card>
       </Grid>
-      <SideBarJob open={addUserOpen} toggle={toggleAddUserDrawer} id={id} />
+      {/* <SideBarJob open={addUserOpen} toggle={toggleAddUserDrawer} id={id} /> */}
     </Grid>
   );
 };

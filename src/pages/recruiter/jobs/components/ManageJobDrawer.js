@@ -39,8 +39,10 @@ import { useDispatch, useSelector } from "react-redux";
 // ** Actions Imports
 // import { addUser } from "src/store/apps/user";
 import {
+  CardHeader,
   // Autocomplete,
   Chip,
+  Divider,
   FormControl,
   FormHelperText,
   Grid,
@@ -90,11 +92,14 @@ const validationSchema = yup.object({
     .string("Job Title is required")
     .trim()
     .required("Job Title is required")
-    .min(10, "Minimum 10 character required"),
+    .min(10, "Minimum 10 character required")
+    .max(200, "Maximum 200 character only allowed"),
   companyName: yup
     .string("Company Name is required")
     .trim()
-    .required("Company Name is required"),
+    .required("Company Name is required")
+    .min(10, "Minimum 10 character required")
+    .max(70, "Maximum 70 character only allowed"),
   email: yup
     .string("Email is Required")
     .email("Enter the valid email")
@@ -107,22 +112,29 @@ const validationSchema = yup.object({
     .string("Job Category is required")
 
     .required("Job Category is required"),
+  addressLineOne: yup
+    .string("Address Line 1 is required")
+    .trim()
+    .required("Address Line 1 is required"),
   location: yup
     .string("Job Location is required")
     .required("Job Location is required"),
-
+  city: yup.string("City is required").trim().required("City is required"),
+  state: yup.string("State is required").trim().required("State is required"),
+  country: yup
+    .string("Country is required")
+    .trim()
+    .required("Country is required"),
+  postalCode: yup
+    .string("Postal Code is required")
+    .trim()
+    .required("Postal Code is required"),
   noticePeriod: yup
     .string("Notice Period is required")
     .required("Notice Period is required"),
   jobType: yup.string("Job Type is required").required("Job Type is required"),
   skills: yup
     .array()
-    // .of(
-    //   yup.object().shape({
-    //     id: yup.string(),
-    //     jobCategory: yup.string(),
-    //   })
-    // )
     .min(1, "Minimum 1 skill is required")
     .max(10, "Maximum 10 skills is allowed"),
 });
@@ -440,39 +452,26 @@ const SideBarJob = (props) => {
     apiKey: process.env.REACT_APP_GMAP_API_KEY,
   });
   return (
-    <Drawer
-      open={open}
-      anchor="right"
-      variant="temporary"
-      onClose={handleClose}
-      ModalProps={{ keepMounted: true }}
-      className={classes.root}
-      sx={{
-        "& .MuiDrawer-paper": { width: { xs: "100%", sm: "100%", lg: "50%" } },
-      }}
-    >
-      <Header>
-        <Typography variant="h5">
+    // <Drawer
+    //   open={open}
+    //   anchor="right"
+    //   variant="temporary"
+    //   onClose={handleClose}
+    //   ModalProps={{ keepMounted: true }}
+    //   className={classes.root}
+    //   sx={{
+    //     "& .MuiDrawer-paper": { width: { xs: "100%", sm: "100%", lg: "50%" } },
+    //   }}
+    // >
+    <Box className={classes.root}>
+      {/* <Header>
+        {/* <Typography variant="h5">
           {id !== "" ? "Edit a Job" : "Create a Job"}
-        </Typography>
-        <IconButton
-          size="small"
-          onClick={handleClose}
-          sx={{
-            p: "0.438rem",
-            borderRadius: 1,
-            color: "text.primary",
-            backgroundColor: "action.selected",
-            "&:hover": {
-              backgroundColor: (theme) =>
-                `rgba(${theme.palette.customColors.main}, 0.16)`,
-            },
-          }}
-        >
-          <Icon icon="tabler:x" fontSize="1.125rem" />
-        </IconButton>
-      </Header>
-      <Box sx={{ p: (theme) => theme.spacing(0, 6, 6) }}>
+        </Typography> */}
+      {/* <CardHeader title={id !== "" ? "Edit a Job" : "Create a Job"} />
+        <Divider sx={{ m: "0 !important" }} /> *
+      </Header> */}
+      <Box sx={{ p: (theme) => theme.spacing(4, 6, 6) }}>
         <Grid container spacing={2}>
           <Grid item lg={12} xl={12} xs={12} md={12} sm={12}>
             <TextField
@@ -823,25 +822,45 @@ const SideBarJob = (props) => {
                   <TextField
                     sx={{ my: 2 }}
                     label={"Experience From "}
-                    type="number"
+                    // type="number"
+                    inputProps={{
+                      maxlength: 2,
+                    }}
+                    disabled
                     fullWidth
                     name="from"
                     value={experiance[0] || 0}
                     onChange={(e) => {
-                      setExperiance([e.target.value, experiance[1]]);
+                      const re = /^[0-9.\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        setExperiance([e.target.value, experiance[1]]);
+                      }
                     }}
+                    // onChange={(e) => {
+                    //   setExperiance([e.target.value, experiance[1]]);
+                    // }}
                   />
                 </Grid>
                 <Grid item lg={6} xl={6} md={6} xs={12} sm={12}>
                   <TextField
                     sx={{ my: 2 }}
                     label={" Experience To "}
-                    type="number"
+                    // type="number"
+                    inputProps={{
+                      maxlength: 2,
+                    }}
+                    disabled
                     fullWidth
                     name="to"
                     value={experiance[1] || 0}
+                    // onChange={(e) => {
+                    //   setExperiance([experiance[0], e.target.value]);
+                    // }}
                     onChange={(e) => {
-                      setExperiance([experiance[0], e.target.value]);
+                      const re = /^[0-9.\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        setExperiance([experiance[0], e.target.value]);
+                      }
                     }}
                   />
                 </Grid>
@@ -885,6 +904,7 @@ const SideBarJob = (props) => {
                     label={"Salary From "}
                     type="number"
                     fullWidth
+                    disabled
                     name="from"
                     value={salary[0] || 0}
                     onChange={(e) => {
@@ -898,6 +918,7 @@ const SideBarJob = (props) => {
                     label={" Salary To "}
                     type="number"
                     fullWidth
+                    disabled
                     name="to"
                     value={salary[1] || 0}
                     onChange={(e) => {
@@ -927,6 +948,7 @@ const SideBarJob = (props) => {
                         },
                       ]}
                       value={salary}
+                      step={0.5}
                       onChange={handleChange}
                       valueLabelDisplay="auto"
                       // getAriaValueText={valuetext}
@@ -1308,7 +1330,8 @@ const SideBarJob = (props) => {
           </Grid>
         </Grid>
       </Box>
-    </Drawer>
+    </Box>
+    // </Drawer>
   );
 };
 
