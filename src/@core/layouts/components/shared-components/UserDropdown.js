@@ -119,6 +119,7 @@ const UserDropdown = (props) => {
             height: "2.5rem",
             background: "#187de4",
             color: "#fff",
+            fontSize: "1.25rem",
           }}
         >
           {userData?.full_name?.charAt(0) || ""}
@@ -179,7 +180,11 @@ const UserDropdown = (props) => {
         {/* <Divider sx={{ my: (theme) => `${theme.spacing(2)} !important` }} /> */}
         <MenuItemStyled
           sx={{ p: 0 }}
-          onClick={() => handleDropdownClose("/recruiter/profile/")}
+          onClick={() => {
+            userData?.role === "jobseeker"
+              ? handleDropdownClose("/jobseeker/profile/")
+              : handleDropdownClose("/recruiter/profile/");
+          }}
         >
           <Box sx={styles}>
             <Icon icon="tabler:user-star" />
